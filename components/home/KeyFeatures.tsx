@@ -2,9 +2,9 @@ import React from 'react'
 import { Card, CardContent } from '../ui/card'
 import { ArrowRight, CalendarDays, Heart, Users } from 'lucide-react'
 import Link from 'next/link'
-import { ImpactTracker } from './ImpactTracker'
+import ImpactTracker from './ImpactTracker'
 
-export function KeyFeatures() {
+export default function KeyFeatures() {
   return (
     <div className='bg-gray-50'>
         <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">

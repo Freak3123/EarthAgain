@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Users, Calendar, TreePine, Heart } from "lucide-react"
 
-export function ImpactTracker() {
+export default function ImpactTracker() {
   const stats = [
     {
       icon: Users,
