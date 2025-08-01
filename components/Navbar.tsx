@@ -15,15 +15,15 @@ const Navbar = () => {
   });
 
   const navItems = [
-    "Home",
-    "About",
-    "Events",
-    "Climate Panchayat",
-    // 'Join Us',
-    "Blog",
-    // 'Speakers',
-    // 'Admin',
-    "Score Card",
+    { href: "/", label:"Home" },
+    { href: "/about", label:"About" },
+    { href: "/events", label:"Events" },
+    { href: "/climate-panchayat", label:"Climate Panchayat" },
+    { href: "/join-us", label:'Join Us' },
+    { href: "/blog", label:"Blog" },
+    { href: "/speakers", label:'Speakers' },
+    { href: "/admin", label:'Admin' },
+    { href: "/score-card", label:"Score Card" },
   ];
 
   return (
@@ -46,13 +46,13 @@ const Navbar = () => {
         <div className="hidden lg:flex flex-1 justify-center space-x-8">
           {navItems.map((item) => (
             <Link
-              key={item}
-              href={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+              key={item.href}
+              href={item.href}
               className={`text-md  ${
                 scrolled ? "text-gray-700 font-semibold" : "text-white"
               } hover:text-green-600 transition-colors`}
             >
-              {item}
+              {item.label}
             </Link>
           ))}
         </div>
@@ -60,10 +60,10 @@ const Navbar = () => {
         {/* Login + Mobile Menu Toggle */}
         <div className="flex items-center space-x-4">
           <Link
-            href="/login"
+            href="/register"
             className="hidden sm:inline-block text-white bg-green-600 hover:bg-green-700 px-5 py-2.5 rounded-md transition"
           >
-            Login
+            Register
           </Link>
 
           {/* Mobile Hamburger Button */}
@@ -83,20 +83,20 @@ const Navbar = () => {
           <div className="flex flex-col pt-20">
             {navItems.map((item) => (
               <Link
-                key={item}
-                href={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                className="text-md text-center font-medium text-gray-700 rounded-md hover:bg-green-50 py-3 ps-3 transition-colors"
+                key={item.href}
+                href={item.href}
+                className="text-xl text-center font-medium text-gray-700 rounded-md hover:bg-green-50 py-3 ps-3 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {item}
+                {item.label}
               </Link>
             ))}
             <Link
-              href="/login"
-              className="text-center text-white bg-green-600 hover:bg-green-700 mt-3 px-4 py-2 rounded-md transition"
+              href="/register"
+              className="text-center text-xl text-white bg-green-600 hover:bg-green-700 mt-3 px-4 py-2 rounded-md transition"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Login
+              Register
             </Link>
           </div>
         </div>
