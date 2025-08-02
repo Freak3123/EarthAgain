@@ -39,27 +39,35 @@ export function CountdownTimer({ target }: { target: string }) {
   }
   return (
     <div className="flex flex-col lg:flex-row md:justify-between items-center gap-8">
-      <div className="flex flex-col w-full justify-start items-start text-left space-y-4">
+      <div className="flex flex-col w-full md:w-fit justify-start items-start text-left space-y-4">
         {/* Headline */}
         <h3 className="text-3xl font-bold text-white">{mytext}</h3>
 
         {/* Description */}
-        <p className="text-base font-semibold text-white/80 max-w-xl leading-relaxed">
+        <p className="text-lg text-white/80 leading-relaxed">
           Join us as we move closer to an inspiring and impactful gathering.{" "}
-          <br />
+          
           Don’t miss the opportunity to connect, learn, and grow. <br />
-          Every second counts — secure your spot before time runs out.
+          Every second counts — secure your spot before time runs out. {" "}
+          <Link
+            href="/register"
+            className="inline-block hover:text-white italic font-medium hover:underline transition"
+          >
+            Register Now
+          </Link>
         </p>
 
         {/* Register Button */}
-        <div className="pt-4">
+        
+
+        {/* <div className="pt-4">
           <Link
             href="/register"
             className="inline-block bg-emerald-100 text-black/80 hover:text-black px-6 py-3 rounded-md text-sm md:text-base font-medium transition"
           >
             Register Now
           </Link>
-        </div>
+        </div> */}
       </div>
 
       <div className="grid grid-cols-4 gap-4 md:max-w-2xl md:min-w-xl max-mr-10">

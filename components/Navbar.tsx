@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { HiMenu, HiX } from "react-icons/hi";
@@ -36,9 +37,15 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex-shrink-0">
           <Link href="/">
-            <span className="text-2xl font-extrabold text-green-600">
+            <Image
+              src="https://earthagain.in/wp-content/uploads/2024/07/EARTH-AGAIN-LOGO-V1-2048x832.png"
+              alt="Earth Again Logo"
+              width={200}
+              height={50}
+              className="h-10 sm:h-20 w-auto"/>
+            {/* <span className="text-2xl font-extrabold text-green-600">
               🌿 Logo
-            </span>
+            </span> */}
           </Link>
         </div>
 
@@ -61,7 +68,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Link
             href="/register"
-            className="hidden sm:inline-block text-white bg-green-600 hover:bg-green-700 px-5 py-2.5 rounded-md transition"
+            className="hidden sm:inline-block text-white bg-[#74B729] hover:bg-green-700 px-5 py-2.5 rounded-md transition"
           >
             Register
           </Link>

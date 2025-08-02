@@ -1,6 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/home/Hero';
 import KeyFeatures from '@/components/home/KeyFeatures';
+import ImpactTracker from '@/components/home/ImpactTracker';
 import Events from '@/components/home/UpcomingEvents';
 import SpeakersSection from '@/components/home/SpeakersSection';
 import Testimonials from '@/components/home/Testimonials';
@@ -14,6 +15,7 @@ export default function Home() {
       <Hero />
       <Navbar />
       <KeyFeatures />
+      <ImpactTracker />
       <Events />
       <SpeakersSection />
       <Testimonials />

@@ -29,14 +29,14 @@ export default function Hero() {
       {/* ✅ Foreground content scrolls normally */}
       <div className="-mt-[80vh] relative z-10">
         {/* Hero text */}
-        <section className="h-[80vh] flex items-end pb-12 px-10">
+        <section className="h-[80vh] flex items-end pb-6 px-2 sm:pb-12 sm:px-10">
           <motion.div
             initial={{ opacity: 0, y: -80 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="flex flex-col max-w-5xl text-green-50"
           >
-            <h1 className="text-6xl md:text-8xl font-sans mb-4 leading-tight">
+            <h1 className="text-5xl md:text-8xl font-sans mb-4 leading-tight">
               EARTH{" "}
               <span className="text-green-600">
                 AGAIN
