@@ -64,7 +64,7 @@ export default function AboutPage() {
 
             <div className="relative">
               <Image
-                src="/placeholder.svg?height=600&width=800"
+                src="/about.png"
                 alt="Earth Again Mission - Community working together"
                 width={800}
                 height={600}
@@ -76,7 +76,7 @@ export default function AboutPage() {
       </section>
 
       {/* 12-Year Vision */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
+      {/* <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our 12-Year Vision for Odisha</h2>
@@ -147,13 +147,13 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Timeline */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">60-Day Movement Timeline</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"><span className="text-green-600">60-Day</span> Movement Timeline</h2>
             <p className="text-xl text-gray-600">A carefully planned journey from awareness to action</p>
           </div>
 
