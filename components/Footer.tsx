@@ -44,9 +44,9 @@ export function Footer() {
                 { href: "/about", label: "About Movement" },
                 { href: "/events", label: "Events" },
                 { href: "/climate-panchayat", label: "Climate Panchayat" },
-                { href: "/join", label: "Join Us" },
+                { href: "/join-us", label: "Join Us" },
                 { href: "/blog", label: "Blog" },
-                { href: "/speakers", label: "Guest Speakers" },
+                // { href: "/speakers", label: "Guest Speakers" },
               ].map((link) => (
                 <Link
                   key={link.href}

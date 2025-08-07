@@ -68,7 +68,7 @@ export default function UpcomingEvents() {
                   src="https://plus.unsplash.com/premium_photo-1712685912274-2483dade540f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D"
                   alt={event.title}
                   fill
-                  className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                  className="object-cover"
                 />
                 <div className="absolute bottom-3 left-3 backdrop-blur-md bg-black/50 text-white text-sm px-3 py-1 rounded shadow">
                   {event.location}

@@ -71,7 +71,7 @@ const ImpactTracker = () => {
         {cards.map((card, i) => (
           <div
             key={i}
-            className={`transition-transform duration-300 ease-in-out transform z-${i*10} ${card.rotate} ${card.hoverRotate} ${card.bgColor} text-black rounded-xl shadow-2xl flex flex-col items-center justify-center p-4 sm:p-6 hover:shadow-2xl hover:z-100 hover:scale-105`}
+            className={`transition-transform duration-300 ease-in-out transform z-${i*10} ${card.rotate} ${card.hoverRotate} ${card.bgColor} text-black rounded-xl shadow-2xl flex flex-col items-center justify-center p-4 sm:p-6 hover:shadow-2xl hover:z-50 hover:scale-105`}
           >
             <div className="sm:mb-4 mb-2">{card.icon}</div>
             <h4 className="sm:text-3xl text-xl font-extrabold">{card.number}</h4>

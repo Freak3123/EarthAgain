@@ -52,16 +52,18 @@ export default function InstaFeed() {
             ].map((post, index) => (
               <Card
                 key={index}
-                className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden group cursor-pointer"
+                className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden group cursor-pointer py-0"
               >
                 <div className="relative">
+                  <div className='h-64 overflow-hidden'>
                   <Image
                     src="https://images.unsplash.com/photo-1660924198520-85447f410eff?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGluc3RhZ3JhbXxlbnwwfHwwfHx8MA%3D%3D"
                     alt="Instagram post"
                     width={300}
                     height={300}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300 rounded-t-lg"
                   />
+                  </div>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                   <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="flex items-center gap-2">
@@ -70,7 +72,7 @@ export default function InstaFeed() {
                     </div>
                   </div>
                 </div>
-                <CardContent className="p-4">
+                <CardContent className="p-x-4 pb-6">
                   <p className="text-sm text-gray-600 line-clamp-2">{post.caption}</p>
                 </CardContent>
               </Card>

@@ -23,16 +23,16 @@ const Navbar = () => {
     { href: "/about", label: "About" },
     { href: "/events", label: "Events" },
     { href: "/climate-panchayat", label: "Climate Panchayat" },
-    { href: "/join-us", label: "Join Us" },
-    { href: "/blog", label: "Blog" },
+    // { href: "/join-us", label: "Join Us" },
+    // { href: "/blog", label: "Blog" },
     { href: "/speakers", label: "Speakers" },
-    { href: "/admin", label: "Admin" },
+    // { href: "/admin", label: "Admin" },
     { href: "/score-card", label: "Score Card" },
   ];
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-colors duration-300 ${
+      className={`fixed top-0 w-full z-100 transition-colors duration-300 ${
         isHome
           ? scrolled
             ? "bg-white shadow-md"

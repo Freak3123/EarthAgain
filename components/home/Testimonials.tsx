@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { InfiniteMovingCards } from "../ui/infinite-moving-cards";
 
 export default function InfiniteMovingCardsDemo() {
   return (
     <div className="bg-[#0F140F] text-white py-36">
+      <div className="px-3">
       <h3 className="text-2xl sm:text-4xl font-bold text-white/80 sm:mb-2 md:ml-44">
         From Fields to Forums
       </h3>
@@ -15,6 +16,7 @@ export default function InfiniteMovingCardsDemo() {
       <h3 className="sm:text-6xl text-4xl font-bold text-white/80 mb-16 md:ml-44">
         A Movement That Matters
       </h3>
+      </div>
     <div>
       <InfiniteMovingCards
         items={testimonials}

@@ -91,23 +91,25 @@ export const InfiniteMovingCards = ({
           {items.map((item) => (
             <li
               key={item.name}
-              className="flex w-[350px] max-w-full flex-row items-start gap-4 rounded-2xl bg-zinc-900 pr-6 text-white shadow-md md:w-[450px]"
+              className="flex w-[350px] max-w-full flex-row items-stretch gap-0 rounded-2xl bg-zinc-900 shadow-md md:w-[450px] overflow-hidden"
             >
-              {/* Avatar */}
-              <div className="flex-shrink-0">
+              {/* Image container */}
+              <div className="relative w-32 h-full flex-shrink-0">
                 <Image
-                  src={item.image || "https://images.unsplash.com/photo-1602233158242-3ba0ac4d2167?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z2lybHxlbnwwfHwwfHx8MA%3D%3D"}
+                  src={
+                    item.image ||
+                    "https://images.unsplash.com/photo-1602233158242-3ba0ac4d2167?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z2lybHxlbnwwfHwwfHx8MA%3D%3D"
+                  }
                   alt={item.name}
-                  width={100}
-                  height={100}
+                  fill
                   loading="lazy"
-                  className="h-full w-fit rounded-l-2xl overflow-hidden object-cover"
+                  className="object-cover"
                 />
               </div>
 
               {/* Text content */}
-              <div className="flex flex-col justify-center py-4">
-                <span className="font-semibold text-white">{item.name}</span>
+              <div className="flex flex-col justify-center py-4 px-6 text-white">
+                <span className="font-semibold">{item.name}</span>
                 <span className="text-sm text-gray-400">{item.title}</span>
                 <p className="mt-2 text-sm text-gray-300">{item.quote}</p>
               </div>
