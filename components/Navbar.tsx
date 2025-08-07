@@ -15,7 +15,7 @@ const Navbar = () => {
   const isHome = pathname === "/";
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 300);
+    setScrolled(latest > 200);
   });
 
   const navItems = [
@@ -30,6 +30,8 @@ const Navbar = () => {
     { href: "/score-card", label: "Score Card" },
   ];
 
+  // const isHome = pathname;
+
   return (
     <nav
       className={`fixed top-0 w-full z-100 transition-colors duration-300 ${
@@ -40,7 +42,7 @@ const Navbar = () => {
           : "bg-[#fefaf2] shadow-md"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      <div className="max-w-7xl z-150 mx-auto px-6 py-3 flex items-center justify-between">
         {/* Logo */}
         <div className="flex-shrink-0">
           <Link href="/">
@@ -49,7 +51,7 @@ const Navbar = () => {
               alt="Earth Again Logo"
               width={200}
               height={50}
-              className="h-10 sm:h-20 w-auto"
+              className="h-10 sm:h-16 w-auto"
             />
             {/* <span className="text-2xl font-extrabold text-green-600">
               🌿 Logo
@@ -59,28 +61,32 @@ const Navbar = () => {
 
         {/* Desktop navigation */}
         <div className="hidden lg:flex flex-1 justify-center space-x-8">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`text-md ${
-                isHome
-                  ? scrolled
-                    ? "text-gray-700 font-semibold"
-                    : "text-white"
-                  : "text-gray-700 font-semibold"
-              } hover:text-green-600 transition-colors`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-base transition-colors ${
+                  isActive
+                    ? "text-green-600 font-semibold"
+                    : isHome && !scrolled
+                    ? "text-white"
+                    : "text-gray-700 font-semibold"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Login + Mobile Menu Toggle */}
         <div className="flex items-center space-x-4">
           <Link
             href="/register"
-            className="hidden lg:inline-block text-white bg-[#74B729] hover:bg-green-700 px-5 py-2.5 rounded-md transition"
+            className="hidden lg:inline-block text-white bg-[#74B729] hover:bg-green-600 px-5 py-2.5 rounded-md transition"
           >
             Register
           </Link>

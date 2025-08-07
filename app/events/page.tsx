@@ -5,14 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Calendar, MapPin, Clock, Users, Filter, Search } from "lucide-react";
+import { Calendar, MapPin, Clock, Users, Search } from "lucide-react";
 import Image from "next/image";
 
 export default function EventsPage() {
@@ -103,22 +96,24 @@ export default function EventsPage() {
   ];
 
   const filteredEvents = events.filter((event) => {
-    const matchesSearch =
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLocation =
-      !filterLocation || event.district === filterLocation;
-    const matchesDate = !filterDate || event.date.includes(filterDate);
+  const lowerSearch = searchTerm.toLowerCase();
 
-    return matchesSearch && matchesLocation && matchesDate;
-  });
+  return (
+    event.title.toLowerCase().includes(lowerSearch) ||
+    event.description.toLowerCase().includes(lowerSearch) ||
+    event.location?.toLowerCase().includes(lowerSearch) ||
+    event.district?.toLowerCase().includes(lowerSearch) ||
+    event.date?.toLowerCase().includes(lowerSearch)
+  );
+});
+
 
   return (
     <div className="min-h-screen bg-[#fefaf2]">
       {/* Hero Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 ">
+      <section className="pt-30 px-4 md:px-6 lg:px-8 ">
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
+          {/* <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
             Earth Again Events
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
@@ -128,82 +123,25 @@ export default function EventsPage() {
             Participate in workshops, climate panchayats, tree plantation
             drives, and community events that are creating real environmental
             impact across Odisha.
-          </p>
+          </p> */}
 
-          {/* Search and Filter */}
-          <div className="max-w-4xl mx-auto px-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              {/* Search Input */}
-              <div className="relative bg-white">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search events"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-green-600 placeholder:text-sm placeholder:text-gray-500 w-full"
-                />
-              </div>
-
-              {/* District Select */}
-              <Select onValueChange={setFilterLocation} defaultValue="">
-                <SelectTrigger className="w-full h-10 border-green-600 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                  <SelectValue
-                    placeholder="All Districts"
-                    className="text-gray-400 peer-data-[state=checked]:text-black"
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Bhubaneswar">Bhubaneswar</SelectItem>
-                  <SelectItem value="Cuttack">Cuttack</SelectItem>
-                  <SelectItem value="Puri">Puri</SelectItem>
-                  <SelectItem value="Berhampur">Berhampur</SelectItem>
-                  <SelectItem value="Rourkela">Rourkela</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* Month Select */}
-              <Select onValueChange={setFilterDate} defaultValue="">
-                <SelectTrigger className="w-full h-10 border-green-600 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                  <SelectValue
-                    placeholder="All Months"
-                    className="text-gray-400 peer-data-[state=checked]:text-black"
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="August">August 2024</SelectItem>
-                  <SelectItem value="September">September 2024</SelectItem>
-                  <SelectItem value="October">October 2024</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* Apply Filters Button */}
-              <Button className="w-full h-10 bg-green-600 hover:bg-green-700 flex items-center justify-center">
-                <Filter className="w-4 h-4 mr-2" />
-                Apply Filters
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Event */}
-      {filteredEvents.find((event) => event.featured) && (
-        <section className="py-16 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
                 Featured Event
               </h2>
             </div>
 
-            {(() => {
-              const featuredEvent = filteredEvents.find(
-                (event) => event.featured
-              )!;
-              return (
-                <Card className="border-0 py-0 shadow-2xl overflow-hidden">
+            {events
+              .filter((event) => event.featured)
+              .map((featuredEvent) => (
+                <Card
+                  key={featuredEvent.id}
+                  className="border-0 p-0 my-2 mb-10 shadow-2xl overflow-hidden"
+                >
                   <div className="grid lg:grid-cols-2">
-                    <div className="relative h-64 lg:h-auto">
+                    {/* Image Section */}
+                    <div className="relative h-60 lg:h-auto">
                       <Image
                         src="https://plus.unsplash.com/premium_photo-1712685912274-2483dade540f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D"
                         alt={featuredEvent.title}
@@ -217,7 +155,9 @@ export default function EventsPage() {
                         </Badge>
                       </div>
                     </div>
-                    <CardContent className="p-8 lg:p-19 lg:px-12">
+
+                    {/* Content Section */}
+                    <CardContent className="p-8 lg:p-10 lg:px-12">
                       <h3 className="text-3xl font-bold text-gray-900 mb-4">
                         {featuredEvent.title}
                       </h3>
@@ -253,24 +193,35 @@ export default function EventsPage() {
                     </CardContent>
                   </div>
                 </Card>
-              );
-            })()}
+              ))}
           </div>
-        </section>
-      )}
-
-      {/* All Events */}
-      <section className="py-20 px-4 md:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
               All Events
             </h2>
-            <p className="text-xl text-gray-600">
-              {filteredEvents.length} events found
-            </p>
           </div>
+          {/* Search and Filter */}
+          <div className="max-w-4xl mx-auto px-4 lg:px-0">
+            {/* Search Input */}
+            <div className="relative bg-white">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search events"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 py-5 border-green-600 placeholder:text-base placeholder:text-gray-400 w-full"
+              />
+            </div>
+          </div>
+          <p className="text-xl text-gray-600 pt-6">
+            {filteredEvents.length} events found
+          </p>
+        </div>
+      </section>
 
+      {/* All Events */}
+      <section className="py-8 px-4 md:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEvents.map((event) => (
               <Card

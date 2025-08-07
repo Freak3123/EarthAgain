@@ -24,10 +24,10 @@ export default function ClimatePanchayatPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#fefaf2] flex items-center justify-center px-4">
         <Card className="max-w-2xl w-full border-0 shadow-2xl">
           <CardContent className="p-12 text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank You for Leading Change!</h1>
@@ -43,9 +43,9 @@ export default function ClimatePanchayatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen pt-22 bg-[#fefaf2">
       {/* Hero Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-green-50 to-white">
+      <section className="py-0 px-4 bg-[#fefaf2] md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">Climate Panchayat Initiative</Badge>
@@ -103,7 +103,7 @@ export default function ClimatePanchayatPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">How to Organize a Climate Panchayat</h2>
@@ -164,7 +164,7 @@ export default function ClimatePanchayatPage() {
       </section>
 
       {/* Benefits */}
-      <section className="py-20 px-4 md:px-6 lg:px-8">
+      {/* <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Why Host a Climate Panchayat?</h2>
@@ -228,11 +228,11 @@ export default function ClimatePanchayatPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Registration Form */}
       {showForm && (
-        <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
+        <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
           <div className="max-w-4xl mx-auto">
             <Card className="border-0 shadow-2xl">
               <CardHeader className="pb-8">

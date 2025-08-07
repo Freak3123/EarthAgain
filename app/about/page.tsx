@@ -8,9 +8,9 @@ import InstaFeed from "@/components/home/InstaFeed"
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen pt-22 bg-[#fefaf2]">
       {/* Hero Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-green-50 to-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">About Earth Again Movement</Badge>
@@ -76,7 +76,7 @@ export default function AboutPage() {
       </section>
 
       {/* 12-Year Vision */}
-      {/* <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
+      {/* section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our 12-Year Vision for Odisha</h2>
@@ -150,7 +150,7 @@ export default function AboutPage() {
       </section> */}
 
       {/* Timeline */}
-      <section className="py-20 px-4 md:px-6 lg:px-8">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"><span className="text-green-600">60-Day</span> Movement Timeline</h2>
