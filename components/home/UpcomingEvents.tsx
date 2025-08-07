@@ -1,85 +1,109 @@
-import { ArrowRight, Clock, MapPin } from "lucide-react";
+"use client";
+
+import { Clock, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+
+const events = [
+  {
+    title: "Climate Panchayat - Bhubaneswar",
+    date: "August 15, 2024",
+    time: "10:00 AM",
+    location: "Kalinga Stadium",
+    image: "/events/climate-panchayat.jpg",
+    description:
+      "A community-led event discussing grassroots climate action in Odisha.",
+  },
+  {
+    title: "Youth Climate Summit",
+    date: "August 22, 2024",
+    time: "9:00 AM",
+    location: "KIIT University",
+    image: "/events/youth-summit.jpg",
+    description:
+      "Empowering the next generation of leaders to act on climate change.",
+  },
+  {
+    title: "Tree Plantation Drive",
+    date: "September 5, 2024",
+    time: "6:00 AM",
+    location: "Nandankanan",
+    image: "/events/tree-drive.jpg",
+    description:
+      "Join us in planting 10,000+ trees to restore local forest cover.",
+  },
+];
 
 export default function UpcomingEvents() {
   return (
-    <div className="bg-gray-50">
-      <section className="py-20 px-4 md:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-12">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Upcoming Events</h2>
-              <p className="text-xl text-gray-600">Join us in these transformative climate action events</p>
-            </div>
-            <Link href="/events">
-              <Button variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 bg-transparent">
-                View All Events <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
+    <section className="bg-[#fefaf2] text-black py-16 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold">Explore Events</h2>
+          <Link href="/events">
+            <Button variant={"default"} className="bg-transparent shadow-none border-0 text-[#A22D10] hover:text-amber-950 hover:bg-transparent">
+              View All Events<ArrowRight className="h-5 w-5"/>
+            </Button>
+          </Link>
+        </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Climate Panchayat - Bhubaneswar",
-                date: "August 15, 2024",
-                time: "10:00 AM",
-                location: "Kalinga Stadium",
-                image: "community meeting in traditional Odisha setting with people discussing climate",
-              },
-              {
-                title: "Youth Climate Summit",
-                date: "August 22, 2024",
-                time: "9:00 AM",
-                location: "KIIT University",
-                image: "young students participating in environmental workshop",
-              },
-              {
-                title: "Tree Plantation Drive",
-                date: "September 5, 2024",
-                time: "6:00 AM",
-                location: "Nandankanan",
-                image: "volunteers planting saplings in forest area",
-              },
-            ].map((event, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
-                <div className="relative h-48">
-                  <Image
-                    // 
-                    src="https://images.unsplash.com/photo-1485433592409-9018e83a1f0d?q=80&w=1814&auto=format&fit=crop"
-                    alt={event.title}
-                    width={400}
-                    height={200}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-white/90 text-gray-900">{event.date}</Badge>
-                  </div>
+        <div
+          className={`grid gap-6 ${
+            events.length === 1
+              ? "grid-cols-1 max-w-md mx-auto"
+              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          }`}
+        >
+          {events.map((event, index) => (
+            <Card
+              key={index}
+              className="bg-white text-black rounded-lg overflow-hidden flex flex-col pb-2 mb-2 p-0 border-0 group shadow-xl"
+            >
+              {/* Image with zoom on hover */}
+              <div className="relative h-52 overflow-hidden">
+                <Image
+                  src="https://plus.unsplash.com/premium_photo-1712685912274-2483dade540f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D"
+                  alt={event.title}
+                  fill
+                  className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                />
+                <div className="absolute bottom-3 left-3 backdrop-blur-md bg-black/50 text-white text-sm px-3 py-1 rounded shadow">
+                  {event.location}
                 </div>
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{event.title}</h3>
-                  <div className="space-y-2 text-sm text-gray-600 mb-4">
+              </div>
+
+              {/* Event Info */}
+              <CardContent className="flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">{event.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                    {event.description}
+                  </p>
+                  <div className="text-sm text-gray-600 space-y-1">
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
                       <span>{event.time}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4" />
-                      <span>{event.location}</span>
+                      <span>{event.date}</span>
                     </div>
                   </div>
-                  <Button className="w-full p-5 bg-green-600 hover:bg-green-700">Register Now</Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </div>
+                <Button
+                  variant="default"
+                  className="mt-4 mb-6 p-5 w-full bg-green-600 hover:bg-green-700 text-md"
+                >
+                  Register Now
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }

@@ -56,7 +56,7 @@ export default function InstaFeed() {
               >
                 <div className="relative">
                   <Image
-                    src={`/placeholder.svg?height=300&width=300&query=${post.image}`}
+                    src="https://images.unsplash.com/photo-1660924198520-85447f410eff?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGluc3RhZ3JhbXxlbnwwfHwwfHx8MA%3D%3D"
                     alt="Instagram post"
                     width={300}
                     height={300}

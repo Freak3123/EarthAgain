@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { HiMenu, HiX } from "react-icons/hi";
@@ -10,27 +11,33 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 300); 
+    setScrolled(latest > 300);
   });
 
   const navItems = [
-    { href: "/", label:"Home" },
-    { href: "/about", label:"About" },
-    { href: "/events", label:"Events" },
-    { href: "/climate-panchayat", label:"Climate Panchayat" },
-    { href: "/join-us", label:'Join Us' },
-    { href: "/blog", label:"Blog" },
-    { href: "/speakers", label:'Speakers' },
-    { href: "/admin", label:'Admin' },
-    { href: "/score-card", label:"Score Card" },
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About" },
+    { href: "/events", label: "Events" },
+    { href: "/climate-panchayat", label: "Climate Panchayat" },
+    { href: "/join-us", label: "Join Us" },
+    { href: "/blog", label: "Blog" },
+    { href: "/speakers", label: "Speakers" },
+    { href: "/admin", label: "Admin" },
+    { href: "/score-card", label: "Score Card" },
   ];
 
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-colors duration-300 ${
-        scrolled ? "bg-white shadow-md" : "bg-transparent"
+        isHome
+          ? scrolled
+            ? "bg-white shadow-md"
+            : "bg-transparent"
+          : "bg-white shadow-md"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
@@ -42,7 +49,8 @@ const Navbar = () => {
               alt="Earth Again Logo"
               width={200}
               height={50}
-              className="h-10 sm:h-20 w-auto"/>
+              className="h-10 sm:h-20 w-auto"
+            />
             {/* <span className="text-2xl font-extrabold text-green-600">
               🌿 Logo
             </span> */}
@@ -56,7 +64,11 @@ const Navbar = () => {
               key={item.href}
               href={item.href}
               className={`text-md  ${
-                scrolled ? "text-gray-700 font-semibold" : "text-white"
+                isHome
+                  ? scrolled
+                    ? "text-gray-700 font-semibold"
+                    : "text-white"
+                  : "text-gray-700 font-semibold"
               } hover:text-green-600 transition-colors`}
             >
               {item.label}
@@ -79,7 +91,7 @@ const Navbar = () => {
             className="lg:hidden z-100 text-3xl text-gray-700 focus:outline-none"
             aria-label="Toggle mobile menu"
           >
-            {isMobileMenuOpen ? <HiX /> : <HiMenu className="text-white"/>}
+            {isMobileMenuOpen ? <HiX /> : <HiMenu className="text-white" />}
           </button>
         </div>
       </div>

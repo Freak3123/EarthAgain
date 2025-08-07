@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "earthagain.in",
       },
+      {
+        protocol: "https",
+        hostname: "www.svgrepo.com",
+      },
     ],
   },
 };

@@ -22,7 +22,7 @@ export default function Hero() {
   return (
     <div ref={scrollRef} className="relative overflow-hidden">
       {/* ✅ Background image with parallax */}
-      <motion.div style={{ y: imageY }} className="w-full h-[80vh] z-0">
+      <motion.div style={{ y: imageY }} className="w-full h-[85vh] z-0">
         <ImagesSlider className="h-full" images={images} />
       </motion.div>
 
@@ -36,10 +36,10 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="flex flex-col max-w-5xl text-green-50"
           >
-            <h1 className="text-5xl md:text-8xl font-sans mb-4 leading-tight">
-              EARTH{" "}
+            <h1 className="text-5xl md:text-8xl font-bold mb-4 leading-tight">
+              Earth{" "}
               <span className="text-green-600">
-                AGAIN
+                Again
                 {/* <br />
                 RESHAPING TOMORROW! */}
               </span>
