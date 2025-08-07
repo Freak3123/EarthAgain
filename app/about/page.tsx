@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Target, Eye, Calendar, Users, TreePine, Lightbulb } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import InstaFeed from "@/components/home/InstaFeed"
 
 export default function AboutPage() {
   return (
@@ -206,6 +207,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
+        <InstaFeed />
       </section>
 
       {/* Call to Action */}

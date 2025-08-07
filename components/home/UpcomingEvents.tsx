@@ -62,7 +62,6 @@ export default function UpcomingEvents() {
               key={index}
               className="bg-white text-black rounded-lg overflow-hidden flex flex-col pb-2 mb-2 p-0 border-0 group shadow-xl"
             >
-              {/* Image with zoom on hover */}
               <div className="relative h-52 overflow-hidden">
                 <Image
                   src="https://plus.unsplash.com/premium_photo-1712685912274-2483dade540f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D"

@@ -1,18 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, MapPin, Clock, Users, Filter, Search } from "lucide-react"
-import Image from "next/image"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar, MapPin, Clock, Users, Filter, Search } from "lucide-react";
+import Image from "next/image";
 
 export default function EventsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterDate, setFilterDate] = useState("")
-  const [filterLocation, setFilterLocation] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  const [filterLocation, setFilterLocation] = useState("");
 
   const events = [
     {
@@ -77,7 +83,8 @@ export default function EventsPage() {
       district: "Bhubaneswar",
       type: "Action Event",
       attendees: "1000+",
-      description: "Mass tree plantation drive with families, schools, and community groups to increase green cover.",
+      description:
+        "Mass tree plantation drive with families, schools, and community groups to increase green cover.",
       image: "volunteers planting trees in forest area with families",
     },
     {
@@ -89,54 +96,63 @@ export default function EventsPage() {
       district: "Bhubaneswar",
       type: "Exhibition",
       attendees: "2000+",
-      description: "Showcase of solar, wind, and other renewable energy solutions for homes and businesses in Odisha.",
+      description:
+        "Showcase of solar, wind, and other renewable energy solutions for homes and businesses in Odisha.",
       image: "renewable energy exhibition with solar panels and wind turbines",
     },
-  ]
+  ];
 
   const filteredEvents = events.filter((event) => {
     const matchesSearch =
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesLocation = !filterLocation || event.district === filterLocation
-    const matchesDate = !filterDate || event.date.includes(filterDate)
+      event.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesLocation =
+      !filterLocation || event.district === filterLocation;
+    const matchesDate = !filterDate || event.date.includes(filterDate);
 
-    return matchesSearch && matchesLocation && matchesDate
-  })
+    return matchesSearch && matchesLocation && matchesDate;
+  });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#fefaf2]">
       {/* Hero Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-green-50 to-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8 ">
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">Earth Again Events</Badge>
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
+            Earth Again Events
+          </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             Join Our <span className="text-green-600">Events</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-12">
-            Participate in workshops, climate panchayats, tree plantation drives, and community events that are creating
-            real environmental impact across Odisha.
+            Participate in workshops, climate panchayats, tree plantation
+            drives, and community events that are creating real environmental
+            impact across Odisha.
           </p>
 
           {/* Search and Filter */}
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-4 gap-4 mb-8">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {/* Search Input */}
+              <div className="relative bg-white">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Search events..."
+                  placeholder="Search events"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-green-600 placeholder:text-sm placeholder:text-gray-500 w-full"
                 />
               </div>
 
-              <Select onValueChange={setFilterLocation} defaultValue="allDistricts">
-                <SelectTrigger>
-                  <SelectValue placeholder="All Districts" />
+              {/* District Select */}
+              <Select onValueChange={setFilterLocation} defaultValue="">
+                <SelectTrigger className="w-full h-10 border-green-600 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                  <SelectValue
+                    placeholder="All Districts"
+                    className="text-gray-400 peer-data-[state=checked]:text-black"
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="allDistricts">All Districts</SelectItem>
                   <SelectItem value="Bhubaneswar">Bhubaneswar</SelectItem>
                   <SelectItem value="Cuttack">Cuttack</SelectItem>
                   <SelectItem value="Puri">Puri</SelectItem>
@@ -145,19 +161,23 @@ export default function EventsPage() {
                 </SelectContent>
               </Select>
 
-              <Select onValueChange={setFilterDate} defaultValue="allMonths">
-                <SelectTrigger>
-                  <SelectValue placeholder="All Months" />
+              {/* Month Select */}
+              <Select onValueChange={setFilterDate} defaultValue="">
+                <SelectTrigger className="w-full h-10 border-green-600 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                  <SelectValue
+                    placeholder="All Months"
+                    className="text-gray-400 peer-data-[state=checked]:text-black"
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="allMonths">All Months</SelectItem>
                   <SelectItem value="August">August 2024</SelectItem>
                   <SelectItem value="September">September 2024</SelectItem>
                   <SelectItem value="October">October 2024</SelectItem>
                 </SelectContent>
               </Select>
 
-              <Button className="bg-green-600 hover:bg-green-700">
+              {/* Apply Filters Button */}
+              <Button className="w-full h-10 bg-green-600 hover:bg-green-700 flex items-center justify-center">
                 <Filter className="w-4 h-4 mr-2" />
                 Apply Filters
               </Button>
@@ -168,32 +188,42 @@ export default function EventsPage() {
 
       {/* Featured Event */}
       {filteredEvents.find((event) => event.featured) && (
-        <section className="py-16 px-4 md:px-6 lg:px-8 bg-gray-50">
+        <section className="py-16 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Featured Event</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Featured Event
+              </h2>
             </div>
 
             {(() => {
-              const featuredEvent = filteredEvents.find((event) => event.featured)!
+              const featuredEvent = filteredEvents.find(
+                (event) => event.featured
+              )!;
               return (
-                <Card className="border-0 shadow-2xl overflow-hidden">
+                <Card className="border-0 py-0 shadow-2xl overflow-hidden">
                   <div className="grid lg:grid-cols-2">
                     <div className="relative h-64 lg:h-auto">
                       <Image
-                        src={`/placeholder.svg?height=400&width=600&query=${featuredEvent.image}`}
+                        src="https://plus.unsplash.com/premium_photo-1712685912274-2483dade540f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D"
                         alt={featuredEvent.title}
                         width={600}
                         height={400}
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-4 left-4">
-                        <Badge className="bg-green-600 text-white">{featuredEvent.type}</Badge>
+                        <Badge className="bg-green-600 text-white">
+                          {featuredEvent.type}
+                        </Badge>
                       </div>
                     </div>
-                    <CardContent className="p-8 lg:p-12">
-                      <h3 className="text-3xl font-bold text-gray-900 mb-4">{featuredEvent.title}</h3>
-                      <p className="text-lg text-gray-600 mb-6">{featuredEvent.description}</p>
+                    <CardContent className="p-8 lg:p-19 lg:px-12">
+                      <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                        {featuredEvent.title}
+                      </h3>
+                      <p className="text-lg text-gray-600 mb-6">
+                        {featuredEvent.description}
+                      </p>
 
                       <div className="space-y-3 mb-8">
                         <div className="flex items-center gap-3 text-gray-600">
@@ -214,13 +244,16 @@ export default function EventsPage() {
                         </div>
                       </div>
 
-                      <Button size="lg" className="bg-green-600 hover:bg-green-700">
+                      <Button
+                        size="lg"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
                         Register for Free
                       </Button>
                     </CardContent>
                   </div>
                 </Card>
-              )
+              );
             })()}
           </div>
         </section>
@@ -230,16 +263,23 @@ export default function EventsPage() {
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">All Events</h2>
-            <p className="text-xl text-gray-600">{filteredEvents.length} events found</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              All Events
+            </h2>
+            <p className="text-xl text-gray-600">
+              {filteredEvents.length} events found
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEvents.map((event) => (
-              <Card key={event.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
-                <div className="relative h-48">
+              <Card
+                key={event.id}
+                className="border-0 pt-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+              >
+                <div className="relative h-60">
                   <Image
-                    src={`/placeholder.svg?height=200&width=400&query=${event.image}`}
+                    src="https://plus.unsplash.com/premium_photo-1712685912274-2483dade540f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D"
                     alt={event.title}
                     width={400}
                     height={200}
@@ -251,25 +291,31 @@ export default function EventsPage() {
                         event.type === "Launch Event"
                           ? "bg-purple-600"
                           : event.type === "Climate Panchayat"
-                            ? "bg-blue-600"
-                            : event.type === "Workshop"
-                              ? "bg-orange-600"
-                              : event.type === "Action Event"
-                                ? "bg-green-600"
-                                : "bg-gray-600"
+                          ? "bg-blue-600"
+                          : event.type === "Workshop"
+                          ? "bg-orange-600"
+                          : event.type === "Action Event"
+                          ? "bg-green-600"
+                          : "bg-gray-600"
                       } text-white`}
                     >
                       {event.type}
                     </Badge>
                   </div>
                   <div className="absolute top-4 right-4">
-                    <Badge className="bg-white/90 text-gray-900">{event.date.split(",")[0]}</Badge>
+                    <Badge className="bg-white/90 text-gray-900">
+                      {event.date.split(",")[0]}
+                    </Badge>
                   </div>
                 </div>
 
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{event.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{event.description}</p>
+                <CardContent className="px-6 py-0 pb-2">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    {event.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {event.description}
+                  </p>
 
                   <div className="space-y-2 mb-6">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -286,7 +332,9 @@ export default function EventsPage() {
                     </div>
                   </div>
 
-                  <Button className="w-full bg-green-600 hover:bg-green-700">Register Now</Button>
+                  <Button className="w-full bg-green-600 hover:bg-green-700">
+                    Register Now
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -295,7 +343,8 @@ export default function EventsPage() {
           {filteredEvents.length === 0 && (
             <div className="text-center py-12">
               <p className="text-xl text-gray-600">
-                No events found matching your criteria. Try adjusting your filters.
+                No events found matching your criteria. Try adjusting your
+                filters.
               </p>
             </div>
           )}
@@ -305,21 +354,30 @@ export default function EventsPage() {
       {/* Call to Action */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-green-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Can't Find What You're Looking For?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Can't Find What You're Looking For?
+          </h2>
           <p className="text-xl mb-8 opacity-90">
-            Want to organize an event in your area? We'll help you plan and execute impactful environmental events in
-            your community.
+            Want to organize an event in your area? We'll help you plan and
+            execute impactful environmental events in your community.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100">
+            <Button
+              size="lg"
+              className="bg-white text-green-600 hover:bg-gray-100"
+            >
               Propose an Event
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 bg-transparent">
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-white text-white hover:bg-white/10 bg-transparent"
+            >
               Contact Event Team
             </Button>
           </div>
         </div>
       </section>
     </div>
-  )
+  );
 }

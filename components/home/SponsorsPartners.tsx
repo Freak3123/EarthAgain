@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export default function SponsorsPartners() {
   return (
-    <div>
+    <div className='bg-[#fefaf2]'>
         <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">

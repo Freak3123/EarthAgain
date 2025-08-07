@@ -6,7 +6,6 @@ import Events from '@/components/home/UpcomingEvents';
 import SpeakersSection from '@/components/home/SpeakersSection';
 import Testimonials from '@/components/home/Testimonials';
 import SponsorsPartners from '@/components/home/SponsorsPartners';
-import InstaFeed from '@/components/home/InstaFeed';
 import CallAction from '@/components/home/CallAction';
 
 export default function Home() {
@@ -20,7 +19,6 @@ export default function Home() {
       <SpeakersSection />
       <Testimonials />
       <SponsorsPartners />
-      <InstaFeed />
       {/* will make a map later */}
       <CallAction />
     </>

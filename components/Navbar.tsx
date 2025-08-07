@@ -24,8 +24,8 @@ const Navbar = () => {
     { href: "/events", label: "Events" },
     { href: "/climate-panchayat", label: "Climate Panchayat" },
     // { href: "/join-us", label: "Join Us" },
-    // { href: "/blog", label: "Blog" },
-    { href: "/speakers", label: "Speakers" },
+    { href: "/blog", label: "Blog" },
+    // { href: "/speakers", label: "Speakers" },
     // { href: "/admin", label: "Admin" },
     { href: "/score-card", label: "Score Card" },
   ];
@@ -35,9 +35,9 @@ const Navbar = () => {
       className={`fixed top-0 w-full z-100 transition-colors duration-300 ${
         isHome
           ? scrolled
-            ? "bg-white shadow-md"
+            ? "bg-[#fefaf2] shadow-md"
             : "bg-transparent"
-          : "bg-white shadow-md"
+          : "bg-[#fefaf2] shadow-md"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
@@ -63,7 +63,7 @@ const Navbar = () => {
             <Link
               key={item.href}
               href={item.href}
-              className={`text-md  ${
+              className={`text-md ${
                 isHome
                   ? scrolled
                     ? "text-gray-700 font-semibold"
@@ -80,7 +80,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Link
             href="/register"
-            className="hidden sm:inline-block text-white bg-[#74B729] hover:bg-green-700 px-5 py-2.5 rounded-md transition"
+            className="hidden lg:inline-block text-white bg-[#74B729] hover:bg-green-700 px-5 py-2.5 rounded-md transition"
           >
             Register
           </Link>
@@ -91,7 +91,19 @@ const Navbar = () => {
             className="lg:hidden z-100 text-3xl text-gray-700 focus:outline-none"
             aria-label="Toggle mobile menu"
           >
-            {isMobileMenuOpen ? <HiX /> : <HiMenu className="text-white" />}
+            {isMobileMenuOpen ? (
+              <HiX />
+            ) : (
+              <HiMenu
+                className={`${
+                  isHome
+                    ? scrolled
+                      ? "text-gray-700"
+                      : "text-white"
+                    : "text-gray-700"
+                }`}
+              />
+            )}
           </button>
         </div>
       </div>
