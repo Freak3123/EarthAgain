@@ -46,7 +46,7 @@ export function Footer() {
                 { href: "/climate-panchayat", label: "Climate Panchayat" },
                 { href: "/join-us", label: "Join Us" },
                 { href: "/blog", label: "Blog" },
-                // { href: "/speakers", label: "Guest Speakers" },
+                { href: "/citizen-voice", label: "Citizen Voice" },
               ].map((link) => (
                 <Link
                   key={link.href}
