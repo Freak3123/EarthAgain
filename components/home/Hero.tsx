@@ -71,14 +71,14 @@ export default function Hero() {
                 Join the Movement
               </Link>
               <Link
-                href="/"
+                href="/citizen-voice"
                 className=" hover:bg-white/20 border-1 border-green-50 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
               >
                 <CalendarDays className="inline mr-2 h-5" />
-                Register for Events
+                Vote your Issues
               </Link>
               <Link
-                href="/"
+                href="/climate-panchayat"
                 className=" hover:bg-white/20 border-1 border-green-50 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
               >
                 <TreePine className="inline mr-2 h-5" />

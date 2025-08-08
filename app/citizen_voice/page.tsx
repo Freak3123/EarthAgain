@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Vote, Users, MapPin, TrendingUp, AlertTriangle, CheckCircle, BarChart3, Waves, Sun, TreePine, Droplets, Wind, Mountain, Fish } from 'lucide-react'
+import BarPoll from "@/components/ui/barpoll"
 import Image from "next/image"
 
 export default function EnvironmentalIssuesPage() {
@@ -99,13 +100,13 @@ export default function EnvironmentalIssuesPage() {
 
   // Mock data for results
   const voteResults = [
-    { issue: "cyclones", votes: 1247, percentage: 23.4 },
-    { issue: "drought", votes: 1156, percentage: 21.7 },
-    { issue: "flooding", votes: 987, percentage: 18.5 },
-    { issue: "biodiversity", votes: 743, percentage: 13.9 },
-    { issue: "heating", votes: 654, percentage: 12.3 },
-    { issue: "mangroves", votes: 432, percentage: 8.1 },
-    { issue: "sealevel", votes: 112, percentage: 2.1 },
+    { issue: "cyclones", votes: 1247, percentage: 23.4, color: "bg-blue-600" },
+    { issue: "drought", votes: 1156, percentage: 21.7, color: "bg-orange-600" },
+    { issue: "flooding", votes: 987, percentage: 18.5, color: "bg-blue-500" },
+    { issue: "biodiversity", votes: 743, percentage: 13.9, color: "bg-purple-600" },
+    { issue: "heating", votes: 654, percentage: 12.3, color: "bg-red-600" },
+    { issue: "mangroves", votes: 432, percentage: 8.1, color: "bg-green-600" },
+    { issue: "sealevel", votes: 112, percentage: 2.1, color: "bg-teal-600" },
   ]
 
   const districtResults = [
@@ -182,7 +183,7 @@ export default function EnvironmentalIssuesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fefaf2] pt-22">
+    <div className="min-h-screen bg-[#fefaf2]">
       {/* Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
@@ -208,6 +209,7 @@ export default function EnvironmentalIssuesPage() {
 
       {/* Main Content */}
       <section className="py-16 px-4 md:px-6 lg:px-8">
+        <BarPoll initialVotes={voteResults} />
         <div className="max-w-6xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-3 mb-12">
@@ -400,32 +402,35 @@ export default function EnvironmentalIssuesPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-6">
-                      {voteResults.map((result, index) => {
+                      {/* {voteResults.map((result, index) => {
                         const issue = getIssueDetails(result.issue)
                         if (!issue) return null
 
-                        return (
-                          <div key={result.issue} className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <Badge className="bg-gray-100 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center">
-                                  {index + 1}
-                                </Badge>
-                                <issue.icon className={`w-6 h-6 ${issue.color}`} />
-                                <div>
-                                  <h4 className="font-semibold text-gray-900">{issue.english}</h4>
-                                  <p className="text-sm text-gray-600">{issue.odia}</p>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <div className="font-bold text-gray-900">{result.votes} votes</div>
-                                <div className="text-sm text-gray-600">{result.percentage}%</div>
-                              </div>
-                            </div>
-                            <Progress value={result.percentage} className="h-3" />
+                        return ( */}
+                          {/* <div key={result.issue} className="space-y-3">
+                          //   <div className="flex items-center justify-between">
+                          //     <div className="flex items-center gap-3">
+                          //       <Badge className="bg-gray-100 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center">
+                          //         {index + 1}
+                          //       </Badge>
+                          //       <issue.icon className={`w-6 h-6 ${issue.color}`} />
+                          //       <div>
+                          //         <h4 className="font-semibold text-gray-900">{issue.english}</h4>
+                          //         <p className="text-sm text-gray-600">{issue.odia}</p>
+                          //       </div>
+                          //     </div>
+                          //     <div className="text-right">
+                          //       <div className="font-bold text-gray-900">{result.votes} votes</div>
+                          //       <div className="text-sm text-gray-600">{result.percentage}%</div>
+                          //     </div>
+                          //   </div>
+                          //   <Progress value={result.percentage} className="h-3" />
+                           </div> */}
+                          <div>
+                            <BarPoll initialVotes={voteResults}/>
                           </div>
-                        )
-                      })}
+                        {/* )
+                      })} */}
                     </div>
                   </CardContent>
                 </Card>

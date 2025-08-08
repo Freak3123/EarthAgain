@@ -45,7 +45,7 @@ export default function ClimatePanchayatPage() {
   return (
     <div className="min-h-screen pt-22 bg-[#fefaf2">
       {/* Hero Section */}
-      <section className="py-0 px-4 bg-[#fefaf2] md:px-6 lg:px-8">
+      <section className="py-0 px-4 pt-10 bg-[#fefaf2] md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">Climate Panchayat Initiative</Badge>
