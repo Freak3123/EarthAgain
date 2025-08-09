@@ -5,19 +5,14 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Vote, Users, MapPin, TrendingUp, AlertTriangle, CheckCircle, BarChart3, Waves, Sun, TreePine, Droplets, Wind, Mountain, Fish } from 'lucide-react'
 import BarPoll from "@/components/ui/barpoll"
-import Image from "next/image"
+
 
 export default function EnvironmentalIssuesPage() {
-  const [activeTab, setActiveTab] = useState("vote")
+  const [activeTab, setActiveTab] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
@@ -26,18 +21,9 @@ export default function EnvironmentalIssuesPage() {
     district: "",
     issues: [] as string[],
   })
+  const [overTab, setOverTab] = useState(false);
 
-  const districts = [
-    // Northern Districts
-    "Angul", "Balangir", "Bargarh", "Deogarh", "Dhenkanal", "Jharsuguda", 
-    "Kendujhar", "Sambalpur", "Subarnapur", "Sundargarh",
-    // Coastal Districts  
-    "Balasore", "Bhadrak", "Cuttack", "Jagatsinghpur", "Jajpur", 
-    "Kendrapada", "Khordha", "Mayurbhanj", "Nayagarh", "Puri",
-    // Southern Districts
-    "Boudh", "Gajapati", "Ganjam", "Kalahandi", "Kandhamal", 
-    "Koraput", "Nabarangpur", "Rayagada", "Sonepur"
-  ]
+
 
   const environmentalIssues = [
     {
@@ -105,7 +91,7 @@ export default function EnvironmentalIssuesPage() {
     { issue: "flooding", votes: 987, percentage: 18.5, color: "bg-blue-500" },
     { issue: "biodiversity", votes: 743, percentage: 13.9, color: "bg-purple-600" },
     { issue: "heating", votes: 654, percentage: 12.3, color: "bg-red-600" },
-    { issue: "mangroves", votes: 432, percentage: 8.1, color: "bg-green-600" },
+    { issue: "mangroves", votes: 432, percentage: 8.1, color: "bg-pink-600" },
     { issue: "sealevel", votes: 112, percentage: 2.1, color: "bg-teal-600" },
   ]
 
@@ -117,26 +103,22 @@ export default function EnvironmentalIssuesPage() {
     { district: "Balasore", topIssue: "cyclones", votes: 143 },
   ]
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitted(true)
-  }
 
-  const handleIssueChange = (issueId: string, checked: boolean) => {
-    if (checked) {
-      if (formData.issues.length < 5) {
-        setFormData(prev => ({
-          ...prev,
-          issues: [...prev.issues, issueId]
-        }))
-      }
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        issues: prev.issues.filter(id => id !== issueId)
-      }))
-    }
-  }
+  // const handleIssueChange = (issueId: string, checked: boolean) => {
+  //   if (checked) {
+  //     if (formData.issues.length < 5) {
+  //       setFormData(prev => ({
+  //         ...prev,
+  //         issues: [...prev.issues, issueId]
+  //       }))
+  //     }
+  //   } else {
+  //     setFormData(prev => ({
+  //       ...prev,
+  //       issues: prev.issues.filter(id => id !== issueId)
+  //     }))
+  //   }
+  // }
 
   const getIssueDetails = (issueId: string) => {
     return environmentalIssues.find(issue => issue.id === issueId)
@@ -208,187 +190,25 @@ export default function EnvironmentalIssuesPage() {
       </section>
 
       {/* Main Content */}
-      <section className="py-16 px-4 md:px-6 lg:px-8">
+      <section className="py-16 px-4 md:px-6 lg:px-8" onClick={() => { if (!overTab) setActiveTab("")}} >
+
+
         <BarPoll initialVotes={voteResults} />
-        <div className="max-w-6xl mx-auto">
+ 
+        <div className="max-w-6xl w-full mx-auto" >
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3 mb-12">
-              <TabsTrigger value="vote" className="text-lg py-3">
-                <Vote className="w-5 h-5 mr-2" />
-                Submit Your Vote
-              </TabsTrigger>
-              <TabsTrigger value="results" className="text-lg py-3">
+            <TabsList className="grid w-full grid-cols-2 mb-12">
+              <TabsTrigger onMouseOver={()=>{setOverTab(true)}} onMouseLeave={()=>{setOverTab(false)}} value="results" className="text-lg py-3">
                 <BarChart3 className="w-5 h-5 mr-2" />
                 View Results
               </TabsTrigger>
-              <TabsTrigger value="districts" className="text-lg py-3">
+              <TabsTrigger onMouseOver={()=>{setOverTab(true)}} onMouseLeave={()=>{setOverTab(false)}} value="districts" className="text-lg py-3">
                 <MapPin className="w-5 h-5 mr-2" />
                 District Analysis
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="vote">
-              <Card className="border-0 shadow-2xl">
-                <CardHeader className="pb-8">
-                  <CardTitle className="text-2xl text-center flex items-center justify-center gap-2">
-                    <AlertTriangle className="w-6 h-6 text-orange-600" />
-                    Environmental Issues Survey
-                  </CardTitle>
-                  <p className="text-center text-gray-600">
-                    Help us identify and prioritize the most pressing environmental challenges in your district
-                  </p>
-                </CardHeader>
-                <CardContent className="p-8">
-                  <form onSubmit={handleSubmit} className="space-y-8">
-                    {/* Personal Information */}
-                    <div className="space-y-6">
-                      <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-green-600" />
-                        Personal Information
-                      </h3>
 
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="name">Your Name *</Label>
-                          <Input
-                            id="name"
-                            value={formData.name}
-                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                            placeholder="Enter your full name"
-                            required
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="email">Email *</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                            placeholder="your.email@example.com"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="mobile">Mobile Number *</Label>
-                          <Input
-                            id="mobile"
-                            value={formData.mobile}
-                            onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
-                            placeholder="+91 XXXXX XXXXX"
-                            required
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="district">District (of Odisha) *</Label>
-                          <Select onValueChange={(value) => setFormData(prev => ({ ...prev, district: value }))}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select your district" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {districts.map((district) => (
-                                <SelectItem key={district} value={district.toLowerCase()}>
-                                  {district}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Environmental Issues Selection */}
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                          <AlertTriangle className="w-5 h-5 text-orange-600" />
-                          Issues (select up to 5)
-                        </h3>
-                        <Badge className="bg-blue-100 text-blue-800">
-                          {formData.issues.length}/5 selected
-                        </Badge>
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-6">
-                        {environmentalIssues.map((issue) => {
-                          const isSelected = formData.issues.includes(issue.id)
-                          const isDisabled = !isSelected && formData.issues.length >= 5
-
-                          return (
-                            <Card 
-                              key={issue.id} 
-                              className={`border-2 transition-all cursor-pointer ${
-                                isSelected 
-                                  ? 'border-green-500 bg-green-50' 
-                                  : isDisabled 
-                                    ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
-                                    : 'border-gray-200 hover:border-green-300'
-                              }`}
-                            >
-                              <CardContent className="p-6">
-                                <div className="flex items-start gap-4">
-                                  <Checkbox
-                                    id={issue.id}
-                                    checked={isSelected}
-                                    onCheckedChange={(checked) => {
-                                      if (!isDisabled) {
-                                        handleIssueChange(issue.id, checked as boolean)
-                                      }
-                                    }}
-                                    disabled={isDisabled}
-                                  />
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-3 mb-2">
-                                      <issue.icon className={`w-6 h-6 ${issue.color}`} />
-                                      <div>
-                                        <h4 className="font-semibold text-gray-900">{issue.odia}</h4>
-                                        <p className="text-sm text-gray-600">({issue.english})</p>
-                                      </div>
-                                    </div>
-                                    <p className="text-sm text-gray-600">{issue.description}</p>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          )
-                        })}
-                      </div>
-
-                      {formData.issues.length > 0 && (
-                        <div className="bg-green-50 p-4 rounded-lg">
-                          <h4 className="font-medium text-gray-900 mb-2">Selected Issues:</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {formData.issues.map((issueId) => {
-                              const issue = getIssueDetails(issueId)
-                              return issue ? (
-                                <Badge key={issueId} className="bg-green-600 text-white">
-                                  {issue.english}
-                                </Badge>
-                              ) : null
-                            })}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <Button 
-                      type="submit" 
-                      size="lg" 
-                      className="w-full bg-green-600 hover:bg-green-700"
-                      disabled={formData.issues.length === 0}
-                    >
-                      <Vote className="w-5 h-5 mr-2" />
-                      Submit Your Vote
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="results">
               <div className="space-y-8">
@@ -400,39 +220,7 @@ export default function EnvironmentalIssuesPage() {
                     </CardTitle>
                     <p className="text-gray-600">Based on {voteResults.reduce((sum, result) => sum + result.votes, 0)} votes from citizens across Odisha</p>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      {/* {voteResults.map((result, index) => {
-                        const issue = getIssueDetails(result.issue)
-                        if (!issue) return null
 
-                        return ( */}
-                          {/* <div key={result.issue} className="space-y-3">
-                          //   <div className="flex items-center justify-between">
-                          //     <div className="flex items-center gap-3">
-                          //       <Badge className="bg-gray-100 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center">
-                          //         {index + 1}
-                          //       </Badge>
-                          //       <issue.icon className={`w-6 h-6 ${issue.color}`} />
-                          //       <div>
-                          //         <h4 className="font-semibold text-gray-900">{issue.english}</h4>
-                          //         <p className="text-sm text-gray-600">{issue.odia}</p>
-                          //       </div>
-                          //     </div>
-                          //     <div className="text-right">
-                          //       <div className="font-bold text-gray-900">{result.votes} votes</div>
-                          //       <div className="text-sm text-gray-600">{result.percentage}%</div>
-                          //     </div>
-                          //   </div>
-                          //   <Progress value={result.percentage} className="h-3" />
-                           </div> */}
-                          <div>
-                            <BarPoll initialVotes={voteResults}/>
-                          </div>
-                        {/* )
-                      })} */}
-                    </div>
-                  </CardContent>
                 </Card>
 
                 <div className="grid md:grid-cols-2 gap-8">
@@ -616,6 +404,7 @@ export default function EnvironmentalIssuesPage() {
 
       {/* Call to Action */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-green-600 text-white">
+      
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Your Voice Matters</h2>
           <p className="text-xl mb-8 opacity-90">
