@@ -41,15 +41,13 @@ export default function KeyFeatures() {
           <p className="text-lg text-gray-700 mb-6">
             Whether you're planting a tree, leading a workshop, or simply
             learning something new — Earth Again gives you the tools, the space,
-            and the community to turn care into climate action. Every choice
-            matters. Every voice counts. And together, we create real change for
-            Odisha and beyond.
+            and the community to turn care into climate action. Make your voice matter, let us create real change for Odisha & beyond, together.
           </p>
           <Link
-            href="/blog"
+            href="/join-us"
             className="inline-block bg-black text-white font-semibold px-6 py-3 rounded-md hover:bg-gray-900 transition"
           >
-            Inspire Me
+            Find your role
           </Link>
         </div>
 
