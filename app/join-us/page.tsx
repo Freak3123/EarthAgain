@@ -26,7 +26,7 @@ export default function JoinPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#fefaf2] flex items-center justify-center px-4">
         <Card className="max-w-2xl w-full border-0 shadow-2xl">
           <CardContent className="p-12 text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -55,7 +55,7 @@ export default function JoinPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-green-50 to-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto text-center">
           <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">Join the Movement</Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
@@ -101,7 +101,7 @@ export default function JoinPage() {
       </section>
 
       {/* Forms Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8">
+      <section className="px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-4xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2 mb-12">
@@ -343,7 +343,7 @@ export default function JoinPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
+      {/* <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Why Join Earth Again?</h2>
@@ -405,10 +405,10 @@ export default function JoinPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Success Stories */}
-      <section className="py-20 px-4 md:px-6 lg:px-8">
+      {/* <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Success Stories</h2>
@@ -464,7 +464,7 @@ export default function JoinPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   )
 }
