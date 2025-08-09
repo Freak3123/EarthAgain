@@ -128,7 +128,7 @@ const Options = ({ votes, setVotes }) => {
             key={vote.issue}
             className={`flex w-full items-center justify-between rounded-lg  px-4 py-3 text-left transition-all ${
               selectedVotes.includes(vote.issue)
-                ? `border-green-100 ${vote.color} text-white border-4`
+                ? `border-green-500 ${vote.color} text-white border-r-[70] border-4 rounded-br-full rounded-tr-full rounded-tl-2xl`
                 : ` ${vote.color} text-white `
             }`}
             disabled={
@@ -352,7 +352,7 @@ const Bars = ({ votes }) => {
                 transition={{ type: "spring" }}
               />
               <span className="absolute bottom-0 left-[50%] mt-2 inline-block w-full -translate-x-[50%] p-2 text-center text-sm text-slate-50">
-                <b>{vote.issue}</b>
+                
                 <br />
                 <span className="text-xs text-slate-200">
                   {vote.votes} votes
