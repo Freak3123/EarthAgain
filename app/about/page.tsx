@@ -33,8 +33,7 @@ export default function AboutPage() {
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Mission</h3>
                     <p className="text-gray-600">
-                      To mobilize every citizen of Odisha in a 60-day intensive climate action campaign that creates
-                      awareness, drives behavioral change, and establishes sustainable practices for a greener future.
+                      To promote environmental stewardship, raise awareness about global issues, and address local challenges through a 60-day intensive climate action campaign organized by the Sambad Group, that is dedicated to educating the public and enhancing the environment and sustainable culture of Odisha.
                     </p>
                   </div>
                 </div>
@@ -46,9 +45,7 @@ export default function AboutPage() {
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Vision</h3>
                     <p className="text-gray-600">
-                      A sustainable Odisha where every community is empowered to take climate action, where
-                      environmental stewardship is a way of life, and where future generations inherit a thriving, green
-                      planet.
+                      A future-ready Odisha where every community thrives through sustainable livelihoods, green innovation, and local climate action. We envision a state where eco-conscious practices power everyday life, and future generations inherit a resilient, self-reliant, and green economy.
                     </p>
                   </div>
                 </div>
