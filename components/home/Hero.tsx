@@ -47,7 +47,7 @@ export default function Hero() {
 
             <div className="text-lg mb-8 max-w-[45rem]">
               <h2 className="text-2xl font-semibold">
-                Renewing Our Commitment to Sustainability and Conservation
+                Earth AgainEmpowering Communities, Building Future-Proof Enterprises
               </h2>
               <br />
               {/*🌱 Raise awareness about mangrove preservation and recreation
@@ -56,10 +56,7 @@ export default function Hero() {
               <br />
               🌱 Encourage community participation in protecting these vital
               ecosystems */}
-              Join Odisha's largest climate action movement from August 9th to
-              October 10th. Together, we'll build a sustainable future through
-              community-driven initiatives, workshops, and climate panchayats
-              across all constituencies.
+              Earth Again brings together citizens, entrepreneurs, and innovators to co-create enterprises that are resilient, sustainable, and rooted in local needs. Through community-led workshops, collaborative innovation programs, and Climate Panchayats, we are shaping an Odisha where thriving communities and future-ready businesses grow together in harmony with the planet.
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
