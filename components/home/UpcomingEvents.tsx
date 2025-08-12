@@ -76,7 +76,7 @@ export default function UpcomingEvents() {
 
               {/* Event Info */}
               <CardContent className="flex-1 flex flex-col justify-between">
-                <div>
+                <div className="pb-6">
                   <h3 className="text-lg font-semibold mb-1">{event.title}</h3>
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                     {event.description}
@@ -92,12 +92,12 @@ export default function UpcomingEvents() {
                     </div>
                   </div>
                 </div>
-                <Button
+                {/* <Button
                   variant="default"
                   className="mt-4 mb-6 p-5 w-full bg-green-600 hover:bg-green-700 text-md"
                 >
                   Register Now
-                </Button>
+                </Button> */}
               </CardContent>
             </Card>
           ))}

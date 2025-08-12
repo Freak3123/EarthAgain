@@ -283,9 +283,9 @@ export default function EventsPage() {
                     </div>
                   </div>
 
-                  <Button className="w-full bg-green-600 hover:bg-green-700">
+                  {/* <Button className="w-full bg-green-600 hover:bg-green-700">
                     Register Now
-                  </Button>
+                  </Button> */}
                 </CardContent>
               </Card>
             ))}
