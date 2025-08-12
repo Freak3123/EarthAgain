@@ -45,7 +45,7 @@ export default function AboutPage() {
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Vision</h3>
                     <p className="text-gray-600">
-                      A future-ready Odisha where every community thrives through sustainable livelihoods, green innovation, and local climate action. We envision a state where eco-conscious practices power everyday life, and future generations inherit a resilient, self-reliant, and green economy.
+                      An Odisha where every community is empowered to act, every enterprise is built to last, and sustainable living is part of everyday life — creating a resilient state that thrives economically, socially, and environmentally for generations to come.
                     </p>
                   </div>
                 </div>

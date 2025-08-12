@@ -63,7 +63,7 @@ export default function ClimatePanchayatPage() {
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-gray-900">What is a Climate Panchayat?</h2>
                 <p className="text-lg text-gray-600">
-                  A Climate Panchayat is a grassroots forum where local citizens gather to discuss environmental issues, share indigenous knowledge, and develop collective solutions to climate challenges across all 147 constituencies of Odisha. It's not just a discussion — it's democracy in action for a sustainable future, shaped by the voices of those who live closest to the land.
+                  A Climate Panchayat is a grassroots community forum where local citizens gather to discuss environmental issues, share indigenous knowledge, and develop collective solutions to climate challenges across all 147 constituencies of Odisha. It’s not just a discussion — it’s community-driven democracy in action for a sustainable future, shaped by the voices of those who live closest to the land.
                 </p>
 
                 <div className="space-y-4">
