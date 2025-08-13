@@ -17,8 +17,8 @@ export default function Home() {
       <ImpactTracker />
       <Events />
       <SpeakersSection />
-      <Testimonials />
-      <SponsorsPartners />
+      {/* <Testimonials /> */}
+      {/* <SponsorsPartners /> */}
       {/* will make a map later */}
       <CallAction />
     </>
