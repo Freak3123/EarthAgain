@@ -15,7 +15,7 @@ export default function Home() {
       <Navbar />
       <KeyFeatures />
       <ImpactTracker />
-      <Events />
+      {/* <Events /> */}
       <SpeakersSection />
       {/* <Testimonials /> */}
       {/* <SponsorsPartners /> */}

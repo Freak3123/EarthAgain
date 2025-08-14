@@ -21,7 +21,7 @@ const Navbar = () => {
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    { href: "/events", label: "Events" },
+    // { href: "/events", label: "Events" },
     { href: "/climate-panchayat", label: "Climate Panchayat" },
     // { href: "/join-us", label: "Join Us" },
     { href: "/blog", label: "Blog" },
@@ -84,12 +84,12 @@ const Navbar = () => {
 
         {/* Login + Mobile Menu Toggle */}
         <div className="flex items-center space-x-4">
-          <Link
+          {/* <Link
             href="/register"
             className="hidden lg:inline-block text-white bg-[#74B729] hover:bg-green-600 px-5 py-2.5 rounded-md transition"
           >
             Register
-          </Link>
+          </Link> */}
 
           {/* Mobile Hamburger Button */}
           <button

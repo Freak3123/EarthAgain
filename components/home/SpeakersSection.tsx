@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
@@ -309,10 +309,17 @@ const allSpeakers = [
 
 export default function SpeakersSection() {
   const [showAll, setShowAll] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const isSmall = useMediaQuery({ maxWidth: 639 });
   const isMedium = useMediaQuery({ minWidth: 640, maxWidth: 767 });
   const isLarge = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
   const isExtraLarge = useMediaQuery({ minWidth: 1024 });
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   let sliceCount = 5;
   if (isSmall) sliceCount = 4;
