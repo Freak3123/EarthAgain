@@ -47,7 +47,7 @@ const Navbar = () => {
         <div className="flex-shrink-0">
           <Link href="/">
             <Image
-              src="https://earthagain.in/wp-content/uploads/2024/07/EARTH-AGAIN-LOGO-V1-2048x832.png"
+              src="/EARTH-AGAIN-LOGO-V1-2048x832.webp"
               alt="Earth Again Logo"
               width={200}
               height={50}
