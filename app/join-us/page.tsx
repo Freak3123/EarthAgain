@@ -34,7 +34,7 @@ export default function JoinPage() {
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to the Team!</h1>
             <p className="text-xl text-gray-600 mb-8">
-              Thank you for joining Earth Again. We'll contact you within 24 hours with next steps and onboarding
+              Thank you for joining Earth Again. We&apos;ll contact you within 24 hours with next steps and onboarding
               information.
             </p>
             <div className="space-y-4">
@@ -63,7 +63,7 @@ export default function JoinPage() {
           </h1>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-12">
             Whether you want to volunteer your time or partner with us as an organization, there are many ways to
-            contribute to Odisha's sustainability movement.
+            contribute to Odisha&apos;s sustainability movement.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -260,7 +260,7 @@ export default function JoinPage() {
                         <Label htmlFor="org-description">Organization Description *</Label>
                         <Textarea
                           id="org-description"
-                          placeholder="Tell us about your organization's mission and activities..."
+                          placeholder="Tell us about your organization&apos;s mission and activities..."
                           rows={4}
                           required
                         />
@@ -324,7 +324,7 @@ export default function JoinPage() {
                         <Label htmlFor="partnership-proposal">Partnership Proposal *</Label>
                         <Textarea
                           id="partnership-proposal"
-                          placeholder="Describe how you'd like to partner with Earth Again and what you can contribute..."
+                          placeholder="Describe how you&apos;d like to partner with Earth Again and what you can contribute..."
                           rows={6}
                           required
                         />

@@ -58,7 +58,7 @@ const ImpactTracker = () => {
   return (
     <section className="bg-[#fefaf2] text-white py-20 px-4 sm:px-10">
       <h3 className="text-2xl sm:text-4xl font-bold text-black/80 sm:mb-2 md:ml-44">
-        Don't believe us?
+        Don&apos;t believe us?
       </h3>
       <h2 className="sm:text-6xl text-4xl font-bold text-green-600 sm:mb-2 md:ml-44">
         The Numbers

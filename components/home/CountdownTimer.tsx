@@ -12,7 +12,7 @@ export function CountdownTimer({ target }: { target: string }) {
     minutes: 0,
     seconds: 0,
   });
-  var mytext = "Count Every Second Until the Event Begins";
+  let mytext = "Count Every Second Until the Event Begins";
   const targetDate = new Date(target).getTime();
 
   useEffect(() => {

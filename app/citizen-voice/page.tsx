@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Vote, Users, MapPin, TrendingUp, AlertTriangle, CheckCircle, BarChart3, Waves, Sun, TreePine, Droplets, Wind, Mountain, Fish } from 'lucide-react'
+import { Vote, Users, MapPin, TrendingUp, CheckCircle, BarChart3, Waves, Sun, TreePine, Droplets, Wind, Mountain, Fish } from "lucide-react"
 import BarPoll from "@/components/ui/barpoll"
 
 
@@ -134,7 +134,7 @@ export default function EnvironmentalIssuesPage() {
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">ଧନ୍ୟବାଦ! Thank You!</h1>
             <p className="text-xl text-gray-600 mb-8">
-              Your vote has been recorded successfully. Together, we'll address these critical environmental challenges facing Odisha.
+              Your vote has been recorded successfully. Together, we&apos;ll address these critical environmental challenges facing Odisha.
             </p>
             <div className="space-y-4">
               <Button 
@@ -409,7 +409,7 @@ export default function EnvironmentalIssuesPage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Your Voice Matters</h2>
           <p className="text-xl mb-8 opacity-90">
             Every vote helps us understand and prioritize the environmental challenges facing Odisha. 
-            Together, we can create targeted solutions for each district's unique needs.
+            Together, we can create targeted solutions for each district&apos;s unique needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 

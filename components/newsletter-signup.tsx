@@ -25,7 +25,7 @@ export function NewsletterSignup() {
         <CardContent className="p-6 text-center">
           <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Thank You!</h3>
-          <p className="text-gray-600">You've successfully subscribed to our newsletter.</p>
+          <p className="text-gray-600">You&apos;ve successfully subscribed to our newsletter.</p>
         </CardContent>
       </Card>
     )

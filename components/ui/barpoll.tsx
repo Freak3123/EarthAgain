@@ -116,7 +116,7 @@ const Options = ({ votes, setVotes }) => {
   return (
     <div className="col-span-1 py-12">
       <h3 className="mb-6 text-3xl font-semibold text-slate-50">
-        What's your opinion?
+        What&apos;s your opinion?
       </h3>
       <div className="text-white pb-5">You can select maximum of 5 votes*</div>
       <div className="mb-6 space-y-2">

@@ -39,7 +39,7 @@ export default function KeyFeatures() {
             you’ll make an impact here.
           </h2>
           <p className="text-lg text-gray-700 mb-6">
-            Whether you're planting a tree, leading a workshop, or simply
+            Whether you&apos;re planting a tree, leading a workshop, or simply
             learning something new — Earth Again gives you the tools, the space,
             and the community to turn care into climate action. Make your voice matter, let us create real change for Odisha & beyond, together.
           </p>
