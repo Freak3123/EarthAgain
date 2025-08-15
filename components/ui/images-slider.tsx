@@ -1,6 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "motion/react";
+import { cubicBezier } from "framer-motion";
 import React, { useEffect, useState } from "react";
 
 export const ImagesSlider = ({
@@ -13,7 +14,7 @@ export const ImagesSlider = ({
   direction = "up",
 }: {
   images: string[];
-  children: React.ReactNode;
+  children?: React.ReactNode;
   overlay?: React.ReactNode;
   overlayClassName?: string;
   className?: string;
@@ -95,7 +96,7 @@ export const ImagesSlider = ({
       opacity: 1,
       transition: {
         duration: 0.5,
-        ease: [0.645, 0.045, 0.355, 1.0],
+        ease: cubicBezier(0.645, 0.045, 0.355, 1.0),
       },
     },
     upExit: {

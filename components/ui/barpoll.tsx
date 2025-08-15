@@ -55,7 +55,17 @@ const districts = [
   "Sonepur",
 ];
 // Pass initialVotes as prop
-const BarPoll = ({ initialVotes }) => {
+type VoteType = {
+  issue: string;
+  votes: number;
+  color: string;
+};
+
+interface BarPollProps {
+  initialVotes: VoteType[];
+}
+
+const BarPoll = ({ initialVotes }: BarPollProps) => {
   const [votes, setVotes] = useState(initialVotes);
 
   return (
@@ -68,7 +78,12 @@ const BarPoll = ({ initialVotes }) => {
   );
 };
 
-const Options = ({ votes, setVotes }) => {
+interface OptionsProps {
+  votes: VoteType[];
+  setVotes: React.Dispatch<React.SetStateAction<VoteType[]>>;
+}
+
+const Options = ({ votes, setVotes }: OptionsProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   type FormData = {
     name: string;
@@ -88,18 +103,22 @@ const Options = ({ votes, setVotes }) => {
   const [selectedVotes, setSelectedVotes] = useState<string[]>([]);
   const totalVotes = votes.reduce((acc, cv) => acc + cv.votes, 0);
 
-  const handleIncrementVote = (vote) => {
-    const newVote = { ...vote, votes: vote.votes + 1 };
+  interface HandleIncrementVote {
+    (vote: VoteType): void;
+  }
+
+  const handleIncrementVote: HandleIncrementVote = (vote) => {
+    const newVote: VoteType = { ...vote, votes: vote.votes + 1 };
     //add vote in selectedVotes only if it does not already exist in selectedVotes
     if (!selectedVotes.includes(newVote.issue)) {
-      setSelectedVotes((prev) => [...prev, newVote.issue]);
+      setSelectedVotes((prev: string[]) => [...prev, newVote.issue]);
       setFormData((prev) => ({
         ...prev,
         votes: [...prev.votes, newVote.issue],
       }));
     } else {
       // If already selected, remove it
-      setSelectedVotes((prev) => prev.filter((v) => v !== newVote.issue));
+      setSelectedVotes((prev: string[]) => prev.filter((v) => v !== newVote.issue));
       setFormData((prev) => ({
         ...prev,
         votes: prev.votes.filter((v) => v !== newVote.issue),
@@ -329,7 +348,7 @@ const Options = ({ votes, setVotes }) => {
   );
 };
 
-const Bars = ({ votes }) => {
+const Bars = ({ votes }: { votes: VoteType[] }) => {
   const totalVotes = votes.reduce((acc, cv) => acc + cv.votes, 0);
 
   return (

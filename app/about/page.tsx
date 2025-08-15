@@ -18,7 +18,7 @@ export default function AboutPage() {
               Our <span className="text-green-600">Mission</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto">
-              Earth Again is Odisha's most ambitious sustainability movement, bringing together communities, youth, and
+              Earth Again is Odisha&apos;s most ambitious sustainability movement, bringing together communities, youth, and
               leaders to create lasting environmental change through collective action and grassroots initiatives.
             </p>
           </div>

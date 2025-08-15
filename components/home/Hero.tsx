@@ -23,7 +23,9 @@ export default function Hero() {
     <div ref={scrollRef} className="relative overflow-hidden">
       {/* ✅ Background image with parallax */}
       <motion.div style={{ y: imageY }} className="w-full h-[85vh] z-0">
-        <ImagesSlider className="h-full" images={images} />
+        <ImagesSlider className="h-full" images={images}>
+          {/* You can put any overlay or content here, or leave it empty if not needed */}
+        </ImagesSlider>
       </motion.div>
 
       {/* ✅ Foreground content scrolls normally */}

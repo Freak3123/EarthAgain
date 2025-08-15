@@ -59,7 +59,7 @@ export default function RegisterPage() {
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Earth Again!</h1>
             <p className="text-xl text-gray-600 mb-8">
-              Thank you for joining our movement. You'll receive a confirmation email shortly with next steps and
+              Thank you for joining our movement. You&apos;ll receive a confirmation email shortly with next steps and
               upcoming event details.
             </p>
             <div className="space-y-4">
@@ -87,7 +87,7 @@ export default function RegisterPage() {
             Join the <span className="text-green-600">Movement</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Register for Earth Again and become part of Odisha's largest sustainability movement. Together, we'll create
+            Register for Earth Again and become part of Odisha&apos;s largest sustainability movement. Together, we&apos;ll create
             lasting environmental change.
           </p>
         </div>
