@@ -48,23 +48,24 @@ export default function JoinUsForm() {
       <div className="max-w-4xl mx-auto">
         <Card className="border-0 shadow-2xl">
           <CardHeader className="pb-8">
-            <CardTitle className="text-2xl text-center">Join Us</CardTitle>
+            <CardTitle className="text-2xl text-center">Host With Us</CardTitle>
           </CardHeader>
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
+                <Label htmlFor="firstName">Full Name<span className="text-red-600">*</span></Label>
                 <Input
                   id="firstName"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                   placeholder="Your Name"
+                  required
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="contact">Contact Details *</Label>
+                  <Label htmlFor="contact">Contact Details<span className="text-red-600">*</span></Label>
                   <Input
                     id="contact"
                     value={formData.contact}
@@ -75,7 +76,7 @@ export default function JoinUsForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="email">Email<span className="text-red-600">*</span></Label>
                   <Input
                     id="email"
                     type="email"
@@ -105,9 +106,10 @@ export default function JoinUsForm() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ngo">NGO</SelectItem>
-                    <SelectItem value="community">Community Group</SelectItem>
-                    <SelectItem value="business">Business</SelectItem>
-                    <SelectItem value="individual">Individual</SelectItem>
+                    <SelectItem value="corporate">Corporate</SelectItem>
+                    <SelectItem value="education-institute">Education Institite</SelectItem>
+                    <SelectItem value="youth-group">Youth Group</SelectItem>
+                    <SelectItem value="senior-citizens-group">Senior Citizens Group</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -133,6 +135,8 @@ export default function JoinUsForm() {
                     <SelectItem value="awareness">Awareness Campaign</SelectItem>
                     <SelectItem value="cleanliness">Cleanliness Drive</SelectItem>
                     <SelectItem value="workshop">Workshops</SelectItem>
+                    <SelectItem value="host-climate-panchayat">Host Climate Panchayat</SelectItem>
+                    <SelectItem value="others">Others</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
