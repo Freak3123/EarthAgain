@@ -1,26 +1,46 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Users, MessageCircle, Calendar, CheckCircle, ArrowRight } from "lucide-react"
-import Image from "next/image"
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import {
+  Users,
+  MessageCircle,
+  Calendar,
+  CheckCircle,
+  ArrowRight,
+} from "lucide-react";
+import Image from "next/image";
 
 export default function ClimatePanchayatPage() {
-  const [showForm, setShowForm] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [showForm, setShowForm] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const formRef = useRef<HTMLDivElement | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitted(true)
-  }
+    e.preventDefault();
+    setIsSubmitted(true);
+  };
+
+  const handleShowForm = () => {
+    setShowForm(true);
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
 
   if (isSubmitted) {
     return (
@@ -30,16 +50,20 @@ export default function ClimatePanchayatPage() {
             <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank You for Leading Change!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              Thank You for Leading Change!
+            </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Your Climate Panchayat proposal has been submitted. Our team will contact you within 48 hours with a
-              toolkit and support materials.
+              Your Climate Panchayat proposal has been submitted. Our team will
+              contact you within 48 hours with a toolkit and support materials.
             </p>
-            <Button className="w-full bg-green-600 hover:bg-green-700">Download Organizer Toolkit</Button>
+            <Button className="w-full bg-green-600 hover:bg-green-700">
+              Download Organizer Toolkit
+            </Button>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -48,22 +72,34 @@ export default function ClimatePanchayatPage() {
       <section className="py-0 px-4 pt-10 bg-[#fefaf2] md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">Climate Panchayat Initiative</Badge>
+            <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
+              Climate Panchayat Initiative
+            </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Host Your Own <span className="text-green-600">Climate Panchayat</span>
+              Host Your Own{" "}
+              <span className="text-green-600">Climate Panchayat</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto">
-              Bring democracy to climate action. Organize community discussions that empower local voices, create
-              awareness, and drive grassroots environmental solutions in your constituency.
+              Bring democracy to climate action. Organize community discussions
+              that empower local voices, create awareness, and drive grassroots
+              environmental solutions in your constituency.
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-gray-900">What is a Climate Panchayat?</h2>
+                <h2 className="text-3xl font-bold text-gray-900">
+                  What is a Climate Panchayat?
+                </h2>
                 <p className="text-lg text-gray-600">
-                  A Climate Panchayat is a grassroots community forum where local citizens gather to discuss environmental issues, share indigenous knowledge, and develop collective solutions to climate challenges across all 147 constituencies of Odisha. It’s not just a discussion — it’s community-driven democracy in action for a sustainable future, shaped by the voices of those who live closest to the land.
+                  A Climate Panchayat is a grassroots community forum where
+                  local citizens gather to discuss environmental issues, share
+                  indigenous knowledge, and develop collective solutions to
+                  climate challenges across all 147 constituencies of Odisha.
+                  It’s not just a discussion — it’s community-driven democracy
+                  in action for a sustainable future, shaped by the voices of
+                  those who live closest to the land.
                 </p>
 
                 <div className="space-y-4">
@@ -81,7 +117,11 @@ export default function ClimatePanchayatPage() {
                 </div>
               </div>
 
-              <Button size="lg" className="bg-green-600 hover:bg-green-700" onClick={() => setShowForm(true)}>
+              <Button
+                size="lg"
+                className="bg-green-600 hover:bg-green-700"
+                onClick={handleShowForm}
+              >
                 <Users className="w-5 h-5 mr-2" />
                 Host a Climate Panchayat
               </Button>
@@ -89,7 +129,7 @@ export default function ClimatePanchayatPage() {
 
             <div className="relative">
               <Image
-                src="/placeholder.svg?height=600&width=800"
+                src="https://images.unsplash.com/photo-1689410764773-1b8f7e5c3859?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDJ8fHxlbnwwfHx8fHw%3D"
                 alt="Climate Panchayat - Community Discussion"
                 width={800}
                 height={600}
@@ -104,9 +144,12 @@ export default function ClimatePanchayatPage() {
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">How to Organize a Climate Panchayat</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              How to Organize a Climate Panchayat
+            </h2>
             <p className="text-xl text-gray-600">
-              Follow these simple steps to bring climate democracy to your community
+              Follow these simple steps to bring climate democracy to your
+              community
             </p>
           </div>
 
@@ -115,39 +158,52 @@ export default function ClimatePanchayatPage() {
               {
                 step: "01",
                 title: "Register Your Interest",
-                description: "Fill out our form and tell us about your community and proposed location.",
+                description:
+                  "Fill out our form and tell us about your community and proposed location.",
                 icon: MessageCircle,
                 color: "bg-green-100 text-green-600",
               },
               {
                 step: "02",
                 title: "Receive Toolkit",
-                description: "Get our comprehensive organizer toolkit with discussion guides and materials.",
+                description:
+                  "Get our comprehensive organizer toolkit with discussion guides and materials.",
                 icon: Users,
                 color: "bg-blue-100 text-blue-600",
               },
               {
                 step: "03",
                 title: "Mobilize Community",
-                description: "Invite neighbors, local leaders, and youth to participate in the discussion.",
+                description:
+                  "Invite neighbors, local leaders, and youth to participate in the discussion.",
                 icon: Calendar,
                 color: "bg-orange-100 text-orange-600",
               },
               {
                 step: "04",
                 title: "Host & Document",
-                description: "Conduct the panchayat and share outcomes with the Earth Again network.",
+                description:
+                  "Conduct the panchayat and share outcomes with the Earth Again network.",
                 icon: CheckCircle,
                 color: "bg-purple-100 text-purple-600",
               },
             ].map((step, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow relative">
+              <Card
+                key={index}
+                className="border-0 shadow-lg hover:shadow-xl transition-shadow relative"
+              >
                 <CardContent className="p-8 text-center">
-                  <div className="text-4xl font-bold text-gray-200 mb-4">{step.step}</div>
-                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 ${step.color}`}>
+                  <div className="text-4xl font-bold text-gray-200 mb-4">
+                    {step.step}
+                  </div>
+                  <div
+                    className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 ${step.color}`}
+                  >
                     <step.icon className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    {step.title}
+                  </h3>
                   <p className="text-gray-600">{step.description}</p>
                 </CardContent>
                 {index < 3 && (
@@ -230,13 +286,19 @@ export default function ClimatePanchayatPage() {
 
       {/* Registration Form */}
       {showForm && (
-        <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
+        <section
+          ref={formRef}
+          className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]"
+        >
           <div className="max-w-4xl mx-auto">
             <Card className="border-0 shadow-2xl">
               <CardHeader className="pb-8">
-                <CardTitle className="text-2xl text-center">Host a Climate Panchayat</CardTitle>
+                <CardTitle className="text-2xl text-center">
+                  Host a Climate Panchayat
+                </CardTitle>
                 <p className="text-center text-gray-600">
-                  Fill out this form to register your interest in hosting a Climate Panchayat
+                  Fill out this form to register your interest in hosting a
+                  Climate Panchayat
                 </p>
               </CardHeader>
               <CardContent className="p-8">
@@ -244,33 +306,56 @@ export default function ClimatePanchayatPage() {
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="organizer-name">Your Name *</Label>
-                      <Input id="organizer-name" placeholder="Enter your full name" required />
+                      <Input
+                        id="organizer-name"
+                        placeholder="Enter your full name"
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="organizer-email">Email Address *</Label>
-                      <Input id="organizer-email" type="email" placeholder="your.email@example.com" required />
+                      <Input
+                        id="organizer-email"
+                        type="email"
+                        placeholder="your.email@example.com"
+                        required
+                      />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="organizer-phone">Phone Number *</Label>
-                      <Input id="organizer-phone" placeholder="+91 XXXXX XXXXX" required />
+                      <Input
+                        id="organizer-phone"
+                        placeholder="+91 XXXXX XXXXX"
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="constituency">Constituency *</Label>
-                      <Input id="constituency" placeholder="Enter your constituency" required />
+                      <Input
+                        id="constituency"
+                        placeholder="Enter your constituency"
+                        required
+                      />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="location">Proposed Location *</Label>
-                    <Input id="location" placeholder="Where do you plan to host the Climate Panchayat?" required />
+                    <Input
+                      id="location"
+                      placeholder="Where do you plan to host the Climate Panchayat?"
+                      required
+                    />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="expected-attendees">Expected Attendees</Label>
+                      <Label htmlFor="expected-attendees">
+                        Expected Attendees
+                      </Label>
                       <Select>
                         <SelectTrigger>
                           <SelectValue placeholder="How many people do you expect?" />
@@ -290,7 +375,9 @@ export default function ClimatePanchayatPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="local-issues">Local Environmental Issues</Label>
+                    <Label htmlFor="local-issues">
+                      Local Environmental Issues
+                    </Label>
                     <Textarea
                       id="local-issues"
                       placeholder="What are the main environmental challenges in your area?"
@@ -316,7 +403,11 @@ export default function ClimatePanchayatPage() {
                     />
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full bg-green-600 hover:bg-green-700">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full bg-green-600 hover:bg-green-700"
+                  >
                     Submit Proposal
                   </Button>
                 </form>
@@ -329,13 +420,20 @@ export default function ClimatePanchayatPage() {
       {/* Call to Action */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-green-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Lead Climate Democracy?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Lead Climate Democracy?
+          </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join hundreds of community leaders across Odisha who are hosting Climate Panchayats. Your leadership can
-            spark the change your community needs.
+            Join hundreds of community leaders across Odisha who are hosting
+            Climate Panchayats. Your leadership can spark the change your
+            community needs.
           </p>
           {!showForm && (
-            <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100" onClick={() => setShowForm(true)}>
+            <Button
+              size="lg"
+              className="bg-white text-green-600 hover:bg-gray-100"
+              onClick={handleShowForm}
+            >
               <Users className="w-5 h-5 mr-2" />
               Start Your Climate Panchayat
             </Button>
@@ -343,5 +441,5 @@ export default function ClimatePanchayatPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
