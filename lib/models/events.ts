@@ -11,6 +11,7 @@ export interface IEvent extends Document {
   attendees: string; 
   description: string;
   image: string;
+  featured: boolean;
 }
 
 const eventSchema = new Schema<IEvent>(
@@ -24,6 +25,7 @@ const eventSchema = new Schema<IEvent>(
     attendees: { type: String, required: true },
     description: { type: String, required: true },
     image: { type: String, required: true },
+    featured: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

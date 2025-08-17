@@ -22,95 +22,34 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import axios from "axios";
+
+type Article = {
+  _id: number;
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  readTime: string;
+  category: string;
+  image: string;
+  featured?: boolean;
+};
 
 export default function BlogPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
+  const [articles, setArticles] = useState<Article[]>([]);
 
-  const articles = [
-    {
-      id: 1,
-      title:
-        "The Science Behind Climate Change in Odisha: What Every Citizen Should Know",
-      excerpt:
-        "Understanding the local impacts of global climate change and how it specifically affects Odisha's coastal regions, agriculture, and communities.",
-      author: "Dr. Meera Patel",
-      date: "August 5, 2024",
-      readTime: "8 min read",
-      category: "Climate Science",
-      image: "climate change effects on Odisha coastline",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Success Story: How Kendrapara Village Became Carbon Neutral",
-      excerpt:
-        "A detailed case study of Kendrapara's journey to carbon neutrality through community-driven initiatives and sustainable practices.",
-      author: "Ravi Sharma",
-      date: "August 3, 2024",
-      readTime: "6 min read",
-      category: "Success Stories",
-      image: "sustainable village with solar panels and green spaces",
-    },
-    {
-      id: 3,
-      title:
-        "Youth Leadership in Climate Action: Empowering the Next Generation",
-      excerpt:
-        "Exploring how young leaders across Odisha are driving environmental change and what we can learn from their innovative approaches.",
-      author: "Anita Das",
-      date: "August 1, 2024",
-      readTime: "5 min read",
-      category: "Youth Engagement",
-      image: "young environmental leaders at climate summit",
-    },
-    {
-      id: 4,
-      title:
-        "Sustainable Agriculture Practices: A Farmer's Guide to Climate Resilience",
-      excerpt:
-        "Practical techniques and methods that Odisha farmers can adopt to make their agriculture more sustainable and climate-resilient.",
-      author: "Suresh Panda",
-      date: "July 30, 2024",
-      readTime: "10 min read",
-      category: "Agriculture",
-      image: "farmer using sustainable farming techniques",
-    },
-    {
-      id: 5,
-      title:
-        "The Role of Traditional Knowledge in Modern Environmental Conservation",
-      excerpt:
-        "How ancient Odia traditions and indigenous knowledge systems can inform contemporary environmental protection strategies.",
-      author: "Prof. Laxmi Narayan",
-      date: "July 28, 2024",
-      readTime: "7 min read",
-      category: "Traditional Knowledge",
-      image: "traditional environmental practices in Odisha",
-    },
-    {
-      id: 6,
-      title:
-        "Renewable Energy Revolution: Solar Power Opportunities in Rural Odisha",
-      excerpt:
-        "Examining the potential for solar energy adoption in rural areas and the economic benefits for local communities.",
-      author: "Deepak Mishra",
-      date: "July 25, 2024",
-      readTime: "9 min read",
-      category: "Renewable Energy",
-      image: "solar installation in rural Odisha village",
-    },
-  ];
+  useState(() => {
+    async function fetchSavedBlogs() {
+      const res = await axios.get("/api/get-blogs");
+      setArticles(res.data);
+      console.log(res.data);
+    }
 
-  const categories = [
-    "All Categories",
-    "Climate Science",
-    "Success Stories",
-    "Youth Engagement",
-    "Agriculture",
-    "Traditional Knowledge",
-    "Renewable Energy",
-  ];
+    fetchSavedBlogs();
+  });
 
   const filteredArticles = articles.filter((article) => {
     const matchesSearch =
@@ -132,7 +71,7 @@ export default function BlogPage() {
       {/* Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
+          <Badge className="bg-green-100 mt-8 text-green-800 hover:bg-green-200 mb-6">
             Earth Again Blog
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
@@ -147,7 +86,7 @@ export default function BlogPage() {
           {/* Search and Filter */}
           <div className="max-w-2xl mx-auto">
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="relative md:col-span-2 bg-white">
+              <div className="relative md:col-span-3 bg-white">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Search articles"
@@ -156,26 +95,6 @@ export default function BlogPage() {
                   className="pl-10 py-5 border-green-600 placeholder:text-base placeholder:text-gray-400"
                 />
               </div>
-
-              <Select
-                defaultValue="All Categories"
-                onValueChange={setFilterCategory}
-              >
-                <SelectTrigger className="border-green-600 py-5 text-base">
-                  <SelectValue
-                    placeholder="All Categories"
-                    className="text-gray-600"
-                  />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
           </div>
         </div>
@@ -183,7 +102,7 @@ export default function BlogPage() {
 
       {/* Featured Article */}
       {featuredArticle && (
-        <section className="py-16 px-4 md:px-6 lg:px-8">
+        <section className="py-10 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -195,7 +114,7 @@ export default function BlogPage() {
               <div className="grid lg:grid-cols-2">
                 <div className="relative h-96 lg:h-auto">
                   <Image
-                    src={`/placeholder.svg?height=500&width=600&query=${featuredArticle.image}`}
+                    src={`${featuredArticle.image}`}
                     alt={featuredArticle.title}
                     width={600}
                     height={500}
@@ -233,10 +152,14 @@ export default function BlogPage() {
                       <span>{featuredArticle.readTime}</span>
                     </div>
                   </div>
-
-                  <Button size="lg" className="bg-green-600 hover:bg-green-700">
-                    Read Full Article <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                  <Link href={`/blog/${featuredArticle._id}`}>
+                    <Button
+                      size="lg"
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      Read Full Article <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
                 </CardContent>
               </div>
             </Card>
@@ -268,12 +191,12 @@ export default function BlogPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {otherArticles.map((article) => (
               <Card
-                key={article.id}
+                key={article._id}
                 className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden group"
               >
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src={`/placeholder.svg?height=200&width=400&query=${article.image}`}
+                    src={`${article.image}`}
                     alt={article.title}
                     width={400}
                     height={200}
@@ -309,7 +232,7 @@ export default function BlogPage() {
                     </div>
                   </div>
 
-                  <Link href={`/blog/${article.id}`}>
+                  <Link href={`/blog/${article._id}`}>
                     <Button
                       variant="outline"
                       className="w-full border-green-600 text-green-600 hover:bg-green-50 bg-transparent"

@@ -1,99 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Calendar, MapPin, Clock, Users, Search } from "lucide-react";
 import Image from "next/image";
+import axios from "axios";
+
+type Event = {
+  _id: number;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  district?: string;
+  type: string;
+  attendees?: string;
+  description: string;
+  image?: string;
+  featured?: boolean;
+};
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterDate, setFilterDate] = useState("");
-  const [filterLocation, setFilterLocation] = useState("");
+  const [events, setEvents]= useState<Event[]>([])
 
-  const events = [
-    {
-      id: 1,
-      title: "Earth Again Grand Launch",
-      date: "August 9, 2024",
-      time: "10:00 AM",
-      location: "Kalinga Stadium, Bhubaneswar",
-      district: "Bhubaneswar",
-      type: "Launch Event",
-      attendees: "5000+",
-      description:
-        "Join us for the grand launch of Odisha's largest sustainability movement with keynote speakers, cultural programs, and commitment ceremonies.",
-      image: "grand launch event with large crowd and green banners",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Climate Panchayat - Cuttack",
-      date: "August 15, 2024",
-      time: "4:00 PM",
-      location: "Cuttack Collectorate",
-      district: "Cuttack",
-      type: "Climate Panchayat",
-      attendees: "200+",
-      description:
-        "Community-driven climate discussion focusing on local environmental challenges and solutions in Cuttack district.",
-      image: "community meeting with people discussing climate issues",
-    },
-    {
-      id: 3,
-      title: "Youth Climate Summit",
-      date: "August 22, 2024",
-      time: "9:00 AM",
-      location: "KIIT University, Bhubaneswar",
-      district: "Bhubaneswar",
-      type: "Workshop",
-      attendees: "500+",
-      description:
-        "Empowering young leaders with climate knowledge, leadership skills, and action planning for sustainable futures.",
-      image: "young students in environmental workshop setting",
-    },
-    {
-      id: 4,
-      title: "Sustainable Agriculture Workshop",
-      date: "August 28, 2024",
-      time: "8:00 AM",
-      location: "Krishi Vigyan Kendra, Puri",
-      district: "Puri",
-      type: "Workshop",
-      attendees: "150+",
-      description:
-        "Training farmers on sustainable farming practices, organic methods, and climate-resilient agriculture techniques.",
-      image: "farmers learning sustainable agriculture techniques",
-    },
-    {
-      id: 5,
-      title: "Tree Plantation Drive",
-      date: "September 5, 2024",
-      time: "6:00 AM",
-      location: "Nandankanan Zoo, Bhubaneswar",
-      district: "Bhubaneswar",
-      type: "Action Event",
-      attendees: "1000+",
-      description:
-        "Mass tree plantation drive with families, schools, and community groups to increase green cover.",
-      image: "volunteers planting trees in forest area with families",
-    },
-    {
-      id: 6,
-      title: "Renewable Energy Expo",
-      date: "September 12, 2024",
-      time: "10:00 AM",
-      location: "Janata Maidan, Bhubaneswar",
-      district: "Bhubaneswar",
-      type: "Exhibition",
-      attendees: "2000+",
-      description:
-        "Showcase of solar, wind, and other renewable energy solutions for homes and businesses in Odisha.",
-      image: "renewable energy exhibition with solar panels and wind turbines",
-    },
-  ];
+
+  useEffect(()=>{
+    async function fetchLiveEvents(){
+      const res=await axios.get('/api/get-events');
+      setEvents(res.data)
+
+    }
+    fetchLiveEvents();
+  },[])
 
   const filteredEvents = events.filter((event) => {
   const lowerSearch = searchTerm.toLowerCase();
@@ -113,17 +55,6 @@ export default function EventsPage() {
       {/* Hero Section */}
       <section className="pt-30 px-4 md:px-6 lg:px-8 ">
         <div className="max-w-7xl mx-auto text-center">
-          {/* <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
-            Earth Again Events
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Join Our <span className="text-green-600">Events</span>
-          </h1>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-12">
-            Participate in workshops, climate panchayats, tree plantation
-            drives, and community events that are creating real environmental
-            impact across Odisha.
-          </p> */}
 
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-6">
@@ -136,7 +67,7 @@ export default function EventsPage() {
               .filter((event) => event.featured)
               .map((featuredEvent) => (
                 <Card
-                  key={featuredEvent.id}
+                  key={featuredEvent._id}
                   className="border-0 p-0 my-2 mb-10 shadow-2xl overflow-hidden"
                 >
                   <div className="grid lg:grid-cols-2">
@@ -184,12 +115,7 @@ export default function EventsPage() {
                         </div>
                       </div>
 
-                      <Button
-                        size="lg"
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        Register for Free
-                      </Button>
+                      
                     </CardContent>
                   </div>
                 </Card>
@@ -225,12 +151,12 @@ export default function EventsPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEvents.map((event) => (
               <Card
-                key={event.id}
+                key={event._id}
                 className="border-0 pt-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
               >
                 <div className="relative h-60">
                   <Image
-                    src="https://plus.unsplash.com/premium_photo-1712685912274-2483dade540f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D"
+                    src={`${event.image}`}
                     alt={event.title}
                     width={400}
                     height={200}
