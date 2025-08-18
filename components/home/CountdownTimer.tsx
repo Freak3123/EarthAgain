@@ -70,7 +70,7 @@ export function CountdownTimer({ target }: { target: string }) {
         </div> */}
       </div>
 
-      <div className="grid grid-cols-4 gap-4 md:max-w-2xl md:min-w-xl max-mr-10">
+      <div className="grid grid-cols-4 gap-2 sm:gap-4 md:max-w-2xl md:min-w-xl max-mr-10">
         {[
           { label: "Days", value: timeLeft.days },
           { label: "Hours", value: timeLeft.hours },

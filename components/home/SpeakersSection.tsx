@@ -10,12 +10,11 @@ import { useMediaQuery } from "react-responsive";
 
 const featuredSpeakers = [
   {
-    name: "KV Singdeo",
-    designation: "An Indian politician",
-    session: "An Indian politician from Odisha and a member of the former royal family of the princely state of Patna, Bolangir",
+    name: "Bhupendra Yadav",
+    designation: "Union Cabinet Minister for Environment",
+    session: "Union Cabinet Minister for Environment, Forest and Climate Change",
     image:
-      "/speaker/A. Ravindra.jpg",
-    expertise: "Biodiversity & Sustainable Agriculture",
+      "/speaker/Bhupender_Yadav.jpg",
   },
   {
     name: "Jennifer Larsen",
@@ -45,20 +44,20 @@ const featuredSpeakers = [
 // }));
 
 const allSpeakers = [
-   {
-    name: "KV Singdeo",
-    designation: "An Indian politician",
-    session: "An Indian politician from Odisha and a member of the former royal family of the princely state of Patna, Bolangir",
+  //  {
+  //   name: "KV Singdeo",
+  //   designation: "An Indian politician",
+  //   session: "An Indian politician from Odisha and a member of the former royal family of the princely state of Patna, Bolangir",
+  //   image:
+  //     "/speaker/A. Ravindra.jpg",
+  // },
+  {
+    name: "Bhupendra Yadav",
+    designation: "Union Cabinet Minister for Environment",
+    session: "Union Cabinet Minister for Environment, Forest and Climate Change",
     image:
-      "/speaker/A. Ravindra.jpg",
+      "/speaker/Bhupender_Yadav.jpg",
   },
-//   {
-//     name: "Bhupendra Yadav",
-//     designation: "Union Cabinet Minister for Environment",
-//     session: "Union Cabinet Minister for Environment, Forest and Climate Change",
-//     image:
-//       "speaker/Bhupender_Yadav.jpg",
-//   },
   {
     name: "Ganesh Ram Singkhuntia",
     designation: "Environment Minister of Odisha",
@@ -155,7 +154,7 @@ const allSpeakers = [
     designation: "Founder Trustee, Raahgiri Foundation",
     session: "Founder Trustee, Raahgiri Foundation",
     image:
-      "/speaker/Sanjay Barnela.jpg",
+      "/speaker/Sarika Panda Bhatt.jpeg",
   },
   {
     name: "Sanjay Barnela",

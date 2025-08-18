@@ -22,7 +22,7 @@ export default function Hero() {
   return (
     <div ref={scrollRef} className="relative overflow-hidden">
       {/* ✅ Background image with parallax */}
-      <motion.div style={{ y: imageY }} className="w-full h-[85vh] z-0">
+      <motion.div style={{ y: imageY }} className="w-full sm:h-[85vh] h-[110vh] z-0">
         <ImagesSlider className="h-full" images={images}>
           {/* You can put any overlay or content here, or leave it empty if not needed */}
         </ImagesSlider>
@@ -88,7 +88,7 @@ export default function Hero() {
         </section>
 
         {/* Countdown Timer */}
-        <section className="py-8 px-10 bg-green-600">
+        <section className="py-8 sm:px-10 px-2 bg-green-600">
           <CountdownTimer target="2025-08-31T05:00:00" />
         </section>
       </div>
