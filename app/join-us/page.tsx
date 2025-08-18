@@ -1,28 +1,82 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, Handshake, Heart, Building, CheckCircle, ArrowRight } from "lucide-react"
-import Image from "next/image"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Users,
+  Handshake,
+  Heart,
+  Building,
+  CheckCircle,
+  ArrowRight,
+} from "lucide-react";
+import Image from "next/image";
 
 export default function JoinPage() {
-  const [activeTab, setActiveTab] = useState("volunteer")
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [activeTab, setActiveTab] = useState("volunteer");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitted(true)
-  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+
+    const form = new FormData(e.currentTarget);
+
+    if (activeTab === "volunteer") {
+      const res = await fetch("/api/join/volunteer", {
+        method: "POST",
+        body: JSON.stringify({
+          name: form.get("vol-name"),
+          email: form.get("vol-email"),
+          phone: form.get("vol-phone"),
+          age: form.get("vol-age"),
+          skills: form.getAll("skills"), // checkboxes
+          availability: form.get("vol-availability"),
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+      alert(data.message);
+    }
+
+    if (activeTab === "partner") {
+      const res = await fetch("/api/join/partner", {
+        method: "POST",
+        body: JSON.stringify({
+          organizationName: form.get("org-name"),
+          organizationType: form.get("org-type"),
+          description: form.get("org-description"),
+          contactName: form.get("contact-name"),
+          contactDesignation: form.get("contact-designation"),
+          contactEmail: form.get("contact-email"),
+          contactPhone: form.get("contact-phone"),
+          partnershipTypes: form.getAll("partnershipTypes"), // checkboxes
+          proposal: form.get("partnership-proposal"),
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+      alert(data.message);
+    }
+  };
 
   if (isSubmitted) {
     return (
@@ -32,13 +86,17 @@ export default function JoinPage() {
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to the Team!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              Welcome to the Team!
+            </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Thank you for joining Earth Again. We&apos;ll contact you within 24 hours with next steps and onboarding
-              information.
+              Thank you for joining Earth Again. We&apos;ll contact you within
+              24 hours with next steps and onboarding information.
             </p>
             <div className="space-y-4">
-              <Button className="w-full bg-green-600 hover:bg-green-700">Join WhatsApp Group</Button>
+              <Button className="w-full bg-green-600 hover:bg-green-700">
+                Join WhatsApp Group
+              </Button>
               <Button
                 variant="outline"
                 className="w-full border-green-600 text-green-600 hover:bg-green-50 bg-transparent"
@@ -49,7 +107,7 @@ export default function JoinPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -57,13 +115,16 @@ export default function JoinPage() {
       {/* Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">Join the Movement</Badge>
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
+            Join the Movement
+          </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             Be Part of <span className="text-green-600">Change</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-12">
-            Whether you want to volunteer your time or partner with us as an organization, there are many ways to
-            contribute to Odisha&apos;s sustainability movement.
+            Whether you want to volunteer your time or partner with us as an
+            organization, there are many ways to contribute to Odisha&apos;s
+            sustainability movement.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -72,11 +133,17 @@ export default function JoinPage() {
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Users className="w-8 h-8 text-green-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Join as Volunteer</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Join as Volunteer
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  Contribute your time, skills, and passion to create environmental impact in your community.
+                  Contribute your time, skills, and passion to create
+                  environmental impact in your community.
                 </p>
-                <Button className="bg-green-600 hover:bg-green-700" onClick={() => setActiveTab("volunteer")}>
+                <Button
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => setActiveTab("volunteer")}
+                >
                   Become a Volunteer
                 </Button>
               </CardContent>
@@ -87,11 +154,17 @@ export default function JoinPage() {
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Handshake className="w-8 h-8 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Partner with Us</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Partner with Us
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  Collaborate as an organization to amplify impact and reach more communities across Odisha.
+                  Collaborate as an organization to amplify impact and reach
+                  more communities across Odisha.
                 </p>
-                <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setActiveTab("partner")}>
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700"
+                  onClick={() => setActiveTab("partner")}
+                >
                   Become a Partner
                 </Button>
               </CardContent>
@@ -123,33 +196,52 @@ export default function JoinPage() {
                     Volunteer Registration
                   </CardTitle>
                   <p className="text-center text-gray-600">
-                    Join thousands of volunteers making a difference across Odisha
+                    Join thousands of volunteers making a difference across
+                    Odisha
                   </p>
                 </CardHeader>
                 <CardContent className="p-8">
                   <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Personal Information */}
                     <div className="space-y-6">
-                      <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Personal Information
+                      </h3>
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="vol-name">Full Name *</Label>
-                          <Input id="vol-name" placeholder="Enter your full name" required />
+                          <Input
+                            id="vol-name"
+                            name="vol-name"
+                            placeholder="Enter your full name"
+                            required
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="vol-email">Email Address *</Label>
-                          <Input id="vol-email" type="email" placeholder="your.email@example.com" required />
+                          <Input
+                            id="vol-email"
+                            name="vol-email"
+                            type="email"
+                            placeholder="your.email@example.com"
+                            required
+                          />
                         </div>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="vol-phone">Phone Number *</Label>
-                          <Input id="vol-phone" placeholder="+91 XXXXX XXXXX" required />
+                          <Input
+                            id="vol-phone"
+                            name="vol-phone"
+                            placeholder="+91 XXXXX XXXXX"
+                            required
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="vol-age">Age Group *</Label>
-                          <Select>
+                          <Select name="vol-age">
                             <SelectTrigger>
                               <SelectValue placeholder="Select age group" />
                             </SelectTrigger>
@@ -167,7 +259,9 @@ export default function JoinPage() {
 
                     {/* Skills and Interests */}
                     <div className="space-y-6">
-                      <h3 className="text-lg font-semibold text-gray-900">Skills & Interests</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Skills & Interests
+                      </h3>
 
                       <div className="space-y-4">
                         <Label>Volunteer Areas (Select all that apply)</Label>
@@ -182,8 +276,11 @@ export default function JoinPage() {
                             "Community Outreach",
                             "Technical Support",
                           ].map((skill) => (
-                            <div key={skill} className="flex items-center space-x-2">
-                              <Checkbox id={skill} />
+                            <div
+                              key={skill}
+                              className="flex items-center space-x-2"
+                            >
+                              <Checkbox id={skill} name="skills" value={skill} />
                               <Label htmlFor={skill} className="text-sm">
                                 {skill}
                               </Label>
@@ -194,22 +291,36 @@ export default function JoinPage() {
 
                       <div className="space-y-2">
                         <Label htmlFor="vol-availability">Availability *</Label>
-                        <Select>
+                        <Select name="vol-availability">
                           <SelectTrigger>
                             <SelectValue placeholder="How much time can you commit?" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="few-hours-week">A few hours per week</SelectItem>
-                            <SelectItem value="few-hours-month">A few hours per month</SelectItem>
-                            <SelectItem value="weekends">Weekends only</SelectItem>
-                            <SelectItem value="flexible">Flexible schedule</SelectItem>
-                            <SelectItem value="full-time">Full-time commitment</SelectItem>
+                            <SelectItem value="few-hours-week">
+                              A few hours per week
+                            </SelectItem>
+                            <SelectItem value="few-hours-month">
+                              A few hours per month
+                            </SelectItem>
+                            <SelectItem value="weekends">
+                              Weekends only
+                            </SelectItem>
+                            <SelectItem value="flexible">
+                              Flexible schedule
+                            </SelectItem>
+                            <SelectItem value="full-time">
+                              Full-time commitment
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full bg-green-600 hover:bg-green-700">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full bg-green-600 hover:bg-green-700"
+                    >
                       Join as Volunteer
                     </Button>
                   </form>
@@ -225,31 +336,49 @@ export default function JoinPage() {
                     Partnership Application
                   </CardTitle>
                   <p className="text-center text-gray-600">
-                    Collaborate with us to amplify environmental impact across Odisha
+                    Collaborate with us to amplify environmental impact across
+                    Odisha
                   </p>
                 </CardHeader>
                 <CardContent className="p-8">
                   <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Organization Information */}
                     <div className="space-y-6">
-                      <h3 className="text-lg font-semibold text-gray-900">Organization Information</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Organization Information
+                      </h3>
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="org-name">Organization Name *</Label>
-                          <Input id="org-name" placeholder="Enter organization name" required />
+                          <Input
+                            id="org-name"
+                            name="org-name"
+                            placeholder="Enter organization name"
+                            required
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="org-type">Organization Type *</Label>
-                          <Select>
+                          <Select name="org-type">
                             <SelectTrigger>
                               <SelectValue placeholder="Select organization type" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="ngo">NGO/Non-Profit</SelectItem>
-                              <SelectItem value="corporate">Corporate</SelectItem>
-                              <SelectItem value="educational">Educational Institution</SelectItem>
-                              <SelectItem value="government">Government Agency</SelectItem>
-                              <SelectItem value="media">Media Organization</SelectItem>
+                              <SelectItem value="ngo">
+                                NGO/Non-Profit
+                              </SelectItem>
+                              <SelectItem value="corporate">
+                                Corporate
+                              </SelectItem>
+                              <SelectItem value="educational">
+                                Educational Institution
+                              </SelectItem>
+                              <SelectItem value="government">
+                                Government Agency
+                              </SelectItem>
+                              <SelectItem value="media">
+                                Media Organization
+                              </SelectItem>
                               <SelectItem value="other">Other</SelectItem>
                             </SelectContent>
                           </Select>
@@ -257,10 +386,13 @@ export default function JoinPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="org-description">Organization Description *</Label>
+                        <Label htmlFor="org-description">
+                          Organization Description *
+                        </Label>
                         <Textarea
                           id="org-description"
-                          placeholder="Tell us about your organization&apos;s mission and activities..."
+                          name="org-description"
+                          placeholder="Tell us about your organization's mission and activities..."
                           rows={4}
                           required
                         />
@@ -269,33 +401,60 @@ export default function JoinPage() {
 
                     {/* Contact Information */}
                     <div className="space-y-6">
-                      <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Contact Information
+                      </h3>
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="contact-name">Contact Person *</Label>
-                          <Input id="contact-name" placeholder="Primary contact name" required />
+                          <Input
+                            id="contact-name"
+                            name="contact-name"
+                            placeholder="Primary contact name"
+                            required
+                          />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="contact-designation">Designation *</Label>
-                          <Input id="contact-designation" placeholder="Job title/position" required />
+                          <Label htmlFor="contact-designation">
+                            Designation *
+                          </Label>
+                          <Input
+                            id="contact-designation"
+                            name="contact-designation"
+                            placeholder="Job title/position"
+                            required
+                          />
                         </div>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="contact-email">Email Address *</Label>
-                          <Input id="contact-email" type="email" placeholder="contact@organization.com" required />
+                          <Input
+                            id="contact-email"
+                            name="contact-email"
+                            type="email"
+                            placeholder="contact@organization.com"
+                            required
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="contact-phone">Phone Number *</Label>
-                          <Input id="contact-phone" placeholder="+91 XXXXX XXXXX" required />
+                          <Input
+                            id="contact-phone"
+                            name="contact-phone"
+                            placeholder="+91 XXXXX XXXXX"
+                            required
+                          />
                         </div>
                       </div>
                     </div>
 
                     {/* Partnership Details */}
                     <div className="space-y-6">
-                      <h3 className="text-lg font-semibold text-gray-900">Partnership Details</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Partnership Details
+                      </h3>
 
                       <div className="space-y-4">
                         <Label>Partnership Type (Select all that apply)</Label>
@@ -310,8 +469,11 @@ export default function JoinPage() {
                             "Content Partnership",
                             "Research Collaboration",
                           ].map((type) => (
-                            <div key={type} className="flex items-center space-x-2">
-                              <Checkbox id={type} />
+                            <div
+                              key={type}
+                              className="flex items-center space-x-2"
+                            > 
+                              <Checkbox id={type} name="partnershipTypes" value={type}/>
                               <Label htmlFor={type} className="text-sm">
                                 {type}
                               </Label>
@@ -321,17 +483,24 @@ export default function JoinPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="partnership-proposal">Partnership Proposal *</Label>
+                        <Label htmlFor="partnership-proposal">
+                          Partnership Proposal *
+                        </Label>
                         <Textarea
                           id="partnership-proposal"
-                          placeholder="Describe how you&apos;d like to partner with Earth Again and what you can contribute..."
+                          name="partnership-proposal"
+                          placeholder="Describe how you'd like to partner with Earth Again and what you can contribute..."
                           rows={6}
                           required
                         />
                       </div>
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full bg-blue-600 hover:bg-blue-700">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                    >
                       Submit Partnership Application
                     </Button>
                   </form>
@@ -466,5 +635,5 @@ export default function JoinPage() {
         </div>
       </section> */}
     </div>
-  )
+  );
 }
