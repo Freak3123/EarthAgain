@@ -111,7 +111,7 @@ export default function JoinPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen pt-12 bg-white">
       {/* Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto text-center">
