@@ -166,7 +166,7 @@ export default function ClimatePanchayatPage() {
 
             <div className="relative">
               <Image
-                src="https://images.unsplash.com/photo-1689410764773-1b8f7e5c3859?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDJ8fHxlbnwwfHx8fHw%3D"
+                src="/climate-panchayat.jpg"
                 alt="Climate Panchayat - Community Discussion"
                 width={800}
                 height={600}
