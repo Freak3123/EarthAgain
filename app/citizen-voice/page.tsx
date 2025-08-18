@@ -165,7 +165,7 @@ export default function EnvironmentalIssuesPage() {
   }
 
   return (
-    <div className="min-h-screen pt-22 bg-[#fefaf2]">
+    <div className="min-h-screen pt-12 bg-[#fefaf2]">
       {/* Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
@@ -191,7 +191,6 @@ export default function EnvironmentalIssuesPage() {
 
       {/* Main Content */}
       <section className="py-16 px-4 md:px-6 lg:px-8" onClick={() => { if (!overTab) setActiveTab("")}} >
-
 
         <BarPoll initialVotes={voteResults} />
  

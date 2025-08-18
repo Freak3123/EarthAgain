@@ -8,7 +8,7 @@ import InstaFeed from "@/components/home/InstaFeed"
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen pt-22 bg-[#fefaf2]">
+    <div className="min-h-screen pt-12 bg-[#fefaf2]">
       {/* Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

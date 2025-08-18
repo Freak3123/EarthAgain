@@ -159,7 +159,7 @@ const Options = ({ votes, setVotes }: OptionsProps) => {
         ))}
       </div>
       <div className="flex items-center justify-between">
-        <span className="italic text-slate-400">{totalVotes} votes</span>
+        <span className="italic text-slate-600">{totalVotes} votes</span>
         <Dialog>
           <form>
             <DialogTrigger className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md">

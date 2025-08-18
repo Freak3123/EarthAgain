@@ -21,7 +21,7 @@ const Navbar = () => {
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    // { href: "/events", label: "Events" },
+    { href: "/events", label: "Events" },
     { href: "/climate-panchayat", label: "Climate Panchayat" },
     // { href: "/join-us", label: "Join Us" },
     { href: "/blog", label: "Blog" },

@@ -69,7 +69,7 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-[#fefaf2]">
       {/* Hero Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8">
+      <section className="pt-24 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <Badge className="bg-green-100 mt-8 text-green-800 hover:bg-green-200 mb-6">
             Earth Again Blog
