@@ -29,10 +29,47 @@ export default function ClimatePanchayatPage() {
   const [showForm, setShowForm] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const formRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitted(true);
+    setLoading(true);
+
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const payload = {
+      organizerName: formData.get("organizer-name"),
+      organizerEmail: formData.get("organizer-email"),
+      organizerPhone: formData.get("organizer-phone"),
+      constituency: formData.get("constituency"),
+      location: formData.get("location"),
+      expectedAttendees: formData.get("expected-attendees") || null,
+      preferredDate: formData.get("preferred-date") || null,
+      localIssues: formData.get("local-issues") || "",
+      experience: formData.get("experience") || "",
+      supportNeeded: formData.get("support-needed") || "",
+    };
+
+    try {
+      const res = await fetch("/api/panchayat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to submit");
+      }
+
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleShowForm = () => {
@@ -308,6 +345,7 @@ export default function ClimatePanchayatPage() {
                       <Label htmlFor="organizer-name">Your Name *</Label>
                       <Input
                         id="organizer-name"
+                        name="organizer-name"
                         placeholder="Enter your full name"
                         required
                       />
@@ -316,6 +354,7 @@ export default function ClimatePanchayatPage() {
                       <Label htmlFor="organizer-email">Email Address *</Label>
                       <Input
                         id="organizer-email"
+                        name="organizer-email"
                         type="email"
                         placeholder="your.email@example.com"
                         required
@@ -328,6 +367,7 @@ export default function ClimatePanchayatPage() {
                       <Label htmlFor="organizer-phone">Phone Number *</Label>
                       <Input
                         id="organizer-phone"
+                        name="organizer-phone"
                         placeholder="+91 XXXXX XXXXX"
                         required
                       />
@@ -336,6 +376,7 @@ export default function ClimatePanchayatPage() {
                       <Label htmlFor="constituency">Constituency *</Label>
                       <Input
                         id="constituency"
+                        name="constituency"
                         placeholder="Enter your constituency"
                         required
                       />
@@ -346,6 +387,7 @@ export default function ClimatePanchayatPage() {
                     <Label htmlFor="location">Proposed Location *</Label>
                     <Input
                       id="location"
+                      name="location"
                       placeholder="Where do you plan to host the Climate Panchayat?"
                       required
                     />
@@ -356,7 +398,7 @@ export default function ClimatePanchayatPage() {
                       <Label htmlFor="expected-attendees">
                         Expected Attendees
                       </Label>
-                      <Select>
+                      <Select name="expected-attendees">
                         <SelectTrigger>
                           <SelectValue placeholder="How many people do you expect?" />
                         </SelectTrigger>
@@ -380,6 +422,7 @@ export default function ClimatePanchayatPage() {
                     </Label>
                     <Textarea
                       id="local-issues"
+                      name="local-issues"
                       placeholder="What are the main environmental challenges in your area?"
                       rows={4}
                     />
@@ -389,6 +432,7 @@ export default function ClimatePanchayatPage() {
                     <Label htmlFor="experience">Your Experience</Label>
                     <Textarea
                       id="experience"
+                      name="experience"
                       placeholder="Tell us about your experience in community organizing or environmental work..."
                       rows={4}
                     />
@@ -398,6 +442,7 @@ export default function ClimatePanchayatPage() {
                     <Label htmlFor="support-needed">Support Needed</Label>
                     <Textarea
                       id="support-needed"
+                      name="support-needed"
                       placeholder="What kind of support do you need from Earth Again team?"
                       rows={3}
                     />
