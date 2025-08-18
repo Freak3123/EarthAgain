@@ -114,7 +114,7 @@ export default function RegisterPage() {
             Event Registration
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Join the <span className="text-green-600">Movement</span>
+            Join the <span className="text-green-600">Event</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Register for Earth Again and become part of Odisha&apos;s largest

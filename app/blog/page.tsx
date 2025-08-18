@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,15 +41,19 @@ export default function BlogPage() {
   const [filterCategory, setFilterCategory] = useState("");
   const [articles, setArticles] = useState<Article[]>([]);
 
-  useState(() => {
+   useEffect(() => {
     async function fetchSavedBlogs() {
-      const res = await axios.get("/api/get-blogs");
-      setArticles(res.data);
-      console.log(res.data);
+      try {
+        const res = await axios.get("/api/get-blogs");
+        setArticles(res.data);
+        console.log(res.data);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      }
     }
 
     fetchSavedBlogs();
-  });
+  }, []);
 
   const filteredArticles = articles.filter((article) => {
     const matchesSearch =

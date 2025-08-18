@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Vote, Users, MapPin, TrendingUp, CheckCircle, BarChart3, Waves, Sun, TreePine, Droplets, Wind, Mountain, Fish } from "lucide-react"
 import BarPoll from "@/components/ui/barpoll"
+import Link from "next/link"
 
 
 export default function EnvironmentalIssuesPage() {
@@ -190,7 +191,7 @@ export default function EnvironmentalIssuesPage() {
       </section>
 
       {/* Main Content */}
-      <section className="py-16 px-4 md:px-6 lg:px-8" onClick={() => { if (!overTab) setActiveTab("")}} >
+      <section id="submit-the-vote" className="py-16 px-4 md:px-6 lg:px-8" onClick={() => { if (!overTab) setActiveTab("")}} >
 
         <BarPoll initialVotes={voteResults} />
  
@@ -411,8 +412,10 @@ export default function EnvironmentalIssuesPage() {
             Together, we can create targeted solutions for each district&apos;s unique needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="#submit-the-vote" className="w-full sm:w-auto">
             <Button 
               size="lg" 
+              
               className="bg-white text-green-600 hover:bg-gray-100"
               onClick={() => {
                 if (!isSubmitted) {
@@ -423,6 +426,7 @@ export default function EnvironmentalIssuesPage() {
               <Vote className="w-5 h-5 mr-2" />
               Submit Your Vote
             </Button>
+            </Link>
             <Button 
               size="lg" 
               variant="outline" 
