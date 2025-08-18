@@ -1,20 +1,26 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Users, Calendar, MapPin, CheckCircle } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Users, Calendar, MapPin, CheckCircle } from "lucide-react";
 
 export default function RegisterPage() {
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,43 +33,65 @@ export default function RegisterPage() {
     experience: "",
     availability: "",
     newsletter: false,
-  })
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission
-    setIsSubmitted(true)
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setIsSubmitted(true);
+      } else {
+        alert(data.error || "Something went wrong!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error. Please try again later.");
+    }
+  };
 
   const handleInterestChange = (interest: string, checked: boolean) => {
     if (checked) {
       setFormData((prev) => ({
         ...prev,
         interests: [...prev.interests, interest],
-      }))
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
         interests: prev.interests.filter((i) => i !== interest),
-      }))
+      }));
     }
-  }
+  };
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-[#fefaf2] items-center justify-center px-4">
+      <div className="min-h-screen flex flex-col bg-[#fefaf2] items-center justify-center px-4">
         <Card className="max-w-2xl w-full border-0 shadow-2xl">
           <CardContent className="p-12 text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Earth Again!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              Welcome to Earth Again!
+            </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Thank you for joining our movement. You&apos;ll receive a confirmation email shortly with next steps and
-              upcoming event details.
+              Thank you for joining our movement. You&apos;ll receive a
+              confirmation email shortly with next steps and upcoming event
+              details.
             </p>
             <div className="space-y-4">
-              <Button className="w-full bg-green-600 hover:bg-green-700">Share with Friends</Button>
+              <Button className="w-full bg-green-600 hover:bg-green-700">
+                Share with Friends
+              </Button>
               <Button
                 variant="outline"
                 className="w-full border-green-600 text-green-600 hover:bg-green-50 bg-transparent"
@@ -74,7 +102,7 @@ export default function RegisterPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -82,20 +110,25 @@ export default function RegisterPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">Event Registration</Badge>
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
+            Event Registration
+          </Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Join the <span className="text-green-600">Movement</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Register for Earth Again and become part of Odisha&apos;s largest sustainability movement. Together, we&apos;ll create
-            lasting environmental change.
+            Register for Earth Again and become part of Odisha&apos;s largest
+            sustainability movement. Together, we&apos;ll create lasting
+            environmental change.
           </p>
         </div>
 
         {/* Registration Form */}
         <Card className="border-0 shadow-2xl">
           <CardHeader className="pb-8">
-            <CardTitle className="text-2xl text-center">Registration Form</CardTitle>
+            <CardTitle className="text-2xl text-center">
+              Registration Form
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -112,7 +145,12 @@ export default function RegisterPage() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       placeholder="Enter your full name"
                       required
                     />
@@ -124,7 +162,12 @@ export default function RegisterPage() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       placeholder="your.email@example.com"
                       required
                     />
@@ -137,7 +180,12 @@ export default function RegisterPage() {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          phone: e.target.value,
+                        }))
+                      }
                       placeholder="+91 XXXXX XXXXX"
                       required
                     />
@@ -145,7 +193,11 @@ export default function RegisterPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="age">Age Group *</Label>
-                    <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, age: value }))}>
+                    <Select
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, age: value }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select age group" />
                       </SelectTrigger>
@@ -171,7 +223,11 @@ export default function RegisterPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="district">District *</Label>
-                    <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, district: value }))}>
+                    <Select
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, district: value }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select your district" />
                       </SelectTrigger>
@@ -192,7 +248,12 @@ export default function RegisterPage() {
                     <Input
                       id="constituency"
                       value={formData.constituency}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, constituency: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          constituency: e.target.value,
+                        }))
+                      }
                       placeholder="Enter your constituency"
                     />
                   </div>
@@ -211,7 +272,12 @@ export default function RegisterPage() {
                   <Input
                     id="occupation"
                     value={formData.occupation}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, occupation: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        occupation: e.target.value,
+                      }))
+                    }
                     placeholder="Student, Professional, Business, etc."
                   />
                 </div>
@@ -229,10 +295,15 @@ export default function RegisterPage() {
                       "Waste Management",
                       "Water Conservation",
                     ].map((interest) => (
-                      <div key={interest} className="flex items-center space-x-2">
+                      <div
+                        key={interest}
+                        className="flex items-center space-x-2"
+                      >
                         <Checkbox
                           id={interest}
-                          onCheckedChange={(checked) => handleInterestChange(interest, checked as boolean)}
+                          onCheckedChange={(checked) =>
+                            handleInterestChange(interest, checked as boolean)
+                          }
                         />
                         <Label htmlFor={interest} className="text-sm">
                           {interest}
@@ -243,11 +314,18 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="experience">Previous Environmental Experience</Label>
+                  <Label htmlFor="experience">
+                    Previous Environmental Experience
+                  </Label>
                   <Textarea
                     id="experience"
                     value={formData.experience}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, experience: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        experience: e.target.value,
+                      }))
+                    }
                     placeholder="Tell us about any previous environmental work or volunteer experience..."
                     rows={4}
                   />
@@ -255,16 +333,28 @@ export default function RegisterPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="availability">Availability</Label>
-                  <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, availability: value }))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, availability: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="How much time can you commit?" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="few-hours-week">A few hours per week</SelectItem>
-                      <SelectItem value="few-hours-month">A few hours per month</SelectItem>
+                      <SelectItem value="few-hours-week">
+                        A few hours per week
+                      </SelectItem>
+                      <SelectItem value="few-hours-month">
+                        A few hours per month
+                      </SelectItem>
                       <SelectItem value="weekends">Weekends only</SelectItem>
-                      <SelectItem value="flexible">Flexible schedule</SelectItem>
-                      <SelectItem value="full-time">Full-time commitment</SelectItem>
+                      <SelectItem value="flexible">
+                        Flexible schedule
+                      </SelectItem>
+                      <SelectItem value="full-time">
+                        Full-time commitment
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -274,15 +364,25 @@ export default function RegisterPage() {
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="newsletter"
-                  onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, newsletter: checked as boolean }))}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      newsletter: checked as boolean,
+                    }))
+                  }
                 />
                 <Label htmlFor="newsletter" className="text-sm">
-                  Subscribe to our newsletter for updates and event notifications
+                  Subscribe to our newsletter for updates and event
+                  notifications
                 </Label>
               </div>
 
               {/* Submit Button */}
-              <Button type="submit" size="lg" className="w-full bg-green-600 hover:bg-green-700">
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
                 Join Earth Again Movement
               </Button>
             </form>
@@ -290,5 +390,5 @@ export default function RegisterPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

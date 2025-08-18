@@ -79,7 +79,7 @@ const RegistrationSchema = new Schema<IRegistration>(
         "flexible",
         "full-time",
       ],
-      default: null,
+      default: undefined,
     },
     newsletter: {
       type: Boolean,
