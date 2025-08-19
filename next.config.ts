@@ -30,7 +30,13 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "jbipzumtwhxggtgtirnl.supabase.co",
         pathname: "/storage/v1/object/public/events/**",
-      }
+      },
+       {
+        protocol: 'https',
+        hostname: 'jbipzumtwhxggtgtirnl.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/blogs/**',
+      },
     ],
   },
 };
