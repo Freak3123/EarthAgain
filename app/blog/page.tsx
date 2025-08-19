@@ -149,7 +149,7 @@ export default function BlogPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      <span>{featuredArticle.date}</span>
+                      <span>{featuredArticle.date.slice(0,10)}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
@@ -228,7 +228,7 @@ export default function BlogPage() {
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      <span>{article.date}</span>
+                      <span>{article.date.slice(0,10)}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />

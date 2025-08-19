@@ -99,11 +99,14 @@ export default function EventsPage() {
                       <div className="space-y-3 mb-8">
                         <div className="flex items-center gap-3 text-gray-600">
                           <Calendar className="w-5 h-5 text-green-600" />
-                          <span>{featuredEvent.date}</span>
+                          <span>{featuredEvent.date.slice(0,10)}</span>
                         </div>
                         <div className="flex items-center gap-3 text-gray-600">
                           <Clock className="w-5 h-5 text-green-600" />
-                          <span>{featuredEvent.time}</span>
+                          <span>
+                            {featuredEvent.time ? featuredEvent.time : "Time not specified"}
+                          </span>
+                          
                         </div>
                         <div className="flex items-center gap-3 text-gray-600">
                           <MapPin className="w-5 h-5 text-green-600" />
@@ -181,7 +184,7 @@ export default function EventsPage() {
                   </div>
                   <div className="absolute top-4 right-4">
                     <Badge className="bg-white/90 text-gray-900">
-                      {event.date.split(",")[0]}
+                      {event.date.slice(0, 10)}
                     </Badge>
                   </div>
                 </div>
