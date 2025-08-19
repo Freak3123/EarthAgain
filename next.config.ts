@@ -28,7 +28,8 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "drive.google.com",
+        hostname: "jbipzumtwhxggtgtirnl.supabase.co",
+        pathname: "/storage/v1/object/public/events/**",
       }
     ],
   },

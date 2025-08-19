@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import {connectDB} from "@/config/mongoDB/connectDB";  // your MongoDB connection helper
-import {Event} from "@/lib/models/events"; // your Mongoose event model
+import { connectDB } from "@/config/mongoDB/connectDB";
+import { Event } from "@/lib/models/events";
+import { createClient } from "@supabase/supabase-js";
 
-// DELETE /api/admin/delete-events
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // service role is needed for delete
+);
+
 export async function DELETE(req: Request) {
   try {
     const { id } = await req.json(); // Expecting { id: string }
@@ -28,12 +31,16 @@ export async function DELETE(req: Request) {
       );
     }
 
-
+    // If event had an image, delete it from Supabase
     if (deletedEvent.image) {
-      const imagePath = path.join(process.cwd(), "public", deletedEvent.image);
+      const imageUrl = deletedEvent.image as string;
 
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+      // Extract relative path from public URL
+      const filePath = imageUrl.split("/storage/v1/object/public/events/")[1]; 
+      // Change "events" if your bucket has a different name
+
+      if (filePath) {
+        await supabase.storage.from("events").remove([filePath]);
       }
     }
 

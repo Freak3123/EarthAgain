@@ -1,39 +1,45 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import {connectDB} from "@/config/mongoDB/connectDB";  // your MongoDB connection helper
-import Blog from "@/lib/models/blogs"; // your Mongoose event model
+import { connectDB } from "@/config/mongoDB/connectDB";
+import Blog from "@/lib/models/blogs";
+import { createClient } from "@supabase/supabase-js";
 
-// DELETE /api/admin/delete-events
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // server-side only
+);
+
 export async function DELETE(req: Request) {
   try {
     const { id } = await req.json(); // Expecting { id: string }
 
     if (!id) {
       return NextResponse.json(
-        { success: false, message: "Event ID is required" },
+        { success: false, message: "Blog ID is required" },
         { status: 400 }
       );
     }
 
     await connectDB();
 
-    // Find and delete event
-    const deletedEvent = await Blog.findByIdAndDelete(id);
+    // Find and delete blog
+    const deletedBlog = await Blog.findByIdAndDelete(id);
 
-    if (!deletedEvent) {
+    if (!deletedBlog) {
       return NextResponse.json(
         { success: false, message: "Blog not found" },
         { status: 404 }
       );
     }
 
+    // If blog had an image, delete it from Supabase
+    if (deletedBlog.image) {
+      // deletedBlog.image is a public URL → extract the file path
+      const imageUrl = deletedBlog.image as string;
+      const filePath = imageUrl.split("/storage/v1/object/public/blogs/")[1]; 
+      // Adjust "blogs" if your bucket name differs
 
-    if (deletedEvent.image) {
-      const imagePath = path.join(process.cwd(), "public", deletedEvent.image);
-
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+      if (filePath) {
+        await supabase.storage.from("blogs").remove([filePath]);
       }
     }
 

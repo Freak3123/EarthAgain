@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
-import path from "path";
-import { writeFile, mkdir } from "fs/promises";
 import { connectDB } from "@/config/mongoDB/connectDB";
 import Blog from "@/lib/models/blogs";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // use service_role only server-side
+);
 
 export async function POST(req: Request) {
   try {
     await connectDB();
-
     const formData = await req.formData();
 
     const title = formData.get("title") as string;
@@ -16,26 +19,27 @@ export async function POST(req: Request) {
     const date = formData.get("date") as string;
     const readTime = formData.get("readTime") as string;
     const category = formData.get("category") as string;
-     const featured = formData.get("featured") === "true";
+    const featured = formData.get("featured") === "true";
     const file = formData.get("image") as File | null;
-    
 
-    let imagePath = "";
+    let imageUrl = "";
 
     if (file) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      const ext = file.name.split(".").pop();
+      const filename = `${Date.now()}-${title}.${ext}`;
+      const filePath = `blogs/${filename}`;
 
-      const filename = `${Date.now()}-${file.name}`;
-      const dirPath = path.join(process.cwd(), "public", "blog-images");
-      const filePath = path.join(dirPath, filename);
+      const { error: uploadError } = await supabase.storage
+        .from("blogs") // 👈 bucket name in Supabase
+        .upload(filePath, file, { cacheControl: "3600", upsert: false });
 
-      // ✅ Ensure folder exists
-      await mkdir(dirPath, { recursive: true });
+      if (uploadError) {
+        console.error(uploadError);
+        return NextResponse.json({ error: "Image upload failed" }, { status: 500 });
+      }
 
-      await writeFile(filePath, buffer);
-
-      imagePath = `/blog-images/${filename}`;
+      const { data } = supabase.storage.from("blogs").getPublicUrl(filePath);
+      imageUrl = data.publicUrl;
     }
 
     const blog = new Blog({
@@ -45,9 +49,8 @@ export async function POST(req: Request) {
       date: new Date(date),
       readTime,
       category,
-      image: imagePath,
+      image: imageUrl,
       featured,
-
     });
 
     await blog.save();
