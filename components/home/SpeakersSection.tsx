@@ -15,6 +15,7 @@ const featuredSpeakers = [
     session: "Union Cabinet Minister for Environment, Forest and Climate Change",
     image:
       "/speaker/Bhupender_Yadav.jpg",
+    expertise: "Environment & Climate Policy"
   },
   {
     name: "Jennifer Larsen",
@@ -22,7 +23,7 @@ const featuredSpeakers = [
     session: "US Counsel General in Hyderabad",
     image:
       "/speaker/Jennifer Larsen.jpg",
-    expertise: "Environmental Policy & Water Management",
+    expertise: "Diplomacy & International Relations",
   },
   {
     name: "Sri Naveen Patnaik ",
@@ -30,7 +31,7 @@ const featuredSpeakers = [
     session: "Hon'ble leader of opposition, Odisha",
     image:
       "/speaker/Shri-Naveen-Patnaik.jpg",
-    expertise: "Science & Technology for Environment",
+    expertise: "Disaster Management & Governance",
   },
 ];
 //image: "https://images.unsplash.com/photo-1542435503-956c469947f6?w=500&auto=format&fit=crop&q=60",

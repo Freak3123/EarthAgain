@@ -183,13 +183,13 @@ export default function BlogPage() {
                 {filteredArticles.length} articles found
               </p>
             </div>
-            <Button
+            {/* <Button
               variant="outline"
               className="border-green-600 text-green-600 hover:bg-green-50 bg-transparent"
             >
               <Filter className="w-4 h-4 mr-2" />
               More Filters
-            </Button>
+            </Button> */}
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
