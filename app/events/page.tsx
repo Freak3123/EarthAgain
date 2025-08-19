@@ -74,7 +74,7 @@ export default function EventsPage() {
                     {/* Image Section */}
                     <div className="relative h-60 lg:h-auto">
                       <Image
-                        src="https://plus.unsplash.com/premium_photo-1712685912274-2483dade540f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D"
+                        src={`${featuredEvent.image}`}
                         alt={featuredEvent.title}
                         width={600}
                         height={400}
