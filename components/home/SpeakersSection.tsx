@@ -45,19 +45,12 @@ const featuredSpeakers = [
 // }));
 
 const allSpeakers = [
-  //  {
-  //   name: "KV Singdeo",
-  //   designation: "An Indian politician",
-  //   session: "An Indian politician from Odisha and a member of the former royal family of the princely state of Patna, Bolangir",
-  //   image:
-  //     "/speaker/A. Ravindra.jpg",
-  // },
-  {
-    name: "Bhupendra Yadav",
-    designation: "Union Cabinet Minister for Environment",
-    session: "Union Cabinet Minister for Environment, Forest and Climate Change",
+   {
+    name: "KV Singdeo",
+    designation: "An Indian politician",
+    session: "An Indian politician from Odisha and a member of the former royal family of the princely state of Patna, Bolangir",
     image:
-      "/speaker/Bhupender_Yadav.jpg",
+      "/speaker/Dy_CM_KV_Singh_Deo.jpg",
   },
   {
     name: "Ganesh Ram Singkhuntia",
@@ -65,13 +58,6 @@ const allSpeakers = [
     session: "Environment Minister of Odisha",
     image:
       "/speaker/Ganesh_Ram_Singh_Khuntia.jpg",
-  },
-  {
-    name: "Sri Naveen Patnaik ",
-    designation: "Hon'ble leader of opposition, Odisha",
-    session: "Hon'ble leader of opposition, Odisha",
-    image:
-      "/speaker/Shri-Naveen-Patnaik.jpg",
   },
   {
     name: "Professor Chetan Singh Solanki",
@@ -142,6 +128,13 @@ const allSpeakers = [
     session: "Founder of Youth for Sustainability",
     image:
       "/speaker/Punyasloka Panda.jpeg",
+  },
+  {
+    name: "Bhupendra Yadav",
+    designation: "Union Cabinet Minister for Environment",
+    session: "Union Cabinet Minister for Environment, Forest and Climate Change",
+    image:
+      "/speaker/Bhupender_Yadav.jpg",
   },
   {
     name: "Prasiddhi Singh",
@@ -289,6 +282,13 @@ const allSpeakers = [
     session: "Regional Director, Earth Day Network",
     image:
       "/speaker/Karuna Singh.jpg",
+  },
+  {
+    name: "Sri Naveen Patnaik ",
+    designation: "Hon'ble leader of opposition, Odisha",
+    session: "Hon'ble leader of opposition, Odisha",
+    image:
+      "/speaker/Shri-Naveen-Patnaik.jpg",
   },
   {
     name: "Amiya Patnaik",
