@@ -30,9 +30,9 @@ export default function RegisterPage() {
     constituency: "",
     occupation: "",
     interests: [] as string[],
-    experience: "",
-    availability: "",
-    newsletter: false,
+    // experience: "",
+    // availability: "",
+    // newsletter: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -313,7 +313,7 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="experience">
                     Previous Environmental Experience
                   </Label>
@@ -357,11 +357,11 @@ export default function RegisterPage() {
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
 
               {/* Newsletter Subscription */}
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <Checkbox
                   id="newsletter"
                   onCheckedChange={(checked) =>
@@ -375,7 +375,7 @@ export default function RegisterPage() {
                   Subscribe to our newsletter for updates and event
                   notifications
                 </Label>
-              </div>
+              </div> */}
 
               {/* Submit Button */}
               <Button

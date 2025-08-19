@@ -44,7 +44,7 @@ const cards: StatCard[] = [
     image: "https://www.svgrepo.com/show/312520/man-dancing.svg"
   },
   {
-    number: '89',
+    number: '160',
     label: 'Climate Panchayats',
     icon: <GlobeAltIcon className="w-10 h-10" />,
     bgColor: 'bg-lime-300',

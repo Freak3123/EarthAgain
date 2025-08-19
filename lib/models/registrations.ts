@@ -9,9 +9,9 @@ export interface IRegistration extends Document {
   constituency?: string;
   occupation?: string;
   interests: string[];
-  experience?: string;
-  availability?: string;
-  newsletter: boolean;
+  // experience?: string;
+  // availability?: string;
+  // newsletter: boolean;
   createdAt: Date;
 }
 
@@ -65,26 +65,26 @@ const RegistrationSchema = new Schema<IRegistration>(
       type: [String],
       default: [],
     },
-    experience: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-    availability: {
-      type: String,
-      enum: [
-        "few-hours-week",
-        "few-hours-month",
-        "weekends",
-        "flexible",
-        "full-time",
-      ],
-      default: undefined,
-    },
-    newsletter: {
-      type: Boolean,
-      default: false,
-    },
+    // experience: {
+    //   type: String,
+    //   default: "",
+    //   trim: true,
+    // },
+    // availability: {
+    //   type: String,
+    //   enum: [
+    //     "few-hours-week",
+    //     "few-hours-month",
+    //     "weekends",
+    //     "flexible",
+    //     "full-time",
+    //   ],
+    //   default: undefined,
+    // },
+    // newsletter: {
+    //   type: Boolean,
+    //   default: false,
+    // },
     createdAt: {
       type: Date,
       default: Date.now,
