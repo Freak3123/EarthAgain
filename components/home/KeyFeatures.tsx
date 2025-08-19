@@ -7,21 +7,21 @@ const cards = [
   {
     title: "Climate Panchayats",
     image:
-      "https://images.unsplash.com/photo-1542897841-138e818c6685?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "/3.jpeg",
     href: "/climate-panchayat",
     desc: "Community-driven climate discussions in every constituency, empowering local voices in environmental decision-making.",
   },
   {
     title: "Workshops & Events",
     image:
-      "https://plus.unsplash.com/premium_photo-1700801936521-348308ae2db3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzN8fHZpbGxhZ2UlMjBwZW9wbGUlMjBnYXRoZXJpbmd8ZW58MHx8MHx8fDA%3D",
+      "/1.jpeg",
     href: "/events",
     desc: "Educational workshops, tree plantation drives, and awareness campaigns designed to create lasting environmental impact.",
   },
   {
     title: "Youth Engagement",
     image:
-      "https://images.unsplash.com/photo-1751666455816-ea2ef616502c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGVudmlyb25tZW50JTIweW91dGh8ZW58MHx8MHx8fDA%3D",
+      "/2.jpeg",
     href: "/join-us",
     desc: "Empowering young leaders to drive climate action in their communities through innovative programs and leadership opportunities.",
   },

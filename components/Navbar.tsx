@@ -24,7 +24,7 @@ const Navbar = () => {
     { href: "/events", label: "Events" },
     { href: "/climate-panchayat", label: "Climate Panchayat" },
     // { href: "/join-us", label: "Join Us" },
-    { href: "/blog", label: "Blog" },
+    // { href: "/blog", label: "Blog" },
     // { href: "/speakers", label: "Speakers" },
     // { href: "/admin", label: "Admin" },
     { href: "/citizen-voice", label: "Citizen Voice" },

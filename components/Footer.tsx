@@ -88,7 +88,7 @@ export function Footer() {
                 placeholder="Enter your email"
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
               />
-              <Button className="w-full bg-green-600 hover:bg-green-700">Subscribe</Button>
+              {/* <Button className="w-full bg-green-600 hover:bg-green-700">Subscribe</Button> */}
             </div>
           </div>
         </div>

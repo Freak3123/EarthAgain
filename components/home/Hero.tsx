@@ -89,7 +89,7 @@ export default function Hero() {
 
         {/* Countdown Timer */}
         <section className="py-8 sm:px-10 px-2 bg-green-600">
-          <CountdownTimer target="2025-08-25T11:59:00" />
+          <CountdownTimer target="2025-10-06T09:00:00" />
         </section>
       </div>
     </div>
