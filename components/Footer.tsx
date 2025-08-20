@@ -81,14 +81,14 @@ export function Footer() {
           {/* Newsletter */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Stay Updated</h3>
-            <p className="text-gray-400 text-sm">Subscribe to our newsletter for the latest updates and events.</p>
+            <p className="text-gray-400 text-sm">Share your email to stay connected with us.</p>
             <div className="space-y-2">
               <Input
                 type="email"
                 placeholder="Enter your email"
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
               />
-              {/* <Button className="w-full bg-green-600 hover:bg-green-700">Subscribe</Button> */}
+              <Button className="w-full bg-green-600 hover:bg-green-700">Send</Button>
             </div>
           </div>
         </div>
