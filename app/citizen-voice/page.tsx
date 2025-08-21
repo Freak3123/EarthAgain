@@ -170,10 +170,10 @@ export default function EnvironmentalIssuesPage() {
       {/* Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
+          {/* <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
             <Vote className="w-4 h-4 mr-2" />
             Environmental Issues Survey
-          </Badge>
+          </Badge> */}
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             Share with us the top 5 <span className="text-green-600">Environment Issues</span> of your district
           </h1>

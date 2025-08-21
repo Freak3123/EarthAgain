@@ -109,9 +109,9 @@ export default function ClimatePanchayatPage() {
       <section className="py-0 px-4 pt-10 bg-[#fefaf2] md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
+            {/* <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
               Climate Panchayat Initiative
-            </Badge>
+            </Badge> */}
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               Host Your Own{" "}
               <span className="text-green-600">Climate Panchayat</span>

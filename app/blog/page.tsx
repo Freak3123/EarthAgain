@@ -75,9 +75,9 @@ export default function BlogPage() {
       {/* Hero Section */}
       <section className="pt-24 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="bg-green-100 mt-8 text-green-800 hover:bg-green-200 mb-6">
+          {/* <Badge className="bg-green-100 mt-8 text-green-800 hover:bg-green-200 mb-6">
             Earth Again Blog
-          </Badge>
+          </Badge> */}
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             Stories of <span className="text-green-600">Change</span>
           </h1>

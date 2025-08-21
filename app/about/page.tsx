@@ -13,7 +13,7 @@ export default function AboutPage() {
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">About Earth Again Movement</Badge>
+            {/* <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">About Earth Again Movement</Badge> */}
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               Our <span className="text-green-600">Mission</span>
             </h1>
