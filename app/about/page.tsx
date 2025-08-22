@@ -204,7 +204,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-        <InstaFeed />
+        {/* <InstaFeed /> */}
       </section>
 
       {/* Call to Action */}
