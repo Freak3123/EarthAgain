@@ -36,7 +36,7 @@ export default function KeyFeatures() {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
             However you choose to care,
             <br />
-            you’ll make an impact here.
+            you&apos;ll make an impact here.
           </h2>
           <p className="text-lg text-gray-700 mb-6">
             Whether you&apos;re planting a tree, leading a workshop, or simply
@@ -59,7 +59,7 @@ export default function KeyFeatures() {
                 width={800}
                 height={500}
                 loading="lazy"
-                src={cards[0].image}
+                src={"/home1.jpg"}
                 alt={cards[0].title}
                 className="object-cover h-110 transition-transform duration-500 group-hover:scale-110 group-hover:brightness-75"
               />
@@ -80,7 +80,7 @@ export default function KeyFeatures() {
                 width={800}
                 height={500}
                 loading="lazy"
-                src={cards[1].image}
+                src={"/home2.jpg"}
                 alt={cards[1].title}
                 className="object-cover h-110 transition-transform duration-500 group-hover:scale-110 group-hover:brightness-75"
               />
@@ -101,7 +101,7 @@ export default function KeyFeatures() {
                 width={800}
                 height={500}
                 loading="lazy"
-                src={cards[2].image}
+                src={"/home3.jpg"}
                 alt={cards[2].title}
                 className="object-cover h-110 transition-transform duration-500 group-hover:scale-110 group-hover:brightness-75"
               />

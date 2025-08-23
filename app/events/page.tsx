@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Calendar, MapPin, Clock, Users, Search } from "lucide-react";
 import Image from "next/image";
 import axios from "axios";
+import LoaderComp from "@/components/LoaderComp";
 
 type Event = {
   _id: number;
@@ -25,17 +26,27 @@ type Event = {
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [events, setEvents]= useState<Event[]>([])
+  const [events, setEvents]= useState<Event[]>([]);
+  const [ isLoading, setIsLoading ] = useState(true);
 
 
   useEffect(()=>{
+  
     async function fetchLiveEvents(){
       const res=await axios.get('/api/get-events');
       setEvents(res.data)
-
+      setIsLoading(false);
     }
     fetchLiveEvents();
   },[])
+
+
+  if(isLoading){
+  return(
+    <div className="min-h-screen flex justify-center items-center">
+      <LoaderComp />
+    </div>
+  )}
 
   const filteredEvents = events.filter((event) => {
   const lowerSearch = searchTerm.toLowerCase();
@@ -48,6 +59,8 @@ export default function EventsPage() {
     event.date?.toLowerCase().includes(lowerSearch)
   );
 });
+
+
 
 
   return (

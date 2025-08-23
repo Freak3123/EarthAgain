@@ -5,13 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import LoaderComp from "@/components/LoaderComp";
 import {
   Calendar,
   User,
@@ -40,6 +34,7 @@ export default function BlogPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [articles, setArticles] = useState<Article[]>([]);
+  const [ isLoading, setIsLoading ] = useState(true);
 
    useEffect(() => {
     async function fetchSavedBlogs() {
@@ -47,6 +42,8 @@ export default function BlogPage() {
         const res = await axios.get("/api/get-blogs");
         setArticles(res.data);
         console.log(res.data);
+
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching blogs:", error);
       }
@@ -54,6 +51,12 @@ export default function BlogPage() {
 
     fetchSavedBlogs();
   }, []);
+  if(isLoading){
+  return(
+    <div className="min-h-screen flex justify-center items-center">
+      <LoaderComp />
+    </div>
+  )}
 
   const filteredArticles = articles.filter((article) => {
     const matchesSearch =
@@ -69,6 +72,8 @@ export default function BlogPage() {
 
   const featuredArticle = filteredArticles.find((article) => article.featured);
   const otherArticles = filteredArticles.filter((article) => !article.featured);
+
+  
 
   return (
     <div className="min-h-screen bg-[#fefaf2]">
