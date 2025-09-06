@@ -24,7 +24,7 @@ export default function SponsorsPartners() {
             </p>
           </div>
 
-          <div className="flex gap-8 justify-center items-center">
+          <div className="flex md:gap-8 gap-4 justify-center items-center">
             {[
               { name: "Sambad", logo: "/Sambad.png" },
               { name: "Kanak News", logo: "/Kanak News.png" },
@@ -32,14 +32,14 @@ export default function SponsorsPartners() {
             ].map((partner, index) => (
               <div
                 key={index}
-                className="bg-white/60 hover:bg-white/80 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white/60 hover:bg-white/80 md:p-6 p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
                 <Image
                   src={`${partner.logo}`}
                   alt={partner.name}
-                  width={120}
+                  width={160}
                   height={60}
-                  className="w-full h-full object-contain transition-all"
+                  className="w-[12 rem] h-full object-contain transition-all"
                 />
               </div>
             ))}
