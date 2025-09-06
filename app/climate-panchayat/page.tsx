@@ -138,8 +138,14 @@ export default function ClimatePanchayatPage() {
                   in action for a sustainable future, shaped by the voices of
                   those who live closest to the land.
                 </p>
+                <p className="text-lg text-gray-600">
+                  This initiative is part of Earth Again, a Sambad Group effort 
+                  and a people-led movement that empowers communities to reclaim 
+                  their role in protecting the planet - reflecting a growing people-led 
+                  movement to place climate action back into the hands of communities.
+                </p>
 
-                <div className="space-y-4">
+                <div className="space-y-2">
                   {[
                     "Community-led environmental discussions",
                     "Local problem identification and solutions",
@@ -170,7 +176,7 @@ export default function ClimatePanchayatPage() {
                 alt="Climate Panchayat - Community Discussion"
                 width={800}
                 height={600}
-                className="rounded-2xl shadow-2xl"
+                className="rounded-2xl h-[25rem] shadow-2xl object-cover"
               />
             </div>
           </div>

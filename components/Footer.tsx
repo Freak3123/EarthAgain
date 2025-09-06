@@ -17,8 +17,7 @@ export function Footer() {
               <span className="text-xl font-bold">Earth Again</span>
             </div>
             <p className="text-gray-400 text-sm">
-              Renewing our commitment to sustainability and conservation through community-driven climate action across
-              Odisha.
+              A flagship initiative by Sambad Group, Odisha’s largest media conglomerate, this programme renews our commitment to sustainability and conservation through community-driven climate action across the state.
             </p>
             <div className="flex space-x-4">
               <Button variant="ghost" size="icon" className="text-gray-400 hover:border-white">

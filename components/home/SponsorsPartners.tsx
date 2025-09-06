@@ -1,18 +1,52 @@
-import React from 'react'
-import Image from 'next/image'
+import React from "react";
+import Image from "next/image";
 
 export default function SponsorsPartners() {
   return (
-    <div className='bg-[#fefaf2]'>
-        <section className="py-20 px-4 md:px-6 lg:px-8 bg-gray-50">
+    <div className="bg-amber-800 text-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Partners & Sponsors</h2>
-            <p className="text-xl text-gray-600">Collaborating with leading organizations for maximum impact</p>
+          {/* <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              Our Partners & Sponsors
+            </h2>
+            <p className="text-xl text-gray-600">
+              Collaborating with leading organizations for maximum impact
+            </p>
+          </div> */}
+
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+              Our Legacy
+            </h2>
+            <p className="text-xl text-white/80 w-[60rem] mx-auto">
+              Over the years, Earth Again was made possible by the generous support of our partners and sponsors. Their commitment to environmental sustainability has been instrumental in driving our mission forward.
+            </p>
+          </div>
+
+          <div className="flex gap-8 justify-center items-center">
+            {[
+              { name: "Sambad", logo: "/Sambad.png" },
+              { name: "Kanak News", logo: "/Kanak News.png" },
+              { name: "Radio Choklate", logo: "/Radio Choklate.png" },
+            ].map((partner, index) => (
+              <div
+                key={index}
+                className="bg-white/60 hover:bg-white/80 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              >
+                <Image
+                  src={`${partner.logo}`}
+                  alt={partner.name}
+                  width={120}
+                  height={60}
+                  className="w-full h-full object-contain transition-all"
+                />
+              </div>
+            ))}
           </div>
 
           {/* Media Partners */}
-          <div className="mb-12">
+          {/* <div className="mb-12">
             <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Media Partners</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center">
               {[
@@ -34,10 +68,10 @@ export default function SponsorsPartners() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Climate Organizations */}
-          <div className="mb-12">
+          {/* <div className="mb-12">
             <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Climate Organizations</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
               {[
@@ -58,10 +92,10 @@ export default function SponsorsPartners() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Government Support */}
-          <div>
+          {/* <div>
             <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Government Support</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
               {[
@@ -81,9 +115,9 @@ export default function SponsorsPartners() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
     </div>
-  )
+  );
 }

@@ -49,7 +49,7 @@ export default function Hero() {
 
             <div className="text-lg mb-8 max-w-[45rem]">
               <h2 className="text-2xl font-semibold">
-                Earth AgainEmpowering Communities, Building Future-Proof Enterprises
+                Earth Again, a flagship initiative by Sambad Group, one of India's leading regional media houses - empowering communities, building future-proof enterprises. 
               </h2>
               <br />
               {/*🌱 Raise awareness about mangrove preservation and recreation

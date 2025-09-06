@@ -14,11 +14,13 @@ export default function Home() {
       <Hero />
       <Navbar />
       <KeyFeatures />
-      <ImpactTracker />
+      <SponsorsPartners />
+      <ImpactTracker /> 
+      
       {/* <Events /> */}
       <SpeakersSection />
       {/* <Testimonials /> */}
-      {/* <SponsorsPartners /> */}
+     
       {/* will make a map later */}
       <CallAction />
     </>
