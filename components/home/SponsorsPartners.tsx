@@ -19,7 +19,7 @@ export default function SponsorsPartners() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
               Our Legacy
             </h2>
-            <p className="text-xl text-white/80 w-[60rem] mx-auto">
+            <p className="text-xl text-white/80 mx-auto">
               Over the years, Earth Again was made possible by the generous support of our partners and sponsors. Their commitment to environmental sustainability has been instrumental in driving our mission forward.
             </p>
           </div>
