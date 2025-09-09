@@ -45,17 +45,23 @@ const Navbar = () => {
       <div className="max-w-7xl z-150 mx-auto px-6 py-3 flex items-center justify-between">
         {/* Logo */}
         <div className="flex-shrink-0">
-          <Link href="/">
+          <Link className="flex items-center" href="/">
             <Image
               src="/EARTH-AGAIN-LOGO-V1-2048x832.webp"
               alt="Earth Again Logo"
               width={200}
               height={50}
-              className="h-10 sm:h-16 w-auto"
+              className="h-10 sm:h-16 w-auto object-cover object-center"
+              style={{ objectPosition: "center", objectFit: "cover" }}
             />
-            {/* <span className="text-2xl font-extrabold text-green-600">
-              🌿 Logo
-            </span> */}
+            <Image
+              src="/Sambad.png"
+              alt="Earth Again Logo"
+              width={200}
+              height={100}
+              className="h-12 sm:h-24 w-auto object-cover object-center"
+              style={{ objectPosition: "center", objectFit: "cover" }}
+            />
           </Link>
         </div>
 
