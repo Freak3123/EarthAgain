@@ -55,7 +55,7 @@ const Navbar = () => {
               style={{ objectPosition: "center", objectFit: "cover" }}
             />
             <Image
-              src="/Sambad.png"
+              src="/Sambad Group.png"
               alt="Earth Again Logo"
               width={200}
               height={100}

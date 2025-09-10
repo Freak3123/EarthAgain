@@ -11,7 +11,7 @@ import EditorsMessage from '@/components/home/EditorsMessage';
 
 export default function Home() {
   return (
-    <>
+    <div className='min-w-sw'>
       <Hero />
       <Navbar />
       <EditorsMessage
@@ -36,6 +36,6 @@ Join us in making the earth whole again.
      
       {/* will make a map later */}
       <CallAction />
-    </>
+    </div>
   );
 }
