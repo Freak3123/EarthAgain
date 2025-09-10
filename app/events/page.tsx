@@ -26,49 +26,43 @@ type Event = {
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [events, setEvents]= useState<Event[]>([]);
-  const [ isLoading, setIsLoading ] = useState(true);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-
-  useEffect(()=>{
-  
-    async function fetchLiveEvents(){
-      const res=await axios.get('/api/get-events');
-      setEvents(res.data)
+  useEffect(() => {
+    async function fetchLiveEvents() {
+      const res = await axios.get("/api/get-events");
+      setEvents(res.data);
       setIsLoading(false);
     }
     fetchLiveEvents();
-  },[])
+  }, []);
 
-
-  if(isLoading){
-  return(
-    <div className="min-h-screen flex justify-center items-center">
-      <LoaderComp />
-    </div>
-  )}
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <LoaderComp />
+      </div>
+    );
+  }
 
   const filteredEvents = events.filter((event) => {
-  const lowerSearch = searchTerm.toLowerCase();
+    const lowerSearch = searchTerm.toLowerCase();
 
-  return (
-    event.title.toLowerCase().includes(lowerSearch) ||
-    event.description.toLowerCase().includes(lowerSearch) ||
-    event.location?.toLowerCase().includes(lowerSearch) ||
-    event.district?.toLowerCase().includes(lowerSearch) ||
-    event.date?.toLowerCase().includes(lowerSearch)
-  );
-});
-
-
-
+    return (
+      event.title.toLowerCase().includes(lowerSearch) ||
+      event.description.toLowerCase().includes(lowerSearch) ||
+      event.location?.toLowerCase().includes(lowerSearch) ||
+      event.district?.toLowerCase().includes(lowerSearch) ||
+      event.date?.toLowerCase().includes(lowerSearch)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-[#fefaf2]">
       {/* Hero Section */}
       <section className="pt-30 px-4 md:px-6 lg:px-8 ">
         <div className="max-w-7xl mx-auto text-center">
-
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-6">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -112,14 +106,15 @@ export default function EventsPage() {
                       <div className="space-y-3 mb-8">
                         <div className="flex items-center gap-3 text-gray-600">
                           <Calendar className="w-5 h-5 text-green-600" />
-                          <span>{featuredEvent.date.slice(0,10)}</span>
+                          <span>{featuredEvent.date.slice(0, 10)}</span>
                         </div>
                         <div className="flex items-center gap-3 text-gray-600">
                           <Clock className="w-5 h-5 text-green-600" />
                           <span>
-                            {featuredEvent.time ? featuredEvent.time : "Time not specified"}
+                            {featuredEvent.time
+                              ? featuredEvent.time
+                              : "Time not specified"}
                           </span>
-                          
                         </div>
                         <div className="flex items-center gap-3 text-gray-600">
                           <MapPin className="w-5 h-5 text-green-600" />
@@ -130,8 +125,6 @@ export default function EventsPage() {
                           <span>{featuredEvent.attendees} Expected</span>
                         </div>
                       </div>
-
-                      
                     </CardContent>
                   </div>
                 </Card>
@@ -165,7 +158,10 @@ export default function EventsPage() {
       <section className="py-8 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredEvents.map((event) => (
+            {filteredEvents
+        .slice() // a copy to avoid mutating original
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .map((event) => (
               <Card
                 key={event._id}
                 className="border-0 pt-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
@@ -211,6 +207,10 @@ export default function EventsPage() {
                   </p>
 
                   <div className="space-y-2 mb-6">
+                    <div className="flex items-center gap-3 text-gray-600">
+                      <Calendar className="w-5 h-5 text-green-600" />
+                      <span>{event.date.slice(0, 10)}</span>
+                    </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Clock className="w-4 h-4" />
                       <span>{event.time}</span>
