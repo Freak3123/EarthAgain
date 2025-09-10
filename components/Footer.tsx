@@ -1,7 +1,16 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Leaf, Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Leaf,
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -17,22 +26,17 @@ export function Footer() {
               <span className="text-xl font-bold">Earth Again</span>
             </div>
             <p className="text-gray-400 text-sm">
-              A flagship initiative by Sambad Group, Odisha’s largest media conglomerate, this programme renews our commitment to sustainability and conservation through community-driven climate action across the state.
+              A flagship initiative by Sambad Group, Odisha’s largest media
+              conglomerate, this programme renews our commitment to
+              sustainability and conservation through community-driven climate
+              action across the state.
             </p>
-            <div className="flex space-x-4">
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:border-white">
-                <Facebook className="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:border-white">
-                <Twitter className="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:border-white">
-                <Instagram className="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:border-white">
-                <Youtube className="w-5 h-5" />
-              </Button>
-            </div>
+            <Link
+              href="https://www.instagram.com/theearthagain_movement?igsh=cXNjeHh3a2x6cTVz"
+              className="flex gap-2">
+              <Instagram className="w-5 h-5 text-gray-300" />
+              <p className="text-sm text-gray-300">theearthagain_movement</p>
+            </Link>
           </div>
 
           {/* Quick Links */}
@@ -80,21 +84,27 @@ export function Footer() {
           {/* Newsletter */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Stay Updated</h3>
-            <p className="text-gray-400 text-sm">Share your email to stay connected with us.</p>
+            <p className="text-gray-400 text-sm">
+              Share your email to stay connected with us.
+            </p>
             <div className="space-y-2">
               <Input
                 type="email"
                 placeholder="Enter your email"
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
               />
-              <Button className="w-full bg-green-600 hover:bg-green-700">Send</Button>
+              <Button className="w-full bg-green-600 hover:bg-green-700">
+                Send
+              </Button>
             </div>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-400 text-sm">© 2025 Earth Again Movement by Sambad Group. All rights reserved.</p>
+            <p className="text-gray-400 text-sm">
+              © 2025 Earth Again Movement by Sambad Group. All rights reserved.
+            </p>
             {/* <div className="flex space-x-6 text-sm text-gray-400">
               <Link href="/privacy" className="hover:text-white transition-colors">
                 Privacy Policy
@@ -107,5 +117,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
