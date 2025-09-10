@@ -34,12 +34,12 @@ export default function EditorsMessage({
         <div className="max-w-5xl bg-white shadow-md hover:shadow-xl rounded-xl border border-gray-200 p-4 m-4 sm:p-6 lg:p-8 sm:m-6 lg:m-10">
           <div className="flex flex-col md:flex-row gap-6 items-center">
             {/* Left: Editor image */}
-            <div className="w-sm md:w-64 md:h-110 lg:w-84 shrink-0">
+            <div className="md:w-64 md:h-110 lg:w-84 shrink-0">
               <Image
                 src={avatarSrc}
                 alt={`${name}${title ? `, ${title}` : ""}`}
-                width={550}
-                height={1102}
+                width={300}
+                height={300}
                 className="rounded-lg object-cover w-full h-full"
                 priority
               />
