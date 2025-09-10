@@ -93,7 +93,7 @@ export default function JoinPage() {
               Thank you for joining Earth Again. We&apos;ll contact you within
               24 hours with next steps and onboarding information.
             </p>
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <Button className="w-full bg-green-600 hover:bg-green-700">
                 Join WhatsApp Group
               </Button>
@@ -103,7 +103,7 @@ export default function JoinPage() {
               >
                 Download Volunteer Handbook
               </Button>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>

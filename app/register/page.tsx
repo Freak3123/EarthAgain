@@ -88,7 +88,7 @@ export default function RegisterPage() {
               confirmation email shortly with next steps and upcoming event
               details.
             </p>
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <Button className="w-full bg-green-600 hover:bg-green-700">
                 Share with Friends
               </Button>
@@ -98,7 +98,7 @@ export default function RegisterPage() {
               >
                 Join Our WhatsApp Group
               </Button>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>
