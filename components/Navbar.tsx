@@ -42,7 +42,7 @@ const Navbar = () => {
           : "bg-[#fefaf2] shadow-md"
       }`}
     >
-      <div className="max-w-7xl z-150 mx-auto px-6 py-3 flex items-center justify-between">
+      <div className="max-w-7xl z-150 mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <div className="flex-shrink-0">
           <Link className="flex items-center" href="/">
