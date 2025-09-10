@@ -207,8 +207,8 @@ export default function EventsPage() {
                   </p>
 
                   <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-3 text-gray-600">
-                      <Calendar className="w-5 h-5 text-green-600" />
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Calendar className="w-4 h-4" />
                       <span>{event.date.slice(0, 10)}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
