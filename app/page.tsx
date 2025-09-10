@@ -15,8 +15,8 @@ export default function Home() {
       <Hero />
       <Navbar />
       <EditorsMessage
-        name="Aarohi Mehta"
-        title="Editor-in-Chief"
+        name="Tanaya Patnaik"
+        title="Editor, Sambad Group"
         avatarSrc="/maam.jpg" 
         message={`As Editor of Sambad Group, Odisha’s leading media house with print, TV, radio, and digital wings, I am proud to share with you  our most ambitious initiative: the “Punascha Pruthibi” (Earth Again) campaign.
 This transformative 12-year journey (2024-2036) represents our comprehensive commitment to climate action through 360-degree promotion and communication.
@@ -24,8 +24,7 @@ Our mission encompasses climate panchayats to educate leaders, training dedicate
 Our ultimate goal: creating a climate warrior in every household of Odisha.
 Climate change affects our farmers, coastal communities, and forests today. Together, we have the power to transform Odisha into a beacon of hope in the global fight against climate change.
 Join us in making the earth whole again.
-Tanaya Patnaik
-Editor, Sambad Group`}
+`}
       />
       <KeyFeatures />
       <SponsorsPartners />
