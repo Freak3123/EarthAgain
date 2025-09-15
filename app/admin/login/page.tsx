@@ -568,7 +568,7 @@ const ClimatePanchayatForm = () => {
         payload.append("image", selectedFile);
       }
 
-      const res = await fetch("/api/admin/climate-panchayat", {
+      const res = await fetch("/api/admin/save-climatePanchayat", {
         method: "POST",
         body: payload,
       });

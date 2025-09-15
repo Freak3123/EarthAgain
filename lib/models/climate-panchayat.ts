@@ -28,4 +28,4 @@ const ClimatePanchayatSchema = new Schema<IClimatePanchayat>(
 );
 
 export const ClimatePanchayatEvent: Model<IClimatePanchayat> =
-  mongoose.models.ClimatePanchayat || mongoose.model<IClimatePanchayat>("ClimatePanchayatEvent", ClimatePanchayatSchema);
+  mongoose.models.ClimatePanchayatEvent || mongoose.model<IClimatePanchayat>("ClimatePanchayatEvent", ClimatePanchayatSchema);

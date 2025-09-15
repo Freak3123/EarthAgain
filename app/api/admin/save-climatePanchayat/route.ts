@@ -26,13 +26,15 @@ export async function POST(req: Request) {
     let imageUrl = "";
 
     if (file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       const ext = file.name.split(".").pop();
       const filename = `${Date.now()}-${title}.${ext}`;
       const filePath = `climate-panchayat/${filename}`;
 
       const { error: uploadError } = await supabase.storage
         .from("climate-panchayat") 
-        .upload(filePath, file, { cacheControl: "3600", upsert: false });
+        .upload(filePath, buffer, { cacheControl: "3600",contentType: file.type, upsert: false });
 
       if (uploadError) {
         console.error(uploadError);
