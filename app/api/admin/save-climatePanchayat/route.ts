@@ -32,10 +32,11 @@ export async function POST(req: Request) {
       const filename = `${Date.now()}-${title}.${ext}`;
       const filePath = `climate-panchayat/${filename}`;
 
+
       const { error: uploadError } = await supabase.storage
         .from("climate-panchayat") 
         .upload(filePath, buffer, { cacheControl: "3600",contentType: file.type, upsert: false });
-
+      console.log("===================");
       if (uploadError) {
         console.error(uploadError);
         return NextResponse.json(
