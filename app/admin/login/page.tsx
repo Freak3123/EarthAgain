@@ -843,7 +843,7 @@ const Page = () => {
                   [...events]
                     .sort(
                       (a, b) =>
-                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                        new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime()
                     )
                     .map((event: IEvent & { _id?: string }, idx: number) => (
                       <div
@@ -929,7 +929,7 @@ const Page = () => {
                   [...climatePanchayats]
                     .sort(
                       (a, b) =>
-                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                        new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime()
                     )
                     .map(
                       (
@@ -1025,7 +1025,7 @@ const Page = () => {
                   [...blogs]
                     .sort(
                       (a, b) =>
-                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                        new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime()
                     )
                     .map(
                       (
