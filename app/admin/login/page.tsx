@@ -1,10 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useSession, signIn, signOut } from "next-auth/react";
-import Image from "next/image";
-import { features } from "process";
 
 export interface IEvent {
   title: string;
@@ -344,20 +342,20 @@ const BlogForm = () => {
   const [message, setMessage] = useState("");
 
   const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-) => {
-  const { name, type } = e.target;
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, type } = e.target;
 
-  const value =
-    type === "checkbox"
-      ? (e.target as HTMLInputElement).checked 
-      : e.target.value; 
+    const value =
+      type === "checkbox"
+        ? (e.target as HTMLInputElement).checked
+        : e.target.value;
 
-  setFormData((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -369,7 +367,7 @@ const BlogForm = () => {
       Object.entries(formData).forEach(([key, value]) => {
         if (typeof value === "boolean") {
           data.append(key, value.toString()); // "true" or "false"
-        }  else {
+        } else {
           data.append(key, value as string);
         }
       });
@@ -582,8 +580,12 @@ const Page = () => {
               </h3>
               <div className="space-y-4">
                 {Array.isArray(events) && events.length > 0 ? (
-                  events.map(
-                    (event: IEvent & { _id?: string }, idx: number) => (
+                  [...events]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                    )
+                    .map((event: IEvent & { _id?: string }, idx: number) => (
                       <div
                         key={event._id || idx}
                         className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
@@ -592,7 +594,14 @@ const Page = () => {
                           <div className="font-bold text-lg">{event.title}</div>
                           <div className="text-gray-600 text-sm">
                             {event.date
-                              ? new Date(event.date).toLocaleDateString()
+                              ? new Date(event.date).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                  }
+                                )
                               : ""}
                             {" • "}
                             {event.time}
@@ -635,8 +644,7 @@ const Page = () => {
                           Delete
                         </Button>
                       </div>
-                    )
-                  )
+                    ))
                 ) : (
                   <div className="text-center text-gray-500">
                     No events found.
@@ -657,7 +665,9 @@ const Page = () => {
               </h3>
               <div className="space-y-4">
                 {Array.isArray(blogs) && blogs.length > 0 ? (
-                  blogs.map(
+                  [...blogs]
+                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                  .map(
                     (
                       blog: {
                         _id?: string;
@@ -682,7 +692,14 @@ const Page = () => {
                           {/* Blog Meta Info */}
                           <div className="text-gray-600 text-sm mt-1">
                             {blog.date
-                              ? new Date(blog.date).toLocaleDateString()
+                              ? new Date(blog.date).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                  }
+                                )
                               : ""}
                             {" • "}
                             {blog.readTime}
