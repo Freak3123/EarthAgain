@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,14 +22,33 @@ import {
   Calendar,
   CheckCircle,
   ArrowRight,
+  Clock,
+  MapPin,
 } from "lucide-react";
 import Image from "next/image";
+import LoaderComp from "@/components/LoaderComp";
+import axios from "axios";
+
+interface IClimatePanchayat {
+  _id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  organizerName: string;
+  attendees: string;
+  description: string;
+  image: string;
+  featured: boolean;
+}
 
 export default function ClimatePanchayatPage() {
   const [showForm, setShowForm] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const formRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [events, setEvents] = useState<IClimatePanchayat[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -103,6 +122,33 @@ export default function ClimatePanchayatPage() {
     );
   }
 
+  useEffect(() => {
+    async function fetchClimatePanchayats() {
+      try {
+        const res = await axios.get("/api/get-climatePanchayat");
+        setEvents(res.data);
+      } catch (err) {
+        console.error("Failed to fetch Climate Panchayat events:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchClimatePanchayats();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <LoaderComp />
+      </div>
+    );
+  }
+
+  const featuredEvents = events.filter((event) => event.featured);
+  const allEvents = [...events].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
   return (
     <div className="min-h-screen pt-22 bg-[#fefaf2">
       {/* Hero Section */}
@@ -139,10 +185,11 @@ export default function ClimatePanchayatPage() {
                   those who live closest to the land.
                 </p>
                 <p className="text-lg text-gray-600">
-                  This initiative is part of Earth Again, a Sambad Group effort 
-                  and a people-led movement that empowers communities to reclaim 
-                  their role in protecting the planet - reflecting a growing people-led 
-                  movement to place climate action back into the hands of communities.
+                  This initiative is part of Earth Again, a Sambad Group effort
+                  and a people-led movement that empowers communities to reclaim
+                  their role in protecting the planet - reflecting a growing
+                  people-led movement to place climate action back into the
+                  hands of communities.
                 </p>
 
                 <div className="space-y-2">
@@ -187,7 +234,7 @@ export default function ClimatePanchayatPage() {
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               How to Organize a Climate Panchayat
             </h2>
             <p className="text-xl text-gray-600">
@@ -259,6 +306,147 @@ export default function ClimatePanchayatPage() {
           </div>
         </div>
       </section>
+ 
+      {/*Events */}
+      <section className="pt-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
+      <div className="max-w-7xl mx-auto text-center">
+        {/* Featured Event */}
+        {featuredEvents.length > 0 && (
+          <>
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                Featured Event
+              </h2>
+            </div>
+
+            {featuredEvents.map((featuredEvent) => (
+              <Card
+                key={featuredEvent._id}
+                className="border-0 p-0 my-2 mb-20 shadow-xl overflow-hidden"
+              >
+                <div className="grid lg:grid-cols-2">
+                  {/* Image Section */}
+                  <div className="relative h-60 lg:h-auto">
+                    <Image
+                      src={featuredEvent.image}
+                      alt={featuredEvent.title}
+                      width={600}
+                      height={400}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-green-600 text-white">Featured</Badge>
+                    </div>
+                  </div>
+
+                  {/* Content Section */}
+                  <CardContent className="p-8 lg:p-10 lg:px-12">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                      {featuredEvent.title}
+                    </h3>
+                    <p className="text-lg text-gray-600 mb-6">
+                      {featuredEvent.description}
+                    </p>
+
+                    <div className="space-y-3 mb-8">
+                      <div className="flex items-center gap-3 text-gray-600">
+                        <Calendar className="w-5 h-5 text-green-600" />
+                        <span>{featuredEvent.date.slice(0, 10)}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-gray-600">
+                        <Clock className="w-5 h-5 text-green-600" />
+                        <span>
+                          {featuredEvent.time || "Time not specified"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-gray-600">
+                        <MapPin className="w-5 h-5 text-green-600" />
+                        <span>{featuredEvent.location}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-gray-600">
+                        <Users className="w-5 h-5 text-green-600" />
+                        <span>{featuredEvent.attendees} Expected</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </div>
+              </Card>
+            ))}
+          </>
+        )}
+
+        {/* All Events */}
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+            All Events
+          </h2>
+        </div>
+
+        <section className="py-4 pb-10 px-4 md:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {allEvents.map((event) => (
+                <Card
+                  key={event._id}
+                  className="border-0 pt-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                >
+                  <div className="relative h-60">
+                    <Image
+                      src={event.image}
+                      alt={event.title}
+                      width={400}
+                      height={200}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-4 right-4">
+                      <Badge className="bg-white/90 text-gray-900">
+                        {event.date.slice(0, 10)}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <CardContent className="px-6 py-0 pb-2">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                      {event.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {event.description}
+                    </p>
+
+                    <div className="space-y-2 mb-6">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Calendar className="w-4 h-4" />
+                        <span>{event.date.slice(0, 10)}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Clock className="w-4 h-4" />
+                        <span>{event.time}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <MapPin className="w-4 h-4" />
+                        <span>{event.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Users className="w-4 h-4" />
+                        <span>{event.attendees} Expected</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {allEvents.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-xl text-gray-600">
+                  No events found.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+    </section>
 
       {/* Benefits */}
       {/* <section className="py-20 px-4 md:px-6 lg:px-8">
