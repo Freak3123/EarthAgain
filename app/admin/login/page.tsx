@@ -17,6 +17,18 @@ export interface IEvent {
   featured: boolean;
 }
 
+export interface ClimatePanchayatFormData {
+  title: string;
+  date: Date;
+  time: string;
+  location: string;
+  organizerName: string;
+  attendees: string;
+  description: string;
+  image: string;
+  featured: boolean;
+}
+
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -512,11 +524,245 @@ const BlogForm = () => {
   );
 };
 
+const ClimatePanchayatForm = () => {
+  const [formData, setFormData] = useState<ClimatePanchayatFormData>({
+    title: "",
+    date: new Date(),
+    time: "",
+    location: "",
+    organizerName: "",
+    attendees: "",
+    description: "",
+    image: "",
+    featured: false,
+  } as ClimatePanchayatFormData);
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleChange = (
+    field: keyof ClimatePanchayatFormData,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: field === "date" ? new Date(value) : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const payload = new FormData();
+
+      payload.append("title", formData.title);
+      payload.append("date", formData.date.toISOString());
+      payload.append("time", formData.time);
+      payload.append("location", formData.location);
+      payload.append("organizerName", formData.organizerName);
+      payload.append("attendees", formData.attendees);
+      payload.append("description", formData.description);
+      payload.append("featured", String(formData.featured));
+
+      if (selectedFile) {
+        payload.append("image", selectedFile);
+      }
+
+      const res = await fetch("/api/admin/climate-panchayat", {
+        method: "POST",
+        body: payload,
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create Climate Panchayat");
+      }
+
+      alert("Climate Panchayat created successfully!");
+
+      // reset form
+      setFormData({
+        title: "",
+        date: new Date(),
+        time: "",
+        location: "",
+        organizerName: "",
+        attendees: "",
+        description: "",
+        image: "",
+        featured: false,
+      } as ClimatePanchayatFormData);
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Error creating Climate Panchayat:", error);
+      alert("Something went wrong while creating the Climate Panchayat");
+    }
+  };
+
+  return (
+    <div className="mt-20">
+      <div className="flex justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Create Climate Panchayat
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Title</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => handleChange("title", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Date */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Date</label>
+              <input
+                type="date"
+                value={formData.date.toISOString().split("T")[0]}
+                onChange={(e) => handleChange("date", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Time */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Time</label>
+              <input
+                type="time"
+                value={formData.time}
+                onChange={(e) => handleChange("time", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Location</label>
+              <input
+                type="text"
+                value={formData.location}
+                onChange={(e) => handleChange("location", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Organizer */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Organizer Name
+              </label>
+              <input
+                type="text"
+                value={formData.organizerName}
+                onChange={(e) => handleChange("organizerName", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Attendees */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Attendees
+              </label>
+              <input
+                type="text"
+                value={formData.attendees}
+                onChange={(e) => handleChange("attendees", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="e.g., 2000+"
+                required
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                rows={3}
+                required
+              />
+            </div>
+
+            {/* Featured */}
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={formData.featured}
+                onChange={(e) =>
+                  setFormData({ ...formData, featured: e.target.checked })
+                }
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+              />
+              <label className="text-sm font-medium">Mark as Featured</label>
+            </div>
+
+            {/* Image */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  setSelectedFile(e.target.files[0]);
+                }
+              }}
+              className="w-full px-3 py-2 border rounded-md"
+            />
+
+            {selectedFile && (
+              <img
+                src={URL.createObjectURL(selectedFile)}
+                alt="Preview"
+                className="mt-2 w-full h-48 object-cover rounded-md"
+              />
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
+            >
+              Create Climate Panchayat
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Page = () => {
   const [activeTab, setActiveTab] = useState("");
   const { data: session, status } = useSession();
   const [events, setEvents] = useState({});
-  const [blogs, setBlogs] = useState({});
+  const [blogs, setBlogs] = useState<
+    Array<{
+      _id?: string;
+      title: string;
+      excerpt: string;
+      author: string;
+      date?: string;
+      readTime: string;
+      category: string;
+      image?: string;
+    }>
+  >([]);
+  const [climatePanchayats, setClimatePanchayats] = useState<
+    ClimatePanchayatFormData[]
+  >([]);
 
   if (!session) {
     return (
@@ -532,7 +778,12 @@ const Page = () => {
     setEvents(res.data);
     console.log(res.data);
   };
+  const fetchClimatePanchayat = async () => {
+    const res = await axios.get("/api/get-climatePanchayat");
 
+    setClimatePanchayats(res.data);
+    console.log(res.data);
+  };
   const fetchSavedBlogs = async () => {
     const res = await axios.get("/api/get-blogs");
 
@@ -550,6 +801,15 @@ const Page = () => {
           }}
         >
           Event
+        </Button>
+        <Button
+          className="m-3"
+          onClick={() => {
+            setActiveTab("climate-panchayat");
+            fetchClimatePanchayat();
+          }}
+        >
+          Climate Panchayat
         </Button>
         <Button
           className="m-3"
@@ -656,6 +916,103 @@ const Page = () => {
         ) : (
           ""
         )}
+        {activeTab === "climate-panchayat" ? (
+          <div className="flex flex-col justify-center">
+            <ClimatePanchayatForm />
+            <div className="mt-10">
+              <h3 className="text-xl font-semibold mb-4 text-center">
+                All Climate Panchayat Events
+              </h3>
+              <div className="space-y-4">
+                {Array.isArray(climatePanchayats) &&
+                climatePanchayats.length > 0 ? (
+                  [...climatePanchayats]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                    )
+                    .map(
+                      (
+                        panchayat: ClimatePanchayatFormData & { _id?: string },
+                        idx: number
+                      ) => (
+                        <div
+                          key={panchayat._id || idx}
+                          className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
+                        >
+                          <div className="flex-1">
+                            <div className="font-bold text-lg">
+                              {panchayat.title}
+                            </div>
+                            <div className="text-gray-600 text-sm">
+                              {panchayat.date
+                                ? new Date(panchayat.date).toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    }
+                                  )
+                                : ""}
+                              {" • "}
+                              {panchayat.time}
+                              {" • "}
+                              {panchayat.location}
+                              {" • "}
+                              {panchayat.organizerName}
+                              {" • "}
+                              {panchayat.attendees}
+                            </div>
+                            <div className="text-gray-700 mt-2">
+                              {panchayat.description}
+                            </div>
+                          </div>
+
+                          <Button
+                            variant="destructive"
+                            className="ml-4 mt-4 md:mt-0"
+                            onClick={async () => {
+                              if (
+                                window.confirm(
+                                  `Are you sure you want to delete "${panchayat.title}"?`
+                                )
+                              ) {
+                                try {
+                                  await axios.delete(
+                                    "/api/admin/delete-climatePanchayat",
+                                    {
+                                      data: { id: panchayat._id },
+                                    }
+                                  );
+
+                                  const res = await axios.get(
+                                    "/api/get-climatePanchayat"
+                                  );
+                                  setClimatePanchayats(res.data);
+                                } catch (err) {
+                                  alert("Failed to delete Climate Panchayat.");
+                                }
+                              }
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      )
+                    )
+                ) : (
+                  <div className="text-center text-gray-500">
+                    No Climate Panchayat events found.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+
         {activeTab === "blog" ? (
           <div className="flex flex-col justify-center">
             <BlogForm />
@@ -666,87 +1023,95 @@ const Page = () => {
               <div className="space-y-4">
                 {Array.isArray(blogs) && blogs.length > 0 ? (
                   [...blogs]
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                  .map(
-                    (
-                      blog: {
-                        _id?: string;
-                        title: string;
-                        excerpt: string;
-                        author: string;
-                        date?: string;
-                        readTime: string;
-                        category: string;
-                        image?: string;
-                      },
-                      idx: number
-                    ) => (
-                      <div
-                        key={blog._id || idx}
-                        className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
-                      >
-                        <div className="flex-1">
-                          {/* Blog Title */}
-                          <div className="font-bold text-lg">{blog.title}</div>
-
-                          {/* Blog Meta Info */}
-                          <div className="text-gray-600 text-sm mt-1">
-                            {blog.date
-                              ? new Date(blog.date).toLocaleDateString(
-                                  "en-GB",
-                                  {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
-                                  }
-                                )
-                              : ""}
-                            {" • "}
-                            {blog.readTime}
-                            {" • "}
-                            {blog.category}
-                            {" • "}
-                            By {blog.author}
-                          </div>
-                        </div>
-
-                        {/* Blog Image (if exists) */}
-                        {blog.image && (
-                          <img
-                            src={blog.image}
-                            alt={blog.title}
-                            className="ml-4 mt-4 md:mt-0 w-32 h-20 object-cover rounded"
-                          />
-                        )}
-
-                        {/* Delete Button */}
-                        <Button
-                          variant="destructive"
-                          className="ml-4 mt-4 md:mt-0"
-                          onClick={async () => {
-                            if (
-                              window.confirm(
-                                `Are you sure you want to delete "${blog.title}"?`
-                              )
-                            ) {
-                              try {
-                                await axios.delete("/api/admin/delete-blogs", {
-                                  data: { id: blog._id },
-                                });
-
-                                const res = await axios.get("/api/get-blogs");
-                                setBlogs(res.data);
-                              } catch (err) {
-                                alert("Failed to delete blog.");
-                              }
-                            }
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      </div>
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime()
                     )
-                  )
+                    .map(
+                      (
+                        blog: {
+                          _id?: string;
+                          title: string;
+                          excerpt: string;
+                          author: string;
+                          date?: string;
+                          readTime: string;
+                          category: string;
+                          image?: string;
+                        },
+                        idx: number
+                      ) => (
+                        <div
+                          key={blog._id || idx}
+                          className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
+                        >
+                          <div className="flex-1">
+                            {/* Blog Title */}
+                            <div className="font-bold text-lg">
+                              {blog.title}
+                            </div>
+
+                            {/* Blog Meta Info */}
+                            <div className="text-gray-600 text-sm mt-1">
+                              {blog.date
+                                ? new Date(blog.date).toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    }
+                                  )
+                                : ""}
+                              {" • "}
+                              {blog.readTime}
+                              {" • "}
+                              {blog.category}
+                              {" • "}
+                              By {blog.author}
+                            </div>
+                          </div>
+
+                          {/* Blog Image (if exists) */}
+                          {blog.image && (
+                            <img
+                              src={blog.image}
+                              alt={blog.title}
+                              className="ml-4 mt-4 md:mt-0 w-32 h-20 object-cover rounded"
+                            />
+                          )}
+
+                          {/* Delete Button */}
+                          <Button
+                            variant="destructive"
+                            className="ml-4 mt-4 md:mt-0"
+                            onClick={async () => {
+                              if (
+                                window.confirm(
+                                  `Are you sure you want to delete "${blog.title}"?`
+                                )
+                              ) {
+                                try {
+                                  await axios.delete(
+                                    "/api/admin/delete-blogs",
+                                    {
+                                      data: { id: blog._id },
+                                    }
+                                  );
+
+                                  const res = await axios.get("/api/get-blogs");
+                                  setBlogs(res.data);
+                                } catch (err) {
+                                  alert("Failed to delete blog.");
+                                }
+                              }
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      )
+                    )
                 ) : (
                   <div className="text-center text-gray-500">
                     No blogs found.
