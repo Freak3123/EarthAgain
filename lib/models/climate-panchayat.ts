@@ -5,8 +5,8 @@ export interface IClimatePanchayat extends Document {
   date: Date;
   time: string;
   location: string;
-  organizerName: string;
-  attendees: string; 
+  //organizerName: string;
+  //attendees: string; 
   description: string;
   image: string;
   featured: boolean;
@@ -18,8 +18,8 @@ const ClimatePanchayatSchema = new Schema<IClimatePanchayat>(
     date: { type: Date, required: true },
     time: { type: String, required: true },
     location: { type: String, required: true },
-    organizerName: { type: String, required: true },
-    attendees: { type: String, required: true },
+    //organizerName: { type: String, required: true },
+    //attendees: { type: String, required: true },
     description: { type: String, required: true },
     image: { type: String, required: true },
     featured: { type: Boolean, default: false },

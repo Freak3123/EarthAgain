@@ -17,8 +17,8 @@ export async function POST(req: Request) {
     const date = formData.get("date") as string;
     const time = formData.get("time") as string;
     const location = formData.get("location") as string;
-    const organizerName = formData.get("organizerName") as string;
-    const attendees = formData.get("attendees") as string;
+    //const organizerName = formData.get("organizerName") as string;
+    //const attendees = formData.get("attendees") as string;
     const description = formData.get("description") as string;
     const featured = formData.get("featured") === "true";
     const file = formData.get("image") as File | null;
@@ -56,8 +56,8 @@ export async function POST(req: Request) {
       date: new Date(date),
       time,
       location,
-      organizerName,
-      attendees,
+      // organizerName,
+      // attendees,
       description,
       image: imageUrl,
       featured,
