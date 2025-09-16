@@ -353,7 +353,7 @@ export default function ClimatePanchayatPage() {
                         <Calendar className="w-5 h-5 text-green-600" />
                         <span>{featuredEvent.date.slice(0, 10)}</span>
                       </div>
-                      <div className="flex items-center gap-3 text-gray-600">
+                      {/*<div className="flex items-center gap-3 text-gray-600">
                         <Clock className="w-5 h-5 text-green-600" />
                         <span>
                           {featuredEvent.time || "Time not specified"}
@@ -362,7 +362,7 @@ export default function ClimatePanchayatPage() {
                       <div className="flex items-center gap-3 text-gray-600">
                         <MapPin className="w-5 h-5 text-green-600" />
                         <span>{featuredEvent.location}</span>
-                      </div>
+                      </div>*/}
                       <div className="flex items-center gap-3 text-gray-600">
                         <Users className="w-5 h-5 text-green-600" />
                         <span>{featuredEvent.attendees} Expected</span>
