@@ -310,12 +310,12 @@ export default function ClimatePanchayatPage() {
       {/*Events */}
       <section className="pt-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
       <div className="max-w-7xl mx-auto text-center">
-        {/* Featured Event */}
+        {/* Featured Climate Panchayat */}
         {featuredEvents.length > 0 && (
           <>
             <div className="text-center mb-6">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                Featured Event
+                Featured Climate Panchayat
               </h2>
             </div>
 
@@ -353,20 +353,20 @@ export default function ClimatePanchayatPage() {
                         <Calendar className="w-5 h-5 text-green-600" />
                         <span>{featuredEvent.date.slice(0, 10)}</span>
                       </div>
-                      <div className="flex items-center gap-3 text-gray-600">
+                      {/* <div className="flex items-center gap-3 text-gray-600">
                         <Clock className="w-5 h-5 text-green-600" />
                         <span>
                           {featuredEvent.time || "Time not specified"}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-3 text-gray-600">
+                      </div> */}
+                      {/* <div className="flex items-center gap-3 text-gray-600">
                         <MapPin className="w-5 h-5 text-green-600" />
                         <span>{featuredEvent.location}</span>
                       </div>
                       <div className="flex items-center gap-3 text-gray-600">
                         <Users className="w-5 h-5 text-green-600" />
                         <span>{featuredEvent.attendees} Expected</span>
-                      </div>
+                      </div> */}
                     </div>
                   </CardContent>
                 </div>
@@ -375,10 +375,10 @@ export default function ClimatePanchayatPage() {
           </>
         )}
 
-        {/* All Events */}
+        {/* All Climate Panchayats */}
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            All Events
+            All Climate Panchayats
           </h2>
         </div>
 
@@ -413,7 +413,7 @@ export default function ClimatePanchayatPage() {
                       {event.description}
                     </p>
 
-                    <div className="space-y-2 mb-6">
+                    {/* <div className="space-y-2 mb-6">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Calendar className="w-4 h-4" />
                         <span>{event.date.slice(0, 10)}</span>
@@ -430,7 +430,7 @@ export default function ClimatePanchayatPage() {
                         <Users className="w-4 h-4" />
                         <span>{event.attendees} Expected</span>
                       </div>
-                    </div>
+                    </div> */}
                   </CardContent>
                 </Card>
               ))}

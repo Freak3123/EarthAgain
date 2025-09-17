@@ -20,8 +20,8 @@ export interface IEvent {
 export interface ClimatePanchayatFormData {
   title: string;
   date: Date;
-  time: string;
-  location: string;
+  // time: string;
+  // location: string;
   // organizerName: string;
   // attendees: string;
   description: string;
@@ -557,8 +557,8 @@ const ClimatePanchayatForm = () => {
 
       payload.append("title", formData.title);
       payload.append("date", formData.date.toISOString());
-      payload.append("time", formData.time);
-      payload.append("location", formData.location);
+      // payload.append("time", formData.time);
+      // payload.append("location", formData.location);
       // payload.append("organizerName", formData.organizerName);
       // payload.append("attendees", formData.attendees);
       payload.append("description", formData.description);
@@ -631,7 +631,7 @@ const ClimatePanchayatForm = () => {
             </div>
 
             {/* Time */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-2">Time</label>
               <input
                 type="time"
@@ -640,10 +640,10 @@ const ClimatePanchayatForm = () => {
                 className="w-full px-3 py-2 border rounded-md"
                 required
               />
-            </div>
+            </div> */}
 
             {/* Location */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-2">Location</label>
               <input
                 type="text"
@@ -652,7 +652,7 @@ const ClimatePanchayatForm = () => {
                 className="w-full px-3 py-2 border rounded-md"
                 required
               />
-            </div>
+            </div> */}
 
             {/* Organizer */}
             {/* <div>
@@ -955,10 +955,10 @@ const Page = () => {
                                     }
                                   )
                                 : ""}
-                              {" • "}
+                              {/* {" • "}
                               {panchayat.time}
                               {" • "}
-                              {panchayat.location}
+                              {panchayat.location} */}
                               {/* {" • "} */}
                               {/* {panchayat.organizerName}
                               {" • "}

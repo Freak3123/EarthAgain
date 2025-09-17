@@ -16,8 +16,8 @@ const ClimatePanchayatSchema = new Schema<IClimatePanchayat>(
   {
     title: { type: String, required: true, trim: true },
     date: { type: Date, required: true },
-    time: { type: String, required: true },
-    location: { type: String, required: true },
+    // time: { type: String, required: true },
+    // location: { type: String, required: true },
     //organizerName: { type: String, required: true },
     //attendees: { type: String, required: true },
     description: { type: String, required: true },

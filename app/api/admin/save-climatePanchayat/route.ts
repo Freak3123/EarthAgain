@@ -15,8 +15,8 @@ export async function POST(req: Request) {
 
     const title = formData.get("title") as string;
     const date = formData.get("date") as string;
-    const time = formData.get("time") as string;
-    const location = formData.get("location") as string;
+    // const time = formData.get("time") as string;
+    // const location = formData.get("location") as string;
     //const organizerName = formData.get("organizerName") as string;
     //const attendees = formData.get("attendees") as string;
     const description = formData.get("description") as string;
@@ -54,8 +54,8 @@ export async function POST(req: Request) {
     const climatePanchayat = new ClimatePanchayatEvent({
       title,
       date: new Date(date),
-      time,
-      location,
+      // time,
+      // location,
       // organizerName,
       // attendees,
       description,
