@@ -30,8 +30,6 @@ const Navbar = () => {
     { href: "/citizen-voice", label: "Citizen Voice" },
   ];
 
-  // const isHome = pathname;
-
   return (
     <nav
       className={`fixed top-0 w-full z-100 transition-colors duration-300 ${
@@ -55,11 +53,11 @@ const Navbar = () => {
               style={{ objectPosition: "center", objectFit: "cover" }}
             />
             <Image
-              src="/Sambad Group.png"
+              src={isHome && !scrolled ? "/sambad-white.png" : "/sambad-colored.png"}
               alt="Earth Again Logo"
               width={200}
               height={100}
-              className="h-12 sm:h-24 w-auto object-cover object-center"
+              className="h-17 sm:h-25 w-auto object-cover object-center"
               style={{ objectPosition: "center", objectFit: "cover" }}
             />
           </Link>
