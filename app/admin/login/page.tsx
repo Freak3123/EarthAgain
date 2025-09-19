@@ -4,7 +4,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useSession, signIn, signOut } from "next-auth/react";
 
-export interface IEvent {
+interface IEvent {
   title: string;
   date: Date;
   time: string;
@@ -17,7 +17,14 @@ export interface IEvent {
   featured: boolean;
 }
 
-export interface ClimatePanchayatFormData {
+interface SpeakerFormData {
+  name: string;
+  session: string;
+  image: string;
+  isFeatured: boolean;
+}
+
+interface ClimatePanchayatFormData {
   title: string;
   date: Date;
   // time: string;
@@ -744,10 +751,161 @@ const ClimatePanchayatForm = () => {
   );
 };
 
+const SpeakerForm = () => {
+  const [formData, setFormData] = useState<SpeakerFormData>({
+    name: "",
+    session: "",
+    image: "",
+    isFeatured: false,
+  });
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleChange = (
+    field: keyof SpeakerFormData,
+    value: string | boolean
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const payload = new FormData();
+
+      payload.append("name", formData.name);
+      payload.append("session", formData.session);
+      payload.append("isFeatured", String(formData.isFeatured));
+
+      if (selectedFile) {
+        payload.append("image", selectedFile);
+      }
+
+      const res = await fetch("/api/admin/save-speakers", {
+        method: "POST",
+        body: payload, // ✅ multipart/form-data
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create speaker");
+      }
+
+      alert("Speaker created successfully!");
+
+      // reset form
+      setFormData({
+        name: "",
+        session: "",
+        image: "",
+        isFeatured: false,
+      });
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Error creating speaker:", error);
+      alert("Something went wrong while creating the speaker");
+    }
+  };
+
+  return (
+    <div className="mt-20">
+      <div className="flex justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-6 text-center">Add Speaker</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Speaker Name
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Session */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Session
+              </label>
+              <input
+                type="text"
+                value={formData.session}
+                onChange={(e) => handleChange("session", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Featured */}
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={formData.isFeatured}
+                onChange={(e) =>
+                  handleChange("isFeatured", e.target.checked)
+                }
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+              />
+              <label className="text-sm font-medium">Mark as Featured</label>
+            </div>
+
+            {/* Image */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  setSelectedFile(e.target.files[0]);
+                }
+              }}
+              className="w-full px-3 py-2 border rounded-md"
+            />
+
+            {selectedFile && (
+              <img
+                src={URL.createObjectURL(selectedFile)}
+                alt="Preview"
+                className="mt-2 w-full h-48 object-cover rounded-md"
+              />
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+            >
+              Save Speaker
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+interface ISpeaker {
+  _id?: string;
+  name: string;
+  session: string;
+  image?: string;
+  isFeatured: boolean;
+  createdAt?: string;
+}
+
 const Page = () => {
   const [activeTab, setActiveTab] = useState("");
   const { data: session, status } = useSession();
   const [events, setEvents] = useState({});
+  const [speakers, setSpeakers] = useState<ISpeaker[]>([]);
   const [blogs, setBlogs] = useState<
     Array<{
       _id?: string;
@@ -778,6 +936,12 @@ const Page = () => {
     setEvents(res.data);
     console.log(res.data);
   };
+  const fetchSpeakers = async () => {
+    const res = await axios.get("/api/get-speakers");
+
+    setSpeakers(res.data);
+    console.log(res.data);
+  };
   const fetchClimatePanchayat = async () => {
     const res = await axios.get("/api/get-climatePanchayat");
 
@@ -801,6 +965,15 @@ const Page = () => {
           }}
         >
           Event
+        </Button>
+        <Button
+          className="m-3"
+          onClick={() => {
+            setActiveTab("speakers");
+            fetchSpeakers();
+          }}
+        >
+          Speakers
         </Button>
         <Button
           className="m-3"
@@ -916,6 +1089,89 @@ const Page = () => {
         ) : (
           ""
         )}
+
+        {activeTab === "speakers" ? (
+  <div className="flex flex-col justify-center">
+    <SpeakerForm />
+    <div className="mt-10">
+      <h3 className="text-xl font-semibold mb-4 text-center">
+        All Speakers
+      </h3>
+      <div className="space-y-4">
+        {Array.isArray(speakers) && speakers.length > 0 ? (
+          [...speakers]
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt ?? "").getTime() -
+                new Date(a.createdAt ?? "").getTime()
+            )
+            .map((speaker: ISpeaker & { _id?: string }, idx: number) => (
+              <div
+                key={speaker._id || idx}
+                className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
+              >
+                <div className="flex items-center space-x-4 flex-1">
+                  {/* Image */}
+                  {speaker.image && (
+                    <img
+                      src={speaker.image}
+                      alt={speaker.name}
+                      className="w-16 h-16 object-cover rounded-full"
+                    />
+                  )}
+
+                  {/* Info */}
+                  <div>
+                    <div className="font-bold text-lg">{speaker.name}</div>
+                    <div className="text-gray-600 text-sm">
+                      {speaker.session}
+                    </div>
+                    {speaker.isFeatured && (
+                      <div className="text-xs text-yellow-700 bg-yellow-200 px-2 py-1 rounded-full inline-block mt-1">
+                        Featured
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Delete */}
+                <Button
+                  variant="destructive"
+                  className="ml-4 mt-4 md:mt-0"
+                  onClick={async () => {
+                    if (
+                      window.confirm(
+                        `Are you sure you want to delete "${speaker.name}"?`
+                      )
+                    ) {
+                      try {
+                        await axios.delete("/api/admin/delete-speakers", {
+                          data: { id: speaker._id },
+                        });
+
+                        const res = await axios.get("/api/get-speakers");
+                        setSpeakers(res.data);
+                      } catch (err) {
+                        alert("Failed to delete speaker.");
+                      }
+                    }
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+            ))
+        ) : (
+          <div className="text-center text-gray-500">No speakers found.</div>
+        )}
+      </div>
+    </div>
+  </div>
+) : (
+  ""
+)}
+
+
         {activeTab === "climate-panchayat" ? (
           <div className="flex flex-col justify-center">
             <ClimatePanchayatForm />

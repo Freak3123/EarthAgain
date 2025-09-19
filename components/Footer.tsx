@@ -48,6 +48,7 @@ export function Footer() {
                 { href: "/events", label: "Events" },
                 { href: "/climate-panchayat", label: "Climate Panchayat" },
                 { href: "/join-us", label: "Join Us" },
+                { href: "/speakers", label: "Speakers" },
                 // { href: "/blog", label: "Blog" },
                 { href: "/citizen-voice", label: "Citizen Voice" },
               ].map((link) => (
@@ -68,7 +69,7 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-sm text-gray-400">
                 <Mail className="w-4 h-4" />
-                <span>earthagain@sambadgroup.com</span>
+                <span>eaoutreach2025@gmail.com</span>
               </div>
               <div className="flex items-center space-x-3 text-sm text-gray-400">
                 <Phone className="w-4 h-4" />
