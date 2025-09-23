@@ -63,19 +63,21 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="/join-us"
+                // 
+                href="/about"
                 className=" bg-green-600 hover:bg-green-700 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
               >
                 <Users className="inline mr-2 h-5" />
-                Join the Movement
+                {/* Join the Movement */}
+                Check Who we are
               </Link>
-              <Link
+              {/* <Link
                 href="/citizen-voice"
                 className=" hover:bg-white/20 border-1 border-green-50 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
               >
                 <CalendarDays className="inline mr-2 h-5" />
                 Vote your Issues
-              </Link>
+              </Link> */}
               <Link
                 href="/climate-panchayat"
                 className=" hover:bg-white/20 border-1 border-green-50 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
