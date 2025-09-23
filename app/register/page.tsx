@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -27,7 +26,7 @@ export default function RegisterPage() {
     phone: "",
     age: "",
     district: "",
-    constituency: "",
+    registrationDays: [] as string[],
     occupation: "",
     interests: [] as string[],
     // experience: "",
@@ -88,17 +87,6 @@ export default function RegisterPage() {
               confirmation email shortly with next steps and upcoming event
               details.
             </p>
-            {/* <div className="space-y-4">
-              <Button className="w-full bg-green-600 hover:bg-green-700">
-                Share with Friends
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full border-green-600 text-green-600 hover:bg-green-50 bg-transparent"
-              >
-                Join Our WhatsApp Group
-              </Button>
-            </div> */}
           </CardContent>
         </Card>
       </div>
@@ -141,7 +129,9 @@ export default function RegisterPage() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name *</Label>
+                    <Label htmlFor="name">
+                      Full Name<span className="text-red-600 inline">*</span>
+                    </Label>
                     <Input
                       id="name"
                       value={formData.name}
@@ -157,7 +147,10 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address *</Label>
+                    <Label htmlFor="email">
+                      Email Address
+                      <span className="text-red-600 inline">*</span>
+                    </Label>
                     <Input
                       id="email"
                       type="email"
@@ -176,7 +169,10 @@ export default function RegisterPage() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Label htmlFor="phone">
+                      Phone Number{" "}
+                      <span className="text-red-600 inline">*</span>
+                    </Label>
                     <Input
                       id="phone"
                       value={formData.phone}
@@ -192,7 +188,9 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="age">Age Group *</Label>
+                    <Label htmlFor="age">
+                      Age Group <span className="text-red-600 inline">*</span>
+                    </Label>
                     <Select
                       onValueChange={(value) =>
                         setFormData((prev) => ({ ...prev, age: value }))
@@ -222,7 +220,9 @@ export default function RegisterPage() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="district">District *</Label>
+                    <Label htmlFor="district">
+                      District <span className="text-red-600 inline">*</span>
+                    </Label>
                     <Select
                       onValueChange={(value) =>
                         setFormData((prev) => ({ ...prev, district: value }))
@@ -244,18 +244,94 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="constituency">Constituency</Label>
-                    <Input
-                      id="constituency"
-                      value={formData.constituency}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          constituency: e.target.value,
-                        }))
-                      }
-                      placeholder="Enter your constituency"
-                    />
+                    <Label htmlFor="registrationDays">
+                      Select Registration Days
+                    </Label>
+                    <div className="flex flex-col space-y-2">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.registrationDays.includes(
+                            "6 Oct 2025"
+                          )}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                registrationDays: [
+                                  ...prev.registrationDays,
+                                  "6 Oct 2025",
+                                ],
+                              }));
+                            } else {
+                              setFormData((prev) => ({
+                                ...prev,
+                                registrationDays: prev.registrationDays.filter(
+                                  (day) => day !== "6 Oct 2025"
+                                ),
+                              }));
+                            }
+                          }}
+                        />
+                        <span>6 Oct 2025</span>
+                      </label>
+
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.registrationDays.includes(
+                            "7 Oct 2025"
+                          )}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                registrationDays: [
+                                  ...prev.registrationDays,
+                                  "7 Oct 2025",
+                                ],
+                              }));
+                            } else {
+                              setFormData((prev) => ({
+                                ...prev,
+                                registrationDays: prev.registrationDays.filter(
+                                  (day) => day !== "7 Oct 2025"
+                                ),
+                              }));
+                            }
+                          }}
+                        />
+                        <span>7 Oct 2025</span>
+                      </label>
+
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.registrationDays.includes(
+                            "8 Oct 2025"
+                          )}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                registrationDays: [
+                                  ...prev.registrationDays,
+                                  "8 Oct 2025",
+                                ],
+                              }));
+                            } else {
+                              setFormData((prev) => ({
+                                ...prev,
+                                registrationDays: prev.registrationDays.filter(
+                                  (day) => day !== "8 Oct 2025"
+                                ),
+                              }));
+                            }
+                          }}
+                        />
+                        <span>8 Oct 2025</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -312,70 +388,7 @@ export default function RegisterPage() {
                     ))}
                   </div>
                 </div>
-
-                {/* <div className="space-y-2">
-                  <Label htmlFor="experience">
-                    Previous Environmental Experience
-                  </Label>
-                  <Textarea
-                    id="experience"
-                    value={formData.experience}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        experience: e.target.value,
-                      }))
-                    }
-                    placeholder="Tell us about any previous environmental work or volunteer experience..."
-                    rows={4}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="availability">Availability</Label>
-                  <Select
-                    onValueChange={(value) =>
-                      setFormData((prev) => ({ ...prev, availability: value }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="How much time can you commit?" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="few-hours-week">
-                        A few hours per week
-                      </SelectItem>
-                      <SelectItem value="few-hours-month">
-                        A few hours per month
-                      </SelectItem>
-                      <SelectItem value="weekends">Weekends only</SelectItem>
-                      <SelectItem value="flexible">
-                        Flexible schedule
-                      </SelectItem>
-                      <SelectItem value="full-time">
-                        Full-time commitment
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div> */}
               </div>
-
-              {/* Newsletter Subscription */}
-              {/* <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="newsletter"
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      newsletter: checked as boolean,
-                    }))
-                  }
-                />
-                <Label htmlFor="newsletter" className="text-sm">
-                  Subscribe to our newsletter for updates and event
-                  notifications
-                </Label>
-              </div> */}
 
               {/* Submit Button */}
               <Button

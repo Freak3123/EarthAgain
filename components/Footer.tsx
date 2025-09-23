@@ -1,5 +1,7 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import axios from "axios";
 import {
   Leaf,
   Facebook,
@@ -11,8 +13,36 @@ import {
   MapPin,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleSubscribe = async () => {
+    if (!email) return setMessage("Please enter a valid email");
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const res = await axios.post("/api/stayupdated", { email });
+
+      if (res.data.success) {
+        setMessage("✅ Thank you! Please check your inbox.");
+        setEmail("");
+      } else {
+        setMessage(res.data.error || "❌ Subscription failed");
+      }
+    } catch (err: any) {
+      console.error("❌ Axios error:", err);
+      setMessage(
+        err.response?.data?.error || "❌ Something went wrong, please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-16">
@@ -33,7 +63,8 @@ export function Footer() {
             </p>
             <Link
               href="https://www.instagram.com/theearthagain_movement?igsh=cXNjeHh3a2x6cTVz"
-              className="flex gap-2">
+              className="flex gap-2"
+            >
               <Instagram className="w-5 h-5 text-gray-300" />
               <p className="text-sm text-gray-300">theearthagain_movement</p>
             </Link>
@@ -92,11 +123,20 @@ export function Footer() {
               <Input
                 type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
               />
-              <Button className="w-full bg-green-600 hover:bg-green-700">
-                Send
+              <Button
+                onClick={handleSubscribe}
+                disabled={loading}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                {loading ? "Sending..." : "Send"}
               </Button>
+              {message && (
+                <p className="text-sm text-gray-300 mt-2">{message}</p>
+              )}
             </div>
           </div>
         </div>
@@ -106,14 +146,6 @@ export function Footer() {
             <p className="text-gray-400 text-sm">
               © 2025 Earth Again Movement by Sambad Group. All rights reserved.
             </p>
-            {/* <div className="flex space-x-6 text-sm text-gray-400">
-              <Link href="/privacy" className="hover:text-white transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="hover:text-white transition-colors">
-                Terms of Service
-              </Link>
-            </div> */}
           </div>
         </div>
       </div>
