@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,12 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Users, Calendar, MapPin, CheckCircle } from "lucide-react";
+import { IRegEvent } from "@/lib/models/regevent";
 
 export default function RegisterPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [events, setEvents] = useState<IRegEvent[]>([]);
+  const [dates, setDates] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,14 +29,41 @@ export default function RegisterPage() {
     age: "",
     district: "",
     registrationDays: [] as string[],
-    occupation: "",
-    interests: [] as string[],
-    // experience: "",
-    // availability: "",
-    // newsletter: false,
+    selectedEvents: [] as string[],
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("/api/get-regEvent");
+        const data = await res.json();
+        setEvents(data);
+
+        // Extract unique dates
+        const uniqueDates = Array.from(
+          new Set(
+            data.map((ev: IRegEvent) =>
+              new Date(ev.date).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })
+            )
+          )
+        ) as string[];
+        uniqueDates.sort(
+          (a, b) => new Date(a).getTime() - new Date(b).getTime()
+        );
+
+        setDates(["all", ...uniqueDates]);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
     try {
@@ -57,19 +86,18 @@ export default function RegisterPage() {
     }
   };
 
-  const handleInterestChange = (interest: string, checked: boolean) => {
-    if (checked) {
-      setFormData((prev) => ({
-        ...prev,
-        interests: [...prev.interests, interest],
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        interests: prev.interests.filter((i) => i !== interest),
-      }));
-    }
-  };
+  // Filter events by selected date
+  const filteredEvents = events.filter((ev) => {
+    const eventDay = new Date(ev.date).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+    return (
+      formData.registrationDays.includes("all") ||
+      formData.registrationDays.includes(eventDay)
+    );
+  });
 
   if (isSubmitted) {
     return (
@@ -243,150 +271,141 @@ export default function RegisterPage() {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="registrationDays">
+                  {/* Date Selection */}
+                  <div className="space-y-2 mb-6">
+                    <Label className="font-semibold text-gray-900">
                       Select Registration Days
                     </Label>
-                    <div className="flex flex-col space-y-2">
+                    <div className="flex flex-col gap-2">
+                      {/* "All" checkbox */}
                       <label className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={formData.registrationDays.includes(
-                            "6 Oct 2025"
-                          )}
+                          checked={formData.registrationDays.includes("all")}
                           onChange={(e) => {
                             if (e.target.checked) {
                               setFormData((prev) => ({
                                 ...prev,
-                                registrationDays: [
-                                  ...prev.registrationDays,
-                                  "6 Oct 2025",
-                                ],
+                                registrationDays: ["all"],
                               }));
                             } else {
                               setFormData((prev) => ({
                                 ...prev,
-                                registrationDays: prev.registrationDays.filter(
-                                  (day) => day !== "6 Oct 2025"
-                                ),
+                                registrationDays: [],
                               }));
                             }
                           }}
                         />
-                        <span>6 Oct 2025</span>
+                        <span>All</span>
                       </label>
 
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={formData.registrationDays.includes(
-                            "7 Oct 2025"
-                          )}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData((prev) => ({
-                                ...prev,
-                                registrationDays: [
-                                  ...prev.registrationDays,
-                                  "7 Oct 2025",
-                                ],
-                              }));
-                            } else {
-                              setFormData((prev) => ({
-                                ...prev,
-                                registrationDays: prev.registrationDays.filter(
-                                  (day) => day !== "7 Oct 2025"
-                                ),
-                              }));
-                            }
-                          }}
-                        />
-                        <span>7 Oct 2025</span>
-                      </label>
-
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={formData.registrationDays.includes(
-                            "8 Oct 2025"
-                          )}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData((prev) => ({
-                                ...prev,
-                                registrationDays: [
-                                  ...prev.registrationDays,
-                                  "8 Oct 2025",
-                                ],
-                              }));
-                            } else {
-                              setFormData((prev) => ({
-                                ...prev,
-                                registrationDays: prev.registrationDays.filter(
-                                  (day) => day !== "8 Oct 2025"
-                                ),
-                              }));
-                            }
-                          }}
-                        />
-                        <span>8 Oct 2025</span>
-                      </label>
+                      {/* Dynamic date checkboxes */}
+                      {dates
+                        .filter((d) => d !== "all")
+                        .map((day) => (
+                          <label
+                            key={day}
+                            className="flex items-center space-x-2"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={formData.registrationDays.includes(day)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    registrationDays: [
+                                      ...prev.registrationDays.filter(
+                                        (d) => d !== "all"
+                                      ),
+                                      day,
+                                    ],
+                                  }));
+                                } else {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    registrationDays:
+                                      prev.registrationDays.filter(
+                                        (d) => d !== day
+                                      ),
+                                  }));
+                                }
+                              }}
+                            />
+                            <span>{day}</span>
+                          </label>
+                        ))}
                     </div>
                   </div>
                 </div>
-              </div>
+                {/* Events list for selected days */}
+                <div className="space-y-4 mb-6">
+                  <Label className="font-semibold text-gray-900">
+                    Select Events to Attend
+                  </Label>
 
-              {/* Professional Information */}
-              <div className="space-y-6">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-green-600" />
-                  Professional & Interest Details
-                </h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="occupation">Occupation</Label>
-                  <Input
-                    id="occupation"
-                    value={formData.occupation}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        occupation: e.target.value,
-                      }))
-                    }
-                    placeholder="Student, Professional, Business, etc."
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <Label>Areas of Interest (Select all that apply)</Label>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {[
-                      "Tree Plantation",
-                      "Climate Panchayats",
-                      "Youth Leadership",
-                      "Environmental Education",
-                      "Sustainable Agriculture",
-                      "Renewable Energy",
-                      "Waste Management",
-                      "Water Conservation",
-                    ].map((interest) => (
-                      <div
-                        key={interest}
-                        className="flex items-center space-x-2"
+                  {filteredEvents.length > 0 ? (
+                    filteredEvents.map((ev) => (
+                      <label
+                        key={ev._id as string}
+                        className="flex items-start space-x-3 cursor-pointer"
                       >
-                        <Checkbox
-                          id={interest}
-                          onCheckedChange={(checked) =>
-                            handleInterestChange(interest, checked as boolean)
-                          }
+                        {/* Checkbox */}
+                        <input
+                          type="checkbox"
+                          className="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded"
+                          checked={formData.selectedEvents.includes(
+                            ev._id! as string
+                          )}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                selectedEvents: [
+                                  ...prev.selectedEvents,
+                                  String(ev._id),
+                                ],
+                              }));
+                            } else {
+                              setFormData((prev) => ({
+                                ...prev,
+                                selectedEvents: prev.selectedEvents.filter(
+                                  (id) => id !== ev._id
+                                ),
+                              }));
+                            }
+                          }}
                         />
-                        <Label htmlFor={interest} className="text-sm">
-                          {interest}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
+
+                        {/* Event Card */}
+                        <div className="flex-1 flex flex-col p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150">
+                          {/* Title and Date */}
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-bold text-lg text-gray-900">
+                              {ev.title}
+                            </span>
+                            <span className="text-sm text-gray-500">
+                              {new Date(ev.date).toLocaleDateString("en-GB")}
+                            </span>
+                          </div>
+
+                          {/* Speakers */}
+                          <span className="text-sm text-gray-500 mb-2">
+                            Speakers: {ev.speakers.join(", ")}
+                          </span>
+
+                          {/* Description */}
+                          <p className="text-gray-700 text-sm">
+                            {ev.description}
+                          </p>
+                        </div>
+                      </label>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">
+                      No events available for the selected day(s).
+                    </p>
+                  )}
                 </div>
               </div>
 

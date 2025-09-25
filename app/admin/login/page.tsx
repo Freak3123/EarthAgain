@@ -36,6 +36,13 @@ interface ClimatePanchayatFormData {
   featured: boolean;
 }
 
+interface RegEventFormData {
+  title: string;
+  date: string;
+  description: string;
+  speakers: string[];
+}
+
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -95,6 +102,160 @@ const LoginForm = () => {
             Login
           </button>
         </form>
+      </div>
+    </div>
+  );
+};
+
+const RegEventForm = () => {
+  const [formData, setFormData] = useState<RegEventFormData>({
+    title: "",
+    date: "",
+    description: "",
+    speakers: [""], // start with one input field
+  });
+
+  const handleChange = (field: keyof RegEventFormData, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSpeakerChange = (index: number, value: string) => {
+    const newSpeakers = [...formData.speakers];
+    newSpeakers[index] = value;
+    setFormData((prev) => ({
+      ...prev,
+      speakers: newSpeakers,
+    }));
+  };
+
+  const addSpeakerField = () => {
+    setFormData((prev) => ({
+      ...prev,
+      speakers: [...prev.speakers, ""],
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const payload = new FormData();
+
+      payload.append("title", formData.title);
+      payload.append("date", formData.date);
+      payload.append("description", formData.description);
+
+      formData.speakers.forEach((speaker) => {
+        if (speaker.trim()) {
+          payload.append("speakers", speaker);
+        }
+      });
+
+      const res = await fetch("/api/admin/save-regEvent", {
+        method: "POST",
+        body: payload,
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create registration event");
+      }
+
+      alert("Registration Event created successfully!");
+
+      // reset form
+      setFormData({
+        title: "",
+        date: "",
+        description: "",
+        speakers: [""],
+      });
+    } catch (error) {
+      console.error("Error creating registration event:", error);
+      alert("Something went wrong while creating the registration event");
+    }
+  };
+
+  return (
+    <div className="mt-20">
+      <div className="flex justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Add Registration Event
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Title</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => handleChange("title", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Date */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Date</label>
+              <input
+                type="date"
+                value={formData.date}
+                onChange={(e) => handleChange("date", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                rows={4}
+                required
+              />
+            </div>
+
+            {/* Speakers */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Speakers</label>
+              {formData.speakers.map((speaker, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={speaker}
+                  onChange={(e) => handleSpeakerChange(index, e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md mb-2"
+                  placeholder={`Speaker ${index + 1}`}
+                  required={index === 0} // first speaker is required
+                />
+              ))}
+              <button
+                type="button"
+                onClick={addSpeakerField}
+                className="text-blue-600 text-sm"
+              >
+                + Add Another Speaker
+              </button>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+            >
+              Save Registration Event
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -832,9 +993,7 @@ const SpeakerForm = () => {
 
             {/* Session */}
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Session
-              </label>
+              <label className="block text-sm font-medium mb-2">Session</label>
               <input
                 type="text"
                 value={formData.session}
@@ -849,9 +1008,7 @@ const SpeakerForm = () => {
               <input
                 type="checkbox"
                 checked={formData.isFeatured}
-                onChange={(e) =>
-                  handleChange("isFeatured", e.target.checked)
-                }
+                onChange={(e) => handleChange("isFeatured", e.target.checked)}
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded"
               />
               <label className="text-sm font-medium">Mark as Featured</label>
@@ -891,7 +1048,6 @@ const SpeakerForm = () => {
   );
 };
 
-
 interface ISpeaker {
   _id?: string;
   name: string;
@@ -906,6 +1062,7 @@ const Page = () => {
   const { data: session, status } = useSession();
   const [events, setEvents] = useState({});
   const [speakers, setSpeakers] = useState<ISpeaker[]>([]);
+  const [regevents, setRegevents] = useState({});
   const [blogs, setBlogs] = useState<
     Array<{
       _id?: string;
@@ -953,6 +1110,10 @@ const Page = () => {
 
     setBlogs(res.data);
   };
+  const fetchRegEvents = async () => {
+    const res = await axios.get("/api/get-regEvent");
+    setRegevents(res.data);
+  }
 
   return (
     <div className="flex flex-col mt-24  min-h-screen bg-gray-100">
@@ -965,6 +1126,15 @@ const Page = () => {
           }}
         >
           Event
+        </Button>
+        <Button
+          className="m-3"
+          onClick={() => {
+            setActiveTab("regevents");
+            fetchRegEvents();
+          }}
+        >
+          RegEvent
         </Button>
         <Button
           className="m-3"
@@ -1016,7 +1186,8 @@ const Page = () => {
                   [...events]
                     .sort(
                       (a, b) =>
-                        new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime()
+                        new Date(b.date ?? "").getTime() -
+                        new Date(a.date ?? "").getTime()
                     )
                     .map((event: IEvent & { _id?: string }, idx: number) => (
                       <div
@@ -1090,87 +1261,180 @@ const Page = () => {
           ""
         )}
 
-        {activeTab === "speakers" ? (
-  <div className="flex flex-col justify-center">
-    <SpeakerForm />
-    <div className="mt-10">
-      <h3 className="text-xl font-semibold mb-4 text-center">
-        All Speakers
-      </h3>
-      <div className="space-y-4">
-        {Array.isArray(speakers) && speakers.length > 0 ? (
-          [...speakers]
-            .sort(
-              (a, b) =>
-                new Date(b.createdAt ?? "").getTime() -
-                new Date(a.createdAt ?? "").getTime()
-            )
-            .map((speaker: ISpeaker & { _id?: string }, idx: number) => (
-              <div
-                key={speaker._id || idx}
-                className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
-              >
-                <div className="flex items-center space-x-4 flex-1">
-                  {/* Image */}
-                  {speaker.image && (
-                    <img
-                      src={speaker.image}
-                      alt={speaker.name}
-                      className="w-16 h-16 object-cover rounded-full"
-                    />
-                  )}
+        {activeTab === "regevents" ? (
+          <div className="flex flex-col justify-center">
+            {/* Add Registration Event Form */}
+            <RegEventForm />
 
-                  {/* Info */}
-                  <div>
-                    <div className="font-bold text-lg">{speaker.name}</div>
-                    <div className="text-gray-600 text-sm">
-                      {speaker.session}
-                    </div>
-                    {speaker.isFeatured && (
-                      <div className="text-xs text-yellow-700 bg-yellow-200 px-2 py-1 rounded-full inline-block mt-1">
-                        Featured
+            {/* List of RegEvents */}
+            <div className="mt-10">
+              <h3 className="text-xl font-semibold mb-4 text-center">
+                All Registration Events
+              </h3>
+              <div className="space-y-4">
+                {Array.isArray(regevents) && regevents.length > 0 ? (
+                  [...regevents]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.createdAt ?? "").getTime() -
+                        new Date(a.createdAt ?? "").getTime()
+                    )
+                    .map((event: RegEventFormData & { _id?: string }, idx: number) => (
+                      <div
+                        key={event._id || idx}
+                        className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-start justify-between"
+                      >
+                        {/* Info */}
+                        <div className="flex-1">
+                          <div className="font-bold text-lg">{event.title}</div>
+                          <div className="text-gray-600 text-sm">
+                            {new Date(event.date).toLocaleDateString()}
+                          </div>
+                          <div className="mt-2 text-gray-700">
+                            {event.description}
+                          </div>
+                          {event.speakers?.length > 0 && (
+                            <div className="mt-2 text-sm text-blue-600">
+                              Speakers: {event.speakers.join(", ")}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Delete */}
+                        <Button
+                          variant="destructive"
+                          className="ml-4 mt-4 md:mt-0"
+                          onClick={async () => {
+                            if (
+                              window.confirm(
+                                `Are you sure you want to delete "${event.title}"?`
+                              )
+                            ) {
+                              try {
+                                await axios.delete(
+                                  "/api/admin/delete-regEvent",
+                                  {
+                                    data: { id: event._id },
+                                  }
+                                );
+
+                                const res = await axios.get(
+                                  "/api/get-regEvent"
+                                );
+                                setRegevents(res.data);
+                              } catch (err) {
+                                alert("Failed to delete registration event.");
+                              }
+                            }
+                          }}
+                        >
+                          Delete
+                        </Button>
                       </div>
-                    )}
+                    ))
+                ) : (
+                  <div className="text-center text-gray-500">
+                    No registration events found.
                   </div>
-                </div>
-
-                {/* Delete */}
-                <Button
-                  variant="destructive"
-                  className="ml-4 mt-4 md:mt-0"
-                  onClick={async () => {
-                    if (
-                      window.confirm(
-                        `Are you sure you want to delete "${speaker.name}"?`
-                      )
-                    ) {
-                      try {
-                        await axios.delete("/api/admin/delete-speakers", {
-                          data: { id: speaker._id },
-                        });
-
-                        const res = await axios.get("/api/get-speakers");
-                        setSpeakers(res.data);
-                      } catch (err) {
-                        alert("Failed to delete speaker.");
-                      }
-                    }
-                  }}
-                >
-                  Delete
-                </Button>
+                )}
               </div>
-            ))
+            </div>
+          </div>
         ) : (
-          <div className="text-center text-gray-500">No speakers found.</div>
+          ""
         )}
-      </div>
-    </div>
-  </div>
-) : (
-  ""
-)}
 
+        {activeTab === "speakers" ? (
+          <div className="flex flex-col justify-center">
+            <SpeakerForm />
+            <div className="mt-10">
+              <h3 className="text-xl font-semibold mb-4 text-center">
+                All Speakers
+              </h3>
+              <div className="space-y-4">
+                {Array.isArray(speakers) && speakers.length > 0 ? (
+                  [...speakers]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.createdAt ?? "").getTime() -
+                        new Date(a.createdAt ?? "").getTime()
+                    )
+                    .map(
+                      (speaker: ISpeaker & { _id?: string }, idx: number) => (
+                        <div
+                          key={speaker._id || idx}
+                          className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
+                        >
+                          <div className="flex items-center space-x-4 flex-1">
+                            {/* Image */}
+                            {speaker.image && (
+                              <img
+                                src={speaker.image}
+                                alt={speaker.name}
+                                className="w-16 h-16 object-cover rounded-full"
+                              />
+                            )}
+
+                            {/* Info */}
+                            <div>
+                              <div className="font-bold text-lg">
+                                {speaker.name}
+                              </div>
+                              <div className="text-gray-600 text-sm">
+                                {speaker.session}
+                              </div>
+                              {speaker.isFeatured && (
+                                <div className="text-xs text-yellow-700 bg-yellow-200 px-2 py-1 rounded-full inline-block mt-1">
+                                  Featured
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Delete */}
+                          <Button
+                            variant="destructive"
+                            className="ml-4 mt-4 md:mt-0"
+                            onClick={async () => {
+                              if (
+                                window.confirm(
+                                  `Are you sure you want to delete "${speaker.name}"?`
+                                )
+                              ) {
+                                try {
+                                  await axios.delete(
+                                    "/api/admin/delete-speakers",
+                                    {
+                                      data: { id: speaker._id },
+                                    }
+                                  );
+
+                                  const res = await axios.get(
+                                    "/api/get-speakers"
+                                  );
+                                  setSpeakers(res.data);
+                                } catch (err) {
+                                  alert("Failed to delete speaker.");
+                                }
+                              }
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      )
+                    )
+                ) : (
+                  <div className="text-center text-gray-500">
+                    No speakers found.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
 
         {activeTab === "climate-panchayat" ? (
           <div className="flex flex-col justify-center">
@@ -1185,7 +1449,8 @@ const Page = () => {
                   [...climatePanchayats]
                     .sort(
                       (a, b) =>
-                        new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime()
+                        new Date(b.date ?? "").getTime() -
+                        new Date(a.date ?? "").getTime()
                     )
                     .map(
                       (
@@ -1281,7 +1546,8 @@ const Page = () => {
                   [...blogs]
                     .sort(
                       (a, b) =>
-                        new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime()
+                        new Date(b.date ?? "").getTime() -
+                        new Date(a.date ?? "").getTime()
                     )
                     .map(
                       (

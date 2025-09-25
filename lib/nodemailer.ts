@@ -11,9 +11,20 @@ export const transporter = nodemailer.createTransport({
 export async function sendConfirmationMail(
   to: string,
   name: string,
-  registrationDays: string[]
+  registrationDays: string[],
+  sessions: { title: string; date: string; speakers: string[] }[] // array of selected events
 ) {
-  const formattedDays = registrationDays.join(", "); // e.g., "6 Oct 2025, 7 Oct 2025, 8 Oct 2025"
+  const formattedDays = registrationDays.join(", "); // e.g., "6 Oct 2025, 7 Oct 2025"
+
+  // Format sessions into an HTML list
+  const sessionsHtml = sessions
+    .map(
+      (s) =>
+        `<li><b>${s.title}</b> (${new Date(s.date).toLocaleDateString(
+          "en-GB"
+        )}) - Speakers: ${s.speakers}</li>`
+    )
+    .join("");
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -30,6 +41,11 @@ export async function sendConfirmationMail(
       🕒 <b>Timing:</b> 11:00 AM – 5:00 PM (all three days)<br/>
       📍 <b>Venue:</b> Swosti Premium, Bhubaneswar
       </p>
+
+      <p><b>Your Selected Sessions:</b></p>
+      <ul>
+        ${sessionsHtml || "<li>No sessions selected</li>"}
+      </ul>
 
       <p>This year’s conference will bring together environmental leaders, youth voices, changemakers, and innovators to engage in powerful discussions, workshops, and action-driven sessions.</p>
 

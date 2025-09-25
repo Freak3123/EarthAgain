@@ -7,8 +7,7 @@ export interface IRegistration extends Document {
   age: string;
   district: string;
   registrationDays: string[];
-  occupation?: string;
-  interests: string[];
+  selectedEvents: string[];
   createdAt: Date;
 }
 
@@ -52,12 +51,7 @@ const RegistrationSchema = new Schema<IRegistration>(
       type: [String],
       default: ["6 Oct 2025", "7 Oct 2025", "8 Oct 2025"],
     },
-    occupation: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-    interests: {
+    selectedEvents: {
       type: [String],
       default: [],
     },
