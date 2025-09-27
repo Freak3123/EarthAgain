@@ -6,10 +6,11 @@ export async function GET(req: Request) {
     await connectDB();
     const regevents = await RegEvent.find({});
     return NextResponse.json(regevents, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Error fetching registration events", error },
-      { status: 500 }
-    );
-  }
+  } catch (error: any) {
+  console.error("Error fetching registration events:", error);
+  return NextResponse.json(
+    { message: "Error fetching registration events", error: error.message },
+    { status: 500 }
+  );
+}
 }

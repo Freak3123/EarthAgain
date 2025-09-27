@@ -3,6 +3,7 @@ import { connectDB } from "@/config/mongoDB/connectDB";
 import Registration from "@/lib/models/registrations";
 import { RegEvent } from "@/lib/models/regevent";
 import { sendConfirmationMail } from "@/lib/nodemailer";
+import mongoose from "mongoose";
 
 export async function POST(req: Request) {
   try {
@@ -11,12 +12,19 @@ export async function POST(req: Request) {
 
     const registration = await Registration.create(body);
 
+    // const sessions =
+    //   registration.selectedEvents && registration.selectedEvents.length > 0
+    //     ? await RegEvent.find({
+    //         _id: { $in: registration.selectedEvents },
+    //       }).select("title date speakers")
+    //     : [];
+
     const sessions =
-      registration.selectedEvents && registration.selectedEvents.length > 0
-        ? await RegEvent.find({
-            _id: { $in: registration.selectedEvents },
-          }).select("title date speakers")
-        : [];
+  registration.selectedEvents && registration.selectedEvents.length > 0
+    ? await RegEvent.find({
+        _id: { $in: registration.selectedEvents.map((id: string) => new mongoose.Types.ObjectId(id)) },
+      }).select("title date speakers")
+    : [];
 
     await sendConfirmationMail(
       registration.email,
