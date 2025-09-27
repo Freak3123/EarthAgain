@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "jbipzumtwhxggtgtirnl.supabase.co",
         pathname: "/storage/v1/object/public/events/**",
+        port: '',
       },
        {
         protocol: 'https',
@@ -44,7 +45,9 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       }
     ],
+    minimumCacheTTL: 60,
   },
+
 };
 
 export default nextConfig;

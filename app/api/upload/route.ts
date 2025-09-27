@@ -13,8 +13,15 @@ export async function POST(req: Request) {
 
   try {
     // Create a unique filename
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${title}-${Date.now()}.${fileExt}`;
+    const fileExt = file.name.split(".").pop()?.toLowerCase();
+
+    // sanitize title: remove spaces, special chars, etc.
+    const safeTitle = title
+  .normalize("NFD")                  // remove accents
+  .replace(/\s+/g, "-")              // spaces → dash
+  .replace(/[^a-zA-Z0-9-]/g, "");
+
+    const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `events/${fileName}`;
 
     // Upload to Supabase storage
@@ -36,49 +43,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-
-
-
-// import { NextRequest, NextResponse } from "next/server";
-// import { writeFile, mkdir } from "fs/promises";
-// import path from "path";
-
-// export async function POST(req: NextRequest) {
-//   try {
-//     const formData = await req.formData();
-//     const file = formData.get("file") as File;
-//     const title = formData.get("title") as string; // 👈 event title from form
-
-//     if (!file || !title) {
-//       return NextResponse.json({ error: "Missing file or title" }, { status: 400 });
-//     }
-
-//     // Convert File -> Buffer
-//     const bytes = await file.arrayBuffer();
-//     const buffer = Buffer.from(bytes);
-
-//     // Ensure uploads directory exists
-//     const uploadDir = path.join(process.cwd(), "public/uploads");
-//     await mkdir(uploadDir, { recursive: true });
-
-//     // Extract extension from original file
-//     const ext = path.extname(file.name);
-
-//     // Slugify title for safe filename
-//     const safeTitle = title.toLowerCase().replace(/[^a-z0-9]/g, "-");
-
-//     // Final filename = event title + extension
-//     const fileName = `${safeTitle}${ext}`;
-//     const filePath = path.join(uploadDir, fileName);
-
-//     await writeFile(filePath, buffer);
-
-//     return NextResponse.json({
-//       filePath: `/uploads/${fileName}`, // Public path
-//     });
-//   } catch (err) {
-//     console.error("Upload error:", err);
-//     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
-//   }
-// }

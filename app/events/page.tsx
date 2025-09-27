@@ -173,6 +173,7 @@ export default function EventsPage() {
                     width={400}
                     height={200}
                     className="w-full h-full object-cover"
+                    unoptimized={false}
                   />
                   <div className="absolute top-4 left-4">
                     <Badge
