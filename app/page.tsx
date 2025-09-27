@@ -30,10 +30,10 @@ Join us in making the earth whole again.
       <SponsorsPartners />
       <ImpactTracker /> 
       
-      {/* <Events /> */}
+     
       <SpeakersSection />
       {/* <Testimonials /> */}
-     
+      <Events />
       {/* will make a map later */}
       <CallAction />
     </div>

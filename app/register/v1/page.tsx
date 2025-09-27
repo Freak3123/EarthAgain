@@ -63,7 +63,7 @@ export default function RegisterPage() {
     fetchEvents();
   }, []);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
     try {
@@ -339,67 +339,106 @@ export default function RegisterPage() {
                   </div>
                 </div>
                 {/* Events list for selected days */}
-                <div className="space-y-4 mb-6">
+                {/* Events list for selected days */}
+                <div className="space-y-6 mb-6">
                   <Label className="font-semibold text-gray-900">
-                    Select Events to Attend
+                    Select Sessions to Attend
                   </Label>
 
                   {filteredEvents.length > 0 ? (
-                    filteredEvents.map((ev) => (
-                      <label
-                        key={ev._id as string}
-                        className="flex items-start space-x-3 cursor-pointer"
-                      >
-                        {/* Checkbox */}
-                        <input
-                          type="checkbox"
-                          className="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded"
-                          checked={formData.selectedEvents.includes(
-                            ev._id! as string
-                          )}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData((prev) => ({
-                                ...prev,
-                                selectedEvents: [
-                                  ...prev.selectedEvents,
-                                  String(ev._id),
-                                ],
-                              }));
-                            } else {
-                              setFormData((prev) => ({
-                                ...prev,
-                                selectedEvents: prev.selectedEvents.filter(
-                                  (id) => id !== ev._id
-                                ),
-                              }));
+                    // Group events by date
+                    Object.entries(
+                      filteredEvents.reduce(
+                        (acc: Record<string, IRegEvent[]>, ev) => {
+                          const eventDay = new Date(ev.date).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
                             }
-                          }}
-                        />
+                          );
+                          if (!acc[eventDay]) acc[eventDay] = [];
+                          acc[eventDay].push(ev);
+                          return acc;
+                        },
+                        {}
+                      )
+                    ).map(([date, eventsOnDay]) => (
+                      <div key={date} className="space-y-3">
+                        {/* Date Header */}
+                        <h3 className="text-lg font-semibold text-green-700 flex items-center gap-2">
+                          <Calendar className="w-5 h-5 text-green-600" />
+                          {date}
+                        </h3>
 
-                        {/* Event Card */}
-                        <div className="flex-1 flex flex-col p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150">
-                          {/* Title and Date */}
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-bold text-lg text-gray-900">
-                              {ev.title}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {new Date(ev.date).toLocaleDateString("en-GB")}
-                            </span>
-                          </div>
+                        {/* Events Grid for this date */}
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {eventsOnDay.map((ev) => {
+                            const isChecked = formData.selectedEvents.includes(
+                              ev._id! as string
+                            );
 
-                          {/* Speakers */}
-                          <span className="text-sm text-gray-500 mb-2">
-                            Speakers: {ev.speakers.join(", ")}
-                          </span>
+                            return (
+                              <label
+                                key={ev._id as string}
+                                className={`relative flex flex-col p-5 rounded-xl border transition-all cursor-pointer 
+                  ${
+                    isChecked
+                      ? "border-green-600 bg-green-50 shadow-md"
+                      : "border-gray-200 hover:border-green-400"
+                  }`}
+                              >
+                                {/* Hidden checkbox */}
+                                <input
+                                  type="checkbox"
+                                  className="absolute inset-0 opacity-0 cursor-pointer"
+                                  checked={isChecked}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        selectedEvents: [
+                                          ...prev.selectedEvents,
+                                          String(ev._id),
+                                        ],
+                                      }));
+                                    } else {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        selectedEvents:
+                                          prev.selectedEvents.filter(
+                                            (id) => id !== ev._id
+                                          ),
+                                      }));
+                                    }
+                                  }}
+                                />
 
-                          {/* Description */}
-                          <p className="text-gray-700 text-sm">
-                            {ev.description}
-                          </p>
+                                {/* Event Title */}
+                                <h4 className="font-bold text-lg text-gray-900 mb-2">
+                                  {ev.title}
+                                </h4>
+
+                                {/* Speakers */}
+                                {ev.speakers.length > 0 && (
+                                  <div className="space-y-1">
+                                    <div className="flex items-center text-sm font-medium text-gray-800 mb-1">
+                                      <Users className="w-4 h-4 text-gray-500 mr-2" />
+                                      Speakers:
+                                    </div>
+                                    <ul className="pl-6 list-disc text-sm text-gray-700 space-y-1">
+                                      {ev.speakers.map((spk, idx) => (
+                                        <li key={idx}>{spk}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </label>
+                            );
+                          })}
                         </div>
-                      </label>
+                      </div>
                     ))
                   ) : (
                     <p className="text-gray-500">
