@@ -9,7 +9,7 @@ const Page = () => {
           Registrations Are Opening Soon!
         </h1>
         <p className="text-lg md:text-xl text-gray-700 mb-4">
-          We’re preparing something exciting for you. Stay tuned and check back soon!
+          We look forward to hosting you !
         </p>
         <p className="text-gray-500 mb-8">
           Follow us on our social channels to get the latest updates.
