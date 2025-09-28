@@ -339,7 +339,6 @@ export default function RegisterPage() {
                   </div>
                 </div>
                 {/* Events list for selected days */}
-                {/* Events list for selected days */}
                 <div className="space-y-6 mb-6">
                   <Label className="font-semibold text-gray-900">
                     Select Sessions to Attend
@@ -453,6 +452,7 @@ export default function RegisterPage() {
                 type="submit"
                 size="lg"
                 className="w-full bg-green-600 hover:bg-green-700"
+                disabled={formData.selectedEvents.length === 0}
               >
                 Join Earth Again Movement
               </Button>

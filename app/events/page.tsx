@@ -9,6 +9,7 @@ import { Calendar, MapPin, Clock, Users, Search } from "lucide-react";
 import Image from "next/image";
 import axios from "axios";
 import LoaderComp from "@/components/LoaderComp";
+import Link from "next/link";
 
 type Event = {
   _id: number;
@@ -159,79 +160,82 @@ export default function EventsPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEvents
-        .slice() // a copy to avoid mutating original
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .map((event) => (
-              <Card
-                key={event._id}
-                className="border-0 pt-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
-              >
-                <div className="relative h-60">
-                  <Image
-                    src={`${event.image}`}
-                    alt={event.title}
-                    width={400}
-                    height={200}
-                    className="w-full h-full object-cover"
-                    unoptimized={false}
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge
-                      className={`${
-                        event.type === "Launch Event"
-                          ? "bg-purple-600"
-                          : event.type === "Climate Panchayat"
-                          ? "bg-blue-600"
-                          : event.type === "Workshop"
-                          ? "bg-orange-600"
-                          : event.type === "Action Event"
-                          ? "bg-green-600"
-                          : "bg-gray-600"
-                      } text-white`}
-                    >
-                      {event.type}
-                    </Badge>
-                  </div>
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-white/90 text-gray-900">
-                      {event.date.slice(0, 10)}
-                    </Badge>
-                  </div>
-                </div>
-
-                <CardContent className="px-6 py-0 pb-2">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    {event.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {event.description}
-                  </p>
-
-                  <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar className="w-4 h-4" />
-                      <span>{event.date.slice(0, 10)}</span>
+              .slice() // a copy to avoid mutating original
+              .sort(
+                (a, b) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
+              )
+              .map((event) => (
+                <Card
+                  key={event._id}
+                  className="border-0 pt-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                >
+                  <div className="relative h-60">
+                    <Image
+                      src={`${event.image}`}
+                      alt={event.title}
+                      width={400}
+                      height={200}
+                      className="w-full h-full object-cover"
+                      unoptimized={false}
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge
+                        className={`${
+                          event.type === "Launch Event"
+                            ? "bg-purple-600"
+                            : event.type === "Climate Panchayat"
+                            ? "bg-blue-600"
+                            : event.type === "Workshop"
+                            ? "bg-orange-600"
+                            : event.type === "Action Event"
+                            ? "bg-green-600"
+                            : "bg-gray-600"
+                        } text-white`}
+                      >
+                        {event.type}
+                      </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Clock className="w-4 h-4" />
-                      <span>{event.time}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <MapPin className="w-4 h-4" />
-                      <span>{event.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Users className="w-4 h-4" />
-                      <span>{event.attendees} Expected</span>
+                    <div className="absolute top-4 right-4">
+                      <Badge className="bg-white/90 text-gray-900">
+                        {event.date.slice(0, 10)}
+                      </Badge>
                     </div>
                   </div>
 
-                  {/* <Button className="w-full bg-green-600 hover:bg-green-700">
+                  <CardContent className="px-6 py-0 pb-2">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                      {event.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {event.description}
+                    </p>
+
+                    <div className="space-y-2 mb-6">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Calendar className="w-4 h-4" />
+                        <span>{event.date.slice(0, 10)}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Clock className="w-4 h-4" />
+                        <span>{event.time}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <MapPin className="w-4 h-4" />
+                        <span>{event.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Users className="w-4 h-4" />
+                        <span>{event.attendees} Expected</span>
+                      </div>
+                    </div>
+
+                    {/* <Button className="w-full bg-green-600 hover:bg-green-700">
                     Register Now
                   </Button> */}
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
           </div>
 
           {filteredEvents.length === 0 && (
@@ -256,19 +260,23 @@ export default function EventsPage() {
             execute impactful environmental events in your community.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-white text-green-600 hover:bg-gray-100"
-            >
-              Propose an Event
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white/10 bg-transparent"
-            >
-              Contact Event Team
-            </Button>
+            <Link href="/join-us">
+              <Button
+                size="lg"
+                className="bg-white text-green-600 hover:bg-gray-100"
+              >
+                Propose an Event
+              </Button>
+            </Link>
+            <a href="mailto:eaoutreach2025@gmail.com">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white/10 bg-transparent"
+              >
+                Contact Event Team
+              </Button>
+            </a>
           </div>
         </div>
       </section>
