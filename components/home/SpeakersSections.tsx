@@ -60,14 +60,16 @@ export default function SpeakersSection() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       <div className="absolute bottom-4 left-4 text-white">
-                        <h3 className="text-xl font-bold mb-1">
+                        {/* <h3 className="text-xl font-bold mb-1">
                           {speaker.name}
-                        </h3>
+                        </h3> */}
                       </div>
                     </div>
                     <CardContent className="p-4 py-0">
-                      <p className="text-gray-600 font-medium mb-4">
-                        {speaker.session}
+                      <p className="text-xl font-bold text-center mb-4">
+                      {/* <p className="text-gray-600 font-medium mb-4"> */}
+                        {/* {speaker.session} */}
+                        {speaker.name}
                       </p>
                     </CardContent>
                   </Card>
