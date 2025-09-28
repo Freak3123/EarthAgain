@@ -91,7 +91,7 @@ export default function SpeakersSection() {
                   key={speaker._id}
                   className="border-0 pt-0 h-auto shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
                 >
-                  <div className="relative w-full h-60">
+                  <div className="relative w-full h-96">
                     <Image
                       src={speaker.image}
                       alt={speaker.name}
@@ -100,12 +100,14 @@ export default function SpeakersSection() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
-                      <h3 className="text-xl font-bold mb-1">{speaker.name}</h3>
+                      {/* <h3 className="text-xl font-bold mb-1">{speaker.name}</h3> */}
                     </div>
                   </div>
                   <CardContent className="p-4 py-0">
-                    <p className="text-gray-600 font-medium mb-4 whitespace-normal break-words">
-                      {speaker.session}
+                    <p className="text-xl font-semibold text-center whitespace-normal break-words">
+                    {/* <p className="text-gray-600 font-medium mb-4 whitespace-normal break-words"> */}
+                      {/* {speaker.session} */}
+                      {speaker.name}
                     </p>
                   </CardContent>
                 </Card>
