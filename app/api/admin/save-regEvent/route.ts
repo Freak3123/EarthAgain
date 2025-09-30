@@ -9,8 +9,9 @@ export async function POST(req: Request) {
 
     const title = formData.get("title") as string;
     const date = formData.get("date") as string;
+    const time = formData.get("time") as string;
     const description = formData.get("description") as string;
-    const speakers = formData.getAll("speakers") as string[]; // allows multiple speakers
+    const speakers = formData.getAll("speakers") as string[];
 
     if (!title || !date || !description || speakers.length === 0) {
       return NextResponse.json(
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
     const regEvent = new RegEvent({
       title,
       date: new Date(date),
+      time: time,           
       description,
       speakers,
     });
@@ -29,7 +31,7 @@ export async function POST(req: Request) {
     await regEvent.save();
 
     return NextResponse.json(
-      { message: "Registration event created successfully", regEvent },
+      { message: "Registration event created successfully" },
       { status: 201 }
     );
   } catch (error) {

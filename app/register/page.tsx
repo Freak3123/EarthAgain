@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Users, Calendar, MapPin, CheckCircle } from "lucide-react";
+import { Users, Calendar, MapPin, CheckCircle, Clock } from "lucide-react";
 import { IRegEvent } from "@/lib/models/regevent";
 
 export default function RegisterPage() {
@@ -422,6 +422,13 @@ export default function RegisterPage() {
                                 {/* Speakers */}
                                 {ev.speakers.length > 0 && (
                                   <div className="space-y-1">
+                                    <div className="flex items-center text-sm font-medium text-gray-800 mb-1">
+                                      <Clock className="w-4 h-4 text-gray-500 mr-2" />
+                                      Time:
+                                      <p className="text-sm font-normal text-gray-700 ml-1">
+                                        {ev.time || "To be announced"}
+                                      </p>
+                                    </div>
                                     <div className="flex items-center text-sm font-medium text-gray-800 mb-1">
                                       <Users className="w-4 h-4 text-gray-500 mr-2" />
                                       Speakers:

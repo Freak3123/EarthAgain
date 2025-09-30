@@ -39,6 +39,7 @@ interface ClimatePanchayatFormData {
 interface RegEventFormData {
   title: string;
   date: string;
+  time: string;
   description: string;
   speakers: string[];
 }
@@ -111,6 +112,7 @@ const RegEventForm = () => {
   const [formData, setFormData] = useState<RegEventFormData>({
     title: "",
     date: "",
+    time: "",
     description: "",
     speakers: [""], // start with one input field
   });
@@ -146,6 +148,7 @@ const RegEventForm = () => {
 
       payload.append("title", formData.title);
       payload.append("date", formData.date);
+      payload.append("time", formData.time);
       payload.append("description", formData.description);
 
       formData.speakers.forEach((speaker) => {
@@ -169,6 +172,7 @@ const RegEventForm = () => {
       setFormData({
         title: "",
         date: "",
+        time: "",
         description: "",
         speakers: [""],
       });
@@ -205,6 +209,18 @@ const RegEventForm = () => {
                 type="date"
                 value={formData.date}
                 onChange={(e) => handleChange("date", e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            {/* Time */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Time</label>
+              <input
+                type="time"
+                value={formData.time}
+                onChange={(e) => handleChange("time", e.target.value)}
                 className="w-full px-3 py-2 border rounded-md"
                 required
               />
@@ -1113,7 +1129,7 @@ const Page = () => {
   const fetchRegEvents = async () => {
     const res = await axios.get("/api/get-regEvent");
     setRegevents(res.data);
-  }
+  };
 
   return (
     <div className="flex flex-col mt-24  min-h-screen bg-gray-100">
@@ -1279,59 +1295,67 @@ const Page = () => {
                         new Date(b.createdAt ?? "").getTime() -
                         new Date(a.createdAt ?? "").getTime()
                     )
-                    .map((event: RegEventFormData & { _id?: string }, idx: number) => (
-                      <div
-                        key={event._id || idx}
-                        className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-start justify-between"
-                      >
-                        {/* Info */}
-                        <div className="flex-1">
-                          <div className="font-bold text-lg">{event.title}</div>
-                          <div className="text-gray-600 text-sm">
-                            {new Date(event.date).toLocaleDateString()}
-                          </div>
-                          <div className="mt-2 text-gray-700">
-                            {event.description}
-                          </div>
-                          {event.speakers?.length > 0 && (
-                            <div className="mt-2 text-sm text-blue-600">
-                              Speakers: {event.speakers.join(", ")}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Delete */}
-                        <Button
-                          variant="destructive"
-                          className="ml-4 mt-4 md:mt-0"
-                          onClick={async () => {
-                            if (
-                              window.confirm(
-                                `Are you sure you want to delete "${event.title}"?`
-                              )
-                            ) {
-                              try {
-                                await axios.delete(
-                                  "/api/admin/delete-regEvent",
-                                  {
-                                    data: { id: event._id },
-                                  }
-                                );
-
-                                const res = await axios.get(
-                                  "/api/get-regEvent"
-                                );
-                                setRegevents(res.data);
-                              } catch (err) {
-                                alert("Failed to delete registration event.");
-                              }
-                            }
-                          }}
+                    .map(
+                      (
+                        event: RegEventFormData & { _id?: string },
+                        idx: number
+                      ) => (
+                        <div
+                          key={event._id || idx}
+                          className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-start justify-between"
                         >
-                          Delete
-                        </Button>
-                      </div>
-                    ))
+                          {/* Info */}
+                          <div className="flex-1">
+                            <div className="font-bold text-lg">
+                              {event.title}
+                            </div>
+                            <div className="text-gray-600 text-sm">
+                              {new Date(event.date).toLocaleDateString()}
+                              {event.time && <span className="ml-2">{event.time}</span>}
+                            </div>
+                            <div className="mt-2 text-gray-700">
+                              {event.description}
+                            </div>
+                            {event.speakers?.length > 0 && (
+                              <div className="mt-2 text-sm text-blue-600">
+                                Speakers: {event.speakers.join(", ")}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Delete */}
+                          <Button
+                            variant="destructive"
+                            className="ml-4 mt-4 md:mt-0"
+                            onClick={async () => {
+                              if (
+                                window.confirm(
+                                  `Are you sure you want to delete "${event.title}"?`
+                                )
+                              ) {
+                                try {
+                                  await axios.delete(
+                                    "/api/admin/delete-regEvent",
+                                    {
+                                      data: { id: event._id },
+                                    }
+                                  );
+
+                                  const res = await axios.get(
+                                    "/api/get-regEvent"
+                                  );
+                                  setRegevents(res.data);
+                                } catch (err) {
+                                  alert("Failed to delete registration event.");
+                                }
+                              }
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      )
+                    )
                 ) : (
                   <div className="text-center text-gray-500">
                     No registration events found.
