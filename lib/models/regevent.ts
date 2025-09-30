@@ -5,14 +5,14 @@ export interface IRegEvent extends Document {
   date: Date;
   time: string;
   description: string;
-  speakers: string[]; // using array in case of multiple speakers
+  speakers: string[]; 
 }
 
 const regEventSchema = new Schema<IRegEvent>(
   {
     title: { type: String, required: true, trim: true },
     date: { type: Date, required: true },
-    time: { type: String, required: false, trim: true },
+    time: { type: String, required: false, trim: true, default: "To be announced" },
     description: { type: String, required: true, trim: true },
     speakers: [{ type: String, required: true, trim: true }],
   },

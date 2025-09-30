@@ -426,7 +426,7 @@ export default function RegisterPage() {
                                       <Clock className="w-4 h-4 text-gray-500 mr-2" />
                                       Time:
                                       <p className="text-sm font-normal text-gray-700 ml-1">
-                                        {ev.time || "To be announced"}
+                                        {ev.time}
                                       </p>
                                     </div>
                                     <div className="flex items-center text-sm font-medium text-gray-800 mb-1">

@@ -23,8 +23,10 @@ export async function POST(req: Request) {
   registration.selectedEvents && registration.selectedEvents.length > 0
     ? await RegEvent.find({
         _id: { $in: registration.selectedEvents.map((id: string) => new mongoose.Types.ObjectId(id)) },
-      }).select("title date speakers")
+      }).select("title date speakers time")
     : [];
+
+    console.log("Sessions fetched for email:", sessions);
 
     await sendConfirmationMail(
       registration.email,
@@ -33,7 +35,7 @@ export async function POST(req: Request) {
       sessions.map((ev) => ({
         title: ev.title,
         date: ev.date instanceof Date ? ev.date.toISOString() : new Date(ev.date).toISOString(),
-        time: ev.time || "to be announced",
+        time: ev.time,
         speakers: ev.speakers,
       }))
     );

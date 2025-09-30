@@ -24,7 +24,7 @@ export async function sendConfirmationMail(
       }); 
       return `
         <li>
-          <b>Session:</b> ${s.title}, ${s.time || "time: to be announced"}, ${day}<br/>
+          <b>Session:</b> ${s.title}, ${s.time}, ${day}<br/>
           <b>Speakers details -</b> ${s.speakers.join(", ")}
         </li>
       `;
