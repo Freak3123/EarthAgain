@@ -20,11 +20,15 @@ export async function POST(req: Request) {
     //     : [];
 
     const sessions =
-  registration.selectedEvents && registration.selectedEvents.length > 0
-    ? await RegEvent.find({
-        _id: { $in: registration.selectedEvents.map((id: string) => new mongoose.Types.ObjectId(id)) },
-      }).select("title date speakers time")
-    : [];
+      registration.selectedEvents && registration.selectedEvents.length > 0
+        ? await RegEvent.find({
+            _id: {
+              $in: registration.selectedEvents.map(
+                (id: string) => new mongoose.Types.ObjectId(id)
+              ),
+            },
+          }).select("title date speakers time")
+        : [];
 
     console.log("Sessions fetched for email:", sessions);
 
@@ -34,7 +38,10 @@ export async function POST(req: Request) {
       registration.registrationDays,
       sessions.map((ev) => ({
         title: ev.title,
-        date: ev.date instanceof Date ? ev.date.toISOString() : new Date(ev.date).toISOString(),
+        date:
+          ev.date instanceof Date
+            ? ev.date.toISOString()
+            : new Date(ev.date).toISOString(),
         time: ev.time,
         speakers: ev.speakers,
       }))

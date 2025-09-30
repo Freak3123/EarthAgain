@@ -44,6 +44,14 @@ interface RegEventFormData {
   speakers: string[];
 }
 
+//same as above but for fetching event name...
+export interface IEventRef {
+  _id: string;
+  title: string;
+  date: Date;
+  time: string;
+}
+
 interface IRegistration {
   _id?: string;
   name: string;
@@ -59,10 +67,9 @@ interface IRegistration {
     | "sambalpur"
     | "other";
   registrationDays: string[];
-  selectedEvents: string[];
-  createdAt: string; // ISO date string when fetched from API
+  selectedEvents: IEventRef[]; 
+  createdAt: Date; // ISO date string when fetched from API
 }
-
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -1155,6 +1162,7 @@ const Page = () => {
   };
   const fetchRegList = async () => {
     const res = await axios.get("/api/get-registrations");
+    console.log("Fetched registrations:", res.data);
     setRegList(res.data);
   };
 
@@ -1714,91 +1722,148 @@ const Page = () => {
           <div className="flex flex-col justify-center p-6">
             <div className="mt-10">
               <h3 className="text-xl font-semibold mb-4 text-center">
-                All Registrations
+                All Registrations (Grouped by Session)
               </h3>
-              <div className="space-y-4">
-                {Array.isArray(regList) && regList.length > 0 ? (
-                  [...regList]
-                    .sort(
-                      (a, b) =>
-                        new Date(b.createdAt).getTime() -
-                        new Date(a.createdAt).getTime()
-                    )
-                    .map((reg: IRegistration, idx: number) => (
-                      <div
-                        key={reg._id || idx}
-                        className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
-                      >
-                        {/* Info */}
-                        <div className="flex-1">
-                          <div className="font-bold text-lg">{reg.name}</div>
-                          <div className="text-gray-600 text-sm">
-                            {reg.email} • {reg.phone}
-                          </div>
-                          <div className="text-gray-600 text-sm mt-1">
-                            Age: {reg.age} • District: {reg.district}
-                          </div>
-                          <div className="text-gray-600 text-sm mt-1">
-                            Registered on:{" "}
-                            {new Date(reg.createdAt).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              }
-                            )}
-                          </div>
-                          {reg.registrationDays?.length > 0 && (
-                            <div className="text-blue-600 text-sm mt-2">
-                              Days: {reg.registrationDays.join(", ")}
-                            </div>
-                          )}
-                          {reg.selectedEvents?.length > 0 && (
-                            <div className="text-green-600 text-sm mt-1">
-                              Events: {reg.selectedEvents.join(", ")}
-                            </div>
-                          )}
-                        </div>
 
-                        {/* Actions */}
-                        <Button
-                          variant="destructive"
-                          className="ml-4 mt-4 md:mt-0"
-                          onClick={async () => {
-                            if (
-                              window.confirm(
-                                `Are you sure you want to delete registration of "${reg.name}"?`
-                              )
-                            ) {
-                              try {
-                                await axios.delete(
-                                  "/api/admin/delete-registration",
-                                  {
-                                    data: { id: reg._id },
+              {/* Group Registrations */}
+              {(() => {
+                // ✅ Ensure events is always an array
+                const safeEvents = Array.isArray(events) ? events : [];
+
+                // Build quick lookup for events by title
+                const eventMap = safeEvents.reduce((acc: any, ev: any) => {
+                  acc[ev._id] = {
+                    title: ev.title,
+                    date: ev.date,
+                    time: ev.time,
+                    location: ev.location,
+                    district: ev.district,
+                  };
+                  return acc;
+                }, {});
+
+                // Group registrations by date • time • event title
+                const grouped = (Array.isArray(regList) ? regList : []).reduce(
+                  (
+                    acc: Record<
+                      string,
+                      { eventTitle: string; reg: IRegistration }[]
+                    >,
+                    reg: IRegistration
+                  ) => {
+                    reg.selectedEvents?.forEach((ev) => {
+                      const day = new Date(ev.date).toLocaleDateString(
+                        "en-GB",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }
+                      );
+                      const key = `${day} • ${ev.time} • ${ev.title}`;
+                      if (!acc[key]) acc[key] = [];
+                      acc[key].push({ eventTitle: ev.title, reg });
+                    });
+                    return acc;
+                  },
+                  {}
+                );
+
+                type GroupedRegs = Record<
+                  string,
+                  { eventTitle: string; reg: IRegistration }[]
+                >;
+
+                const groupedTyped = grouped as GroupedRegs;
+
+                return Object.entries(groupedTyped).length > 0 ? (
+                  Object.entries(groupedTyped).map(([key, entries]) => (
+                    <div key={key} className="mb-8">
+                      <h4 className="text-lg font-bold mb-3 text-blue-700">
+                        {key} ({entries.length})
+                      </h4>
+
+                      <div className="space-y-4">
+                        {entries
+                          .sort(
+                            (a, b) =>
+                              new Date(b.reg.createdAt).getTime() -
+                              new Date(a.reg.createdAt).getTime()
+                          )
+                          .map(({ reg }, idx) => (
+                            <div
+                              key={reg._id || idx}
+                              className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
+                            >
+                              {/* Info */}
+                              <div className="flex-1">
+                                <div className="font-bold text-lg">
+                                  {reg.name}
+                                </div>
+                                <div className="text-gray-600 text-sm">
+                                  {reg.email} • {reg.phone}
+                                </div>
+                                <div className="text-gray-600 text-sm mt-1">
+                                  Age: {reg.age} • District: {reg.district}
+                                </div>
+                                <div className="text-gray-600 text-sm mt-1">
+                                  Registered on:{" "}
+                                  {new Date(reg.createdAt).toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    }
+                                  )}
+                                </div>
+                                {reg.registrationDays?.length > 0 && (
+                                  <div className="text-blue-600 text-sm mt-2">
+                                    Days: {reg.registrationDays.join(", ")}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Actions */}
+                              <Button
+                                variant="destructive"
+                                className="ml-4 mt-4 md:mt-0"
+                                onClick={async () => {
+                                  if (
+                                    window.confirm(
+                                      `Are you sure you want to delete registration of "${reg.name}"?`
+                                    )
+                                  ) {
+                                    try {
+                                      await axios.delete(
+                                        "/api/admin/delete-registration",
+                                        {
+                                          data: { id: reg._id },
+                                        }
+                                      );
+                                      const res = await axios.get(
+                                        "/api/get-registrations"
+                                      );
+                                      setRegList(res.data);
+                                    } catch (err) {
+                                      alert("Failed to delete registration.");
+                                    }
                                   }
-                                );
-
-                                const res = await axios.get(
-                                  "/api/get-registrations"
-                                );
-                                setRegList(res.data);
-                              } catch (err) {
-                                alert("Failed to delete registration.");
-                              }
-                            }
-                          }}
-                        >
-                          Delete
-                        </Button>
+                                }}
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          ))}
                       </div>
-                    ))
+                    </div>
+                  ))
                 ) : (
                   <div className="text-center text-gray-500">
                     No registrations found.
                   </div>
-                )}
-              </div>
+                );
+              })()}
             </div>
           </div>
         ) : (

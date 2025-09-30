@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, models } from "mongoose";
+import { RegEvent } from "@/lib/models/regevent";
 
 export interface IRegistration extends Document {
   name: string;
@@ -7,7 +8,7 @@ export interface IRegistration extends Document {
   age: string;
   district: string;
   registrationDays: string[];
-  selectedEvents: string[];
+  selectedEvents: mongoose.Types.ObjectId[];
   createdAt: Date;
 }
 
@@ -51,10 +52,12 @@ const RegistrationSchema = new Schema<IRegistration>(
       type: [String],
       default: ["6 Oct 2025", "7 Oct 2025", "8 Oct 2025"],
     },
-    selectedEvents: {
-      type: [String],
-      default: [],
-    },
+    selectedEvents: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "RegEvent",
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now,
@@ -64,6 +67,7 @@ const RegistrationSchema = new Schema<IRegistration>(
 );
 
 const Registration =
-  models.Registration || mongoose.model<IRegistration>("Registration", RegistrationSchema);
+  models.Registration ||
+  mongoose.model<IRegistration>("Registration", RegistrationSchema);
 
 export default Registration;
