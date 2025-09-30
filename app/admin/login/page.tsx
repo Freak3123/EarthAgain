@@ -1154,7 +1154,7 @@ const Page = () => {
     setRegevents(res.data);
   };
   const fetchRegList = async () => {
-    const res = await axios.get("/api/admin/get-registrations");
+    const res = await axios.get("/api/get-registrations");
     setRegList(res.data);
   };
 
@@ -1780,7 +1780,7 @@ const Page = () => {
                                 );
 
                                 const res = await axios.get(
-                                  "/api/admin/get-registrations"
+                                  "/api/get-registrations"
                                 );
                                 setRegList(res.data);
                               } catch (err) {

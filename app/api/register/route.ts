@@ -33,6 +33,7 @@ export async function POST(req: Request) {
       sessions.map((ev) => ({
         title: ev.title,
         date: ev.date instanceof Date ? ev.date.toISOString() : new Date(ev.date).toISOString(),
+        time: ev.time || "to be announced",
         speakers: ev.speakers,
       }))
     );
