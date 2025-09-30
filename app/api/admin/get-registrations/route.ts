@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Registration from "@/lib/models/registrations";
-
-// Make sure to connect to MongoDB
-async function connectDB() {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(process.env.MONGO_URI as string);
-  }
-}
+import { connectDB } from "@/config/mongoDB/connectDB";
 
 export async function GET() {
   try {
