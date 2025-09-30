@@ -20,17 +20,22 @@ export async function POST(req: Request) {
     //     : [];
 
     const sessions =
-      registration.selectedEvents && registration.selectedEvents.length > 0
-        ? await RegEvent.find({
-            _id: {
-              $in: registration.selectedEvents.map(
-                (id: string) => new mongoose.Types.ObjectId(id)
-              ),
-            },
-          }).select("title date speakers time")
-        : [];
+  registration.selectedEvents && registration.selectedEvents.length > 0
+    ? await RegEvent.find({
+        _id: { $in: registration.selectedEvents.map((id: string) => new mongoose.Types.ObjectId(id)) },
+      }).select("title date speakers time")
+    : [];
 
-    console.log("Sessions fetched for email:", sessions);
+
+    function formatTo12Hour(time24: string) {
+      if (!time24) return "";
+      const [hours, minutes] = time24.split(":").map(Number);
+      const suffix = hours >= 12 ? "PM" : "AM";
+      const hours12 = ((hours + 11) % 12) + 1; // convert 0–23 → 1–12
+      return `${hours12.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")} ${suffix}`;
+    }
 
     await sendConfirmationMail(
       registration.email,
@@ -38,10 +43,7 @@ export async function POST(req: Request) {
       registration.registrationDays,
       sessions.map((ev) => ({
         title: ev.title,
-        date:
-          ev.date instanceof Date
-            ? ev.date.toISOString()
-            : new Date(ev.date).toISOString(),
+        date: ev.date instanceof Date ? ev.date.toISOString() : new Date(ev.date).toISOString(),
         time: ev.time,
         speakers: ev.speakers,
       }))

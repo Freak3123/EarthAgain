@@ -17,6 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Users, Calendar, MapPin, CheckCircle, Clock } from "lucide-react";
 import { IRegEvent } from "@/lib/models/regevent";
+import { formatTo12Hour } from "@/lib/formatTime";
 
 export default function RegisterPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -62,6 +63,7 @@ export default function RegisterPage() {
     };
     fetchEvents();
   }, []);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -426,7 +428,7 @@ export default function RegisterPage() {
                                       <Clock className="w-4 h-4 text-gray-500 mr-2" />
                                       Time:
                                       <p className="text-sm font-normal text-gray-700 ml-1">
-                                        {ev.time}
+                                        { formatTo12Hour(ev.time)}
                                       </p>
                                     </div>
                                     <div className="flex items-center text-sm font-medium text-gray-800 mb-1">
