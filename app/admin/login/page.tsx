@@ -44,6 +44,26 @@ interface RegEventFormData {
   speakers: string[];
 }
 
+interface IRegistration {
+  _id?: string;
+  name: string;
+  email: string;
+  phone: string;
+  age: "under-18" | "18-25" | "26-35" | "36-50" | "above-50";
+  district:
+    | "bhubaneswar"
+    | "cuttack"
+    | "puri"
+    | "berhampur"
+    | "rourkela"
+    | "sambalpur"
+    | "other";
+  registrationDays: string[];
+  selectedEvents: string[];
+  createdAt: string; // ISO date string when fetched from API
+}
+
+
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -1094,6 +1114,11 @@ const Page = () => {
   const [climatePanchayats, setClimatePanchayats] = useState<
     ClimatePanchayatFormData[]
   >([]);
+  const [regList, setRegList] = useState<any[]>([]);
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
   if (!session) {
     return (
@@ -1105,13 +1130,11 @@ const Page = () => {
 
   const fetchLiveEvents = async () => {
     const res = await axios.get("/api/get-events");
-
     setEvents(res.data);
     console.log(res.data);
   };
   const fetchSpeakers = async () => {
     const res = await axios.get("/api/get-speakers");
-
     setSpeakers(res.data);
     console.log(res.data);
   };
@@ -1130,9 +1153,13 @@ const Page = () => {
     const res = await axios.get("/api/get-regEvent");
     setRegevents(res.data);
   };
+  const fetchRegList = async () => {
+    const res = await axios.get("/api/admin/get-registrations");
+    setRegList(res.data);
+  };
 
   return (
-    <div className="flex flex-col mt-24  min-h-screen bg-gray-100">
+    <div className="flex flex-col mt-34 min-h-78 bg-gray-100">
       <div className="flex justify-center">
         <Button
           className="m-3"
@@ -1186,6 +1213,17 @@ const Page = () => {
           }}
         >
           Logout
+        </Button>
+      </div>
+      <div className="flex justify-center">
+        <Button
+          className="m-3 bg-green-600 hover:bg-green-700"
+          onClick={() => {
+            setActiveTab("reglist");
+            fetchRegList();
+          }}
+        >
+          Registrations till now
         </Button>
       </div>
 
@@ -1311,7 +1349,9 @@ const Page = () => {
                             </div>
                             <div className="text-gray-600 text-sm">
                               {new Date(event.date).toLocaleDateString()}
-                              {event.time && <span className="ml-2">{event.time}</span>}
+                              {event.time && (
+                                <span className="ml-2">{event.time}</span>
+                              )}
                             </div>
                             <div className="mt-2 text-gray-700">
                               {event.description}
@@ -1661,6 +1701,101 @@ const Page = () => {
                 ) : (
                   <div className="text-center text-gray-500">
                     No blogs found.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+
+        {activeTab === "reglist" ? (
+          <div className="flex flex-col justify-center p-6">
+            <div className="mt-10">
+              <h3 className="text-xl font-semibold mb-4 text-center">
+                All Registrations
+              </h3>
+              <div className="space-y-4">
+                {Array.isArray(regList) && regList.length > 0 ? (
+                  [...regList]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                    )
+                    .map((reg: IRegistration, idx: number) => (
+                      <div
+                        key={reg._id || idx}
+                        className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row items-center justify-between"
+                      >
+                        {/* Info */}
+                        <div className="flex-1">
+                          <div className="font-bold text-lg">{reg.name}</div>
+                          <div className="text-gray-600 text-sm">
+                            {reg.email} • {reg.phone}
+                          </div>
+                          <div className="text-gray-600 text-sm mt-1">
+                            Age: {reg.age} • District: {reg.district}
+                          </div>
+                          <div className="text-gray-600 text-sm mt-1">
+                            Registered on:{" "}
+                            {new Date(reg.createdAt).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                              }
+                            )}
+                          </div>
+                          {reg.registrationDays?.length > 0 && (
+                            <div className="text-blue-600 text-sm mt-2">
+                              Days: {reg.registrationDays.join(", ")}
+                            </div>
+                          )}
+                          {reg.selectedEvents?.length > 0 && (
+                            <div className="text-green-600 text-sm mt-1">
+                              Events: {reg.selectedEvents.join(", ")}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Actions */}
+                        <Button
+                          variant="destructive"
+                          className="ml-4 mt-4 md:mt-0"
+                          onClick={async () => {
+                            if (
+                              window.confirm(
+                                `Are you sure you want to delete registration of "${reg.name}"?`
+                              )
+                            ) {
+                              try {
+                                await axios.delete(
+                                  "/api/admin/delete-registration",
+                                  {
+                                    data: { id: reg._id },
+                                  }
+                                );
+
+                                const res = await axios.get(
+                                  "/api/admin/get-registrations"
+                                );
+                                setRegList(res.data);
+                              } catch (err) {
+                                alert("Failed to delete registration.");
+                              }
+                            }
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    ))
+                ) : (
+                  <div className="text-center text-gray-500">
+                    No registrations found.
                   </div>
                 )}
               </div>
