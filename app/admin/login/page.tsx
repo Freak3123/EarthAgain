@@ -1167,8 +1167,8 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col mt-34 min-h-78 bg-gray-100">
-      <div className="flex justify-center">
+    <div className="flex flex-col mt-34 min-h-78 w-auto">
+      <div className="justify-center flex flex-wrap p-4">
         <Button
           className="m-3"
           onClick={() => {
