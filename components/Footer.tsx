@@ -81,7 +81,6 @@ export function Footer() {
                 { href: "/join-us", label: "Join Us" },
                 { href: "/speakers", label: "Speakers" },
                 // { href: "/blog", label: "Blog" },
-                { href: "/citizen-voice", label: "Citizen Voice" },
               ].map((link) => (
                 <Link
                   key={link.href}

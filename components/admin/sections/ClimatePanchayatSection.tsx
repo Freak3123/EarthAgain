@@ -1,0 +1,167 @@
+"use client";
+import { useState } from "react";
+import axios from "axios";
+import { Trash2, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ClimatePanchayatForm } from "../forms/ClimatePanchayatForm";
+import {
+  SectionHeading,
+  SearchBar,
+  ListLoading,
+  EmptyState,
+  SectionToggle,
+  SectionMode,
+  matches,
+  listCard,
+  ClimatePanchayatFormData,
+} from "../shared";
+
+export function ClimatePanchayatSection({
+  climatePanchayats,
+  loading,
+  search,
+  onSearch,
+  onRefresh,
+}: {
+  climatePanchayats: unknown;
+  loading: boolean;
+  search: string;
+  onSearch: (v: string) => void;
+  onRefresh: () => Promise<void> | void;
+}) {
+  const [mode, setMode] = useState<SectionMode>("manage");
+  const count = Array.isArray(climatePanchayats)
+    ? climatePanchayats.length
+    : 0;
+  return (
+    <div>
+      <SectionToggle
+        mode={mode}
+        onMode={setMode}
+        count={count}
+        createLabel="Add Panchayat"
+      />
+      {mode === "create" ? (
+        <ClimatePanchayatForm />
+      ) : (
+        <div>
+          <SectionHeading
+            title="All Climate Panchayat Events"
+            count={count}
+            right={
+              count > 0 ? (
+                <SearchBar
+                  value={search}
+                  onChange={onSearch}
+                  placeholder="Search Climate Panchayats…"
+                />
+              ) : undefined
+            }
+          />
+          {(() => {
+                const arr = Array.isArray(climatePanchayats)
+                  ? climatePanchayats
+                  : [];
+                if (loading) return <ListLoading />;
+                if (arr.length === 0)
+                  return (
+                    <EmptyState message="No Climate Panchayat events found." />
+                  );
+                const q = search.trim().toLowerCase();
+                const shown = [...arr]
+                  .filter((e: any) => matches(q, [e.title, e.description]))
+                  .sort(
+                    (a, b) =>
+                      new Date(b.date ?? "").getTime() -
+                      new Date(a.date ?? "").getTime()
+                  );
+                if (shown.length === 0)
+                  return (
+                    <EmptyState
+                      message={`No Climate Panchayat events match “${search}”.`}
+                    />
+                  );
+                return (
+                  <div className="space-y-4">
+                    {shown.map(
+                      (
+                        panchayat: ClimatePanchayatFormData & { _id?: string },
+                        idx: number
+                      ) => (
+                        <div key={panchayat._id || idx} className={listCard}>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <div className="text-lg font-bold text-stone-900">
+                                {panchayat.title}
+                              </div>
+                              {panchayat.featured && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                                  <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+                                  Featured
+                                </span>
+                              )}
+                            </div>
+                            <div className="mt-1 font-mono text-xs text-stone-500">
+                              {panchayat.date
+                                ? new Date(panchayat.date).toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    }
+                                  )
+                                : ""}
+                              {/* {" • "}
+                              {panchayat.time}
+                              {" • "}
+                              {panchayat.location} */}
+                              {/* {" • "} */}
+                              {/* {panchayat.organizerName}
+                              {" • "}
+                              {panchayat.attendees} */}
+                            </div>
+                            <div className="mt-2 text-sm text-stone-700">
+                              {panchayat.description}
+                            </div>
+                          </div>
+
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="gap-1.5 self-start md:self-center"
+                            onClick={async () => {
+                              if (
+                                window.confirm(
+                                  `Are you sure you want to delete "${panchayat.title}"?`
+                                )
+                              ) {
+                                try {
+                                  await axios.delete(
+                                    "/api/admin/delete-climatePanchayat",
+                                    {
+                                      data: { id: panchayat._id },
+                                    }
+                                  );
+
+                                  await onRefresh();
+                                } catch (err) {
+                                  alert("Failed to delete Climate Panchayat.");
+                                }
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Delete
+                          </Button>
+                        </div>
+                      )
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+        </div>
+  );
+}

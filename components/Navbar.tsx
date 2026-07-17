@@ -27,7 +27,6 @@ const Navbar = () => {
     // { href: "/blog", label: "Blog" },
     { href: "/speakers", label: "Speakers" },
     // { href: "/admin", label: "Admin" },
-    { href: "/citizen-voice", label: "Citizen Voice" },
   ];
 
   return (
