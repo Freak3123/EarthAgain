@@ -46,7 +46,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -75,12 +75,33 @@ export function Footer() {
             <h3 className="text-lg font-semibold">Quick Links</h3>
             <div className="space-y-2">
               {[
+                { href: "/", label: "Home" },
                 { href: "/about", label: "About Movement" },
                 { href: "/events", label: "Events" },
                 { href: "/climate-panchayat", label: "Climate Panchayat" },
-                { href: "/join-us", label: "Join Us" },
                 { href: "/speakers", label: "Speakers" },
                 // { href: "/blog", label: "Blog" },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block text-gray-400 hover:text-white text-sm transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Get Involved */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Get Involved</h3>
+            <div className="space-y-2">
+              {[
+                { href: "/register", label: "Register" },
+                { href: "/join-us", label: "Join Us" },
+                { href: "/host-form", label: "Host With Us" },
+                { href: "/start-chapter", label: "Start A Local Chapter" },
               ].map((link) => (
                 <Link
                   key={link.href}

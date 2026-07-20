@@ -64,12 +64,12 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 // 
-                href="/register"
+                href="/start-chapter"
                 className=" bg-green-600 hover:bg-green-700 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
               >
                 <Users className="inline mr-2 h-5" />
                 {/* Join the Movement */}
-                Register Now
+                Start A Local Chapter
               </Link>
               {/* <Link
                 href="/citizen-voice"
@@ -79,7 +79,7 @@ export default function Hero() {
                 Vote your Issues
               </Link> */}
               <Link
-                href="/register"
+                href="/host-form"
                 className=" hover:bg-white/20 border-1 border-green-50 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
               >
                 <TreePine className="inline mr-2 h-5" />

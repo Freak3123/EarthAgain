@@ -94,6 +94,17 @@ const Navbar = () => {
             Register
           </Link>
 
+          <Link
+            href="/join-us"
+            className={`hidden lg:inline-block ring-1 px-5 py-2.5 rounded-md transition ${
+              isHome && !scrolled
+                ? "text-white ring-white hover:bg-white/20"
+                : "text-[#74B729] ring-[#74B729] hover:bg-green-50"
+            }`}
+          >
+            Join Us
+          </Link>
+
           {/* Mobile Hamburger Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -137,6 +148,13 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Register
+            </Link>
+            <Link
+              href="/join-us"
+              className="text-center text-xl text-green-700 border border-green-600 hover:bg-green-50 mt-3 px-4 py-2 rounded-md transition"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Join Us
             </Link>
           </div>
         </div>

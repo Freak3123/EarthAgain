@@ -28,7 +28,7 @@ Join us in making the earth whole again.
       />
       <KeyFeatures />
       <SponsorsPartners />
-      <ImpactTracker /> 
+      {/* <ImpactTracker />  */}
       
      
       <SpeakersSection />
