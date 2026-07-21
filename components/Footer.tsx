@@ -102,6 +102,7 @@ export function Footer() {
                 { href: "/join-us", label: "Join Us" },
                 { href: "/host-form", label: "Host With Us" },
                 { href: "/start-chapter", label: "Start A Local Chapter" },
+                { href: "/admin/login", label: "Login" },
               ].map((link) => (
                 <Link
                   key={link.href}

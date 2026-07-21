@@ -10,6 +10,9 @@ export interface IChapter extends Document {
   type: string;
   entityName?: string;
   instituteName?: string;
+  // Approval workflow — see docs/rbac-subsites-design.md §3.
+  status: "pending" | "approved" | "rejected";
+  siteId: mongoose.Types.ObjectId | null;
   createdAt: Date;
 }
 
@@ -29,6 +32,12 @@ const ChapterSchema = new Schema<IChapter>(
     entityName: { type: String, trim: true },
     // Only set when type is "college-chapter"
     instituteName: { type: String, trim: true },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    siteId: { type: Schema.Types.ObjectId, ref: "Site", default: null },
     createdAt: { type: Date, default: Date.now },
   },
   { versionKey: false }

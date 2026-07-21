@@ -10,6 +10,8 @@ import { CheckCircle } from "lucide-react"
 
 export default function JoinUsForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("")
   const [formData, setFormData] = useState({
     firstName: "",
     contact: "",
@@ -20,9 +22,29 @@ export default function JoinUsForm() {
     activity: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitted(true)
+    setIsSubmitting(true)
+    setError("")
+
+    try {
+      const res = await fetch("/api/host", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+      const data = await res.json()
+
+      if (data.success) {
+        setIsSubmitted(true)
+      } else {
+        setError(data.message || "Something went wrong. Please try again.")
+      }
+    } catch {
+      setError("We couldn't reach the server. Please check your connection and try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (isSubmitted) {
@@ -141,8 +163,15 @@ export default function JoinUsForm() {
                 </Select>
               </div>
 
-              <Button type="submit" size="lg" className="w-full bg-green-600 hover:bg-green-700">
-                Join Us
+              {error && <p className="text-sm text-red-600">{error}</p>}
+
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isSubmitting}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                {isSubmitting ? "Submitting..." : "Join Us"}
               </Button>
             </form>
           </CardContent>
