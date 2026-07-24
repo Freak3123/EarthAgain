@@ -8,6 +8,7 @@ import Testimonials from '@/components/home/Testimonials';
 import SponsorsPartners from '@/components/home/SponsorsPartners';
 import CallAction from '@/components/home/CallAction';
 import EditorsMessage from '@/components/home/EditorsMessage';
+import FeaturedSpeakers from '@/components/home/FeaturedSpeakers';
 
 export default function Home() {
   return (
@@ -26,13 +27,14 @@ Climate change affects our farmers, coastal communities, and forests today. Toge
 Join us in making the earth whole again.
 `}
       />
+      <FeaturedSpeakers />
       <KeyFeatures />
       <SponsorsPartners />
       {/* <ImpactTracker />  */}
       
      
       <SpeakersSection />
-      {/* <Testimonials /> */}
+      <Testimonials />
       <Events />
       {/* will make a map later */}
       <CallAction />

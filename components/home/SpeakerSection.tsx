@@ -1,38 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useMediaQuery } from "react-responsive";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { motion, useScroll, useTransform } from "motion/react";
 
-import { Carousel } from "@/components/ui/apple-cards-carousel"; // ⬅️ from Aceternity
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
-const featuredSpeakers = [
-  {
-    name: "Bhupendra Yadav",
-    designation: "Union Cabinet Minister for Environment",
-    session: "Union Cabinet Minister for Environment, Forest and Climate Change",
-    image:
-      "/speaker/Bhupender_Yadav.jpg",
-    expertise: "Environment & Climate Policy"
-  },
-  {
-    name: "Jennifer Larsen",
-    designation: "US Counsel General in Hyderabad",
-    session: "US Counsel General in Hyderabad",
-    image:
-      "/speaker/Jennifer Larsen.jpg",
-    expertise: "Diplomacy & International Relations",
-  },
-  {
-    name: "Sri Naveen Patnaik ",
-    designation: "Hon'ble leader of opposition, Odisha",
-    session: "Hon'ble leader of opposition, Odisha",
-    image:
-      "/speaker/Shri-Naveen-Patnaik.jpg",
-    expertise: "Disaster Management & Governance",
-  },
-];
 
 const allSpeakers = [
    {
@@ -297,85 +268,53 @@ const allSpeakers = [
 ];
 
 export default function SpeakersSection() {
-  const [isMounted, setIsMounted] = useState(false);
-  const isSmall = useMediaQuery({ maxWidth: 639 });
-  const isMedium = useMediaQuery({ minWidth: 640, maxWidth: 767 });
-  const isLarge = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
-  const isExtraLarge = useMediaQuery({ minWidth: 1024 });
+  const targetRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [scrollDistance, setScrollDistance] = useState(0);
+
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Translate the row horizontally by exactly the amount it overflows the viewport.
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollDistance]);
 
   useEffect(() => {
-    setIsMounted(true);
+    const update = () => {
+      if (rowRef.current) {
+        setScrollDistance(
+          Math.max(0, rowRef.current.scrollWidth - window.innerWidth)
+        );
+      }
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
-
-  if (!isMounted) return null;
-
-  let sliceCount = 5;
-  if (isSmall) sliceCount = 4;
-  else if (isMedium) sliceCount = 3;
-  else if (isLarge) sliceCount = 4;
-  else if (isExtraLarge) sliceCount = 5;
 
   return (
     <div className="bg-[#0F140F] text-white">
-      <section className="py-20 px-4">
-        <div className="mx-auto max-w-7xl">
-          {/* Featured Speakers (keep grid layout) */}
-          <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Featured Speakers
-            </h2>
-            <p className="text-xl text-white/80">
-              Learn from environmental leaders and experts
-            </p>
+      {/* Tall wrapper gives the vertical scroll room that drives the horizontal reel */}
+      <section
+        ref={targetRef}
+        style={{ height: `${scrollDistance + 800}px` }}
+        className="relative"
+      >
+        <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden py-20">
+          <div className="mx-auto w-full max-w-[109rem] px-4">
+            <h3 className="text-3xl md:text-4xl font-bold mb-10">
+              All Speakers
+            </h3>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-8">
-            {featuredSpeakers.map((speaker, index) => (
+          <motion.div ref={rowRef} style={{ x }} className="flex gap-4 pl-4">
+            {allSpeakers.map((speaker, index) => (
               <Card
                 key={index}
-                className="border-0 pt-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                className="border-0 py-0 gap-0 w-72 shrink-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
               >
-                <div className="relative w-full h-60">
-                  <Image
-                    src={speaker.image}
-                    alt={speaker.name}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="text-xl font-bold mb-1">{speaker.name}</h3>
-                    <p className="text-sm opacity-90">{speaker.designation}</p>
-                  </div>
-                </div>
-                <CardContent className="p-4 py-0">
-                  <div className="mb-3">
-                    <Badge className="bg-green-100 w-[39vw] sm:w-auto text-green-800 font-bold text-xs">
-                      <p className="truncate p-1 px-2">{speaker.expertise}</p>
-                    </Badge>
-                  </div>
-                  <p className="text-gray-600 font-medium mb-4">
-                    {speaker.session}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* All Speakers in Apple Cards Carousel */}
-        <div className="mt-20 mx-auto max-w-[109rem]">
-          <h3 className="text-3xl md:text-4xl font-bold">
-            All Speakers
-          </h3>
-
-          <Carousel
-            items={allSpeakers.map((speaker, index) => (
-              <Card
-                key={index}
-                className="border-0 pt-0 h-104 w-72 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
-              >
-                <div className="relative w-full h-60">
+                <div className="relative w-full h-80">
                   <Image
                     src={speaker.image}
                     alt={speaker.name}
@@ -387,14 +326,14 @@ export default function SpeakersSection() {
                     <h3 className="text-xl font-bold mb-1">{speaker.name}</h3>
                   </div>
                 </div>
-                <CardContent className="p-4 py-0">
-                  <p className="text-gray-600 font-medium">
+                <CardContent className="px-4 h-20 flex items-center">
+                  <p className="text-sm text-gray-600 font-medium line-clamp-3">
                     {speaker.session}
                   </p>
                 </CardContent>
               </Card>
             ))}
-          />
+          </motion.div>
         </div>
       </section>
     </div>
