@@ -15,6 +15,17 @@ export type BlockType =
   | "newsletter"
   | "contact";
 
+export interface IBlockBorder {
+  enabled: boolean;
+  color: string;
+  /** Border thickness in pixels. */
+  width: number;
+}
+
+export interface IBlockStyle {
+  border: IBlockBorder;
+}
+
 export interface IBlock {
   /** Stable client-generated id, unique within the site (used for React keys / reorder). */
   id: string;
@@ -22,6 +33,14 @@ export interface IBlock {
   hidden: boolean;
   /** Fields specific to the section type; shape validated in the block registry, not here. */
   data: Record<string, unknown>;
+  /**
+   * Cross-cutting presentation options (currently just an optional section
+   * border), applied generically by the registry rather than per-renderer.
+   * Optional: blocks created before this field existed are read via .lean()
+   * (which skips Mongoose's default-hydration), so callers must treat this
+   * as possibly absent rather than relying on the schema default.
+   */
+  style?: IBlockStyle;
 }
 
 export interface ISiteSettings {
@@ -47,6 +66,20 @@ export interface ISite extends Document {
   updatedAt: Date;
 }
 
+const BlockBorderSchema = new Schema<IBlockBorder>(
+  {
+    enabled: { type: Boolean, default: false },
+    color: { type: String, default: "#16a34a" },
+    width: { type: Number, default: 2 },
+  },
+  { _id: false }
+);
+
+const BlockStyleSchema = new Schema<IBlockStyle>(
+  { border: { type: BlockBorderSchema, default: () => ({}) } },
+  { _id: false }
+);
+
 const BlockSchema = new Schema<IBlock>(
   {
     id: { type: String, required: true },
@@ -67,6 +100,7 @@ const BlockSchema = new Schema<IBlock>(
     },
     hidden: { type: Boolean, default: false },
     data: { type: Schema.Types.Mixed, default: {} },
+    style: { type: BlockStyleSchema, default: () => ({}) },
   },
   { _id: false }
 );

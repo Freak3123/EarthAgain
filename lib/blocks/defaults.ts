@@ -32,11 +32,14 @@ export const blockDefaultData: Record<BlockType, Record<string, unknown>> = {
     readTime: "0 min read",
     imageUrl: "",
     badge: "Featured",
+    linkLabel: "Continue reading",
+    linkHref: "#featured",
   },
   about: {
     kicker: "About",
     title: "About Section",
     paragraphs: [placeholder, placeholder],
+    learnMoreLabel: "Learn more",
     learnMoreHref: "#team",
     stats: [
       { value: "100+", label: "Metric one" },
@@ -78,6 +81,7 @@ export const blockDefaultData: Record<BlockType, Record<string, unknown>> = {
   team: {
     kicker: "Team",
     title: "Team Section",
+    viewAllLabel: "View All",
     members: [
       { name: "Team member one", role: "Role / Title", imageUrl: "" },
       { name: "Team member two", role: "Role / Title", imageUrl: "" },
@@ -116,6 +120,11 @@ export const defaultBlockOrder: BlockType[] = [
   "contact",
 ];
 
+/** No border by default — an explicit admin opt-in, not a template look. */
+export function defaultBlockStyle() {
+  return { border: { enabled: false, color: "#16a34a", width: 2 } };
+}
+
 /** Build a fresh ordered block array for a newly-approved site. */
 export function defaultBlocks(): IBlock[] {
   return defaultBlockOrder.map((type) => ({
@@ -123,6 +132,7 @@ export function defaultBlocks(): IBlock[] {
     type,
     hidden: false,
     data: structuredClone(blockDefaultData[type]),
+    style: defaultBlockStyle(),
   }));
 }
 

@@ -30,6 +30,7 @@ import { RegistrationsList } from "./RegistrationsList";
 import { FormDataList, Column, FormRecord } from "./FormDataList";
 import { ChaptersSection } from "./sections/ChaptersSection";
 import { prettify, ContactCell, BadgeList, LinkCell } from "./cells";
+import SubsiteBuilder from "./builder/SubsiteBuilder";
 
 type TabGroup = "content" | "forms";
 
@@ -80,6 +81,13 @@ const AdminDashboard = () => {
         <LoginForm />
       </div>
     );
+  }
+
+  // Two experiences behind one role-aware /admin (design §2/§4): subadmins get
+  // their scoped sub-site builder; everything below this point is the
+  // superadmin console, unchanged.
+  if (session.user.role === "subadmin") {
+    return <SubsiteBuilder />;
   }
 
   const fetchLiveEvents = async () => {
