@@ -9,6 +9,7 @@ import {
   LayoutTemplate,
   BookOpen,
   CalendarDays,
+  Star,
   Leaf,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -20,6 +21,7 @@ import { EventsSection } from "@/components/admin/sections/EventsSection";
 import BlockListPane from "./BlockListPane";
 import SettingsPanel from "./SettingsPanel";
 import BorderField from "./BorderField";
+import FeaturedTab from "./FeaturedTab";
 
 /**
  * The sub-site builder — the subadmin's entire /admin experience (design §4).
@@ -35,7 +37,7 @@ import BorderField from "./BorderField";
  * or event goes live immediately — there's no draft/publish step for them.
  */
 
-type Tab = "content" | "blog" | "events" | "settings";
+type Tab = "content" | "blog" | "events" | "featured" | "settings";
 
 function newBlockId() {
   return typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -222,8 +224,12 @@ export default function SubsiteBuilder() {
 
   const openTab = (next: Tab) => {
     setTab(next);
-    if (next === "blog" && !blogsLoaded) fetchBlogs();
-    if (next === "events" && !eventsLoaded) fetchEvents();
+    if ((next === "blog" || next === "featured") && !blogsLoaded) fetchBlogs();
+    if ((next === "events" || next === "featured") && !eventsLoaded) fetchEvents();
+  };
+
+  const refreshFeatured = async () => {
+    await Promise.all([fetchBlogs(), fetchEvents()]);
   };
 
   const publishSite = async () => {
@@ -304,6 +310,9 @@ export default function SubsiteBuilder() {
           </TabButton>
           <TabButton active={tab === "events"} onClick={() => openTab("events")} icon={CalendarDays}>
             Events
+          </TabButton>
+          <TabButton active={tab === "featured"} onClick={() => openTab("featured")} icon={Star}>
+            Featured
           </TabButton>
           <TabButton active={tab === "settings"} onClick={() => openTab("settings")} icon={SettingsIcon}>
             Site Settings
@@ -418,6 +427,17 @@ export default function SubsiteBuilder() {
               formMode="site"
               showSiteFilter={false}
               allowBulkDelete={false}
+            />
+          </div>
+        </div>
+      ) : tab === "featured" ? (
+        <div className="flex-1 overflow-y-auto p-8">
+          <div className="mx-auto max-w-4xl">
+            <FeaturedTab
+              blogs={blogs}
+              events={events}
+              loading={blogsLoading || eventsLoading}
+              onRefresh={refreshFeatured}
             />
           </div>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { Trash2 } from "lucide-react";
+import { Trash2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlogForm } from "../forms/BlogForm";
 import SiteFilterSelect, { SiteFilterValue, matchesSiteFilter } from "../SiteFilterSelect";
@@ -57,6 +57,16 @@ export function BlogsSection({
   const handleSaved = () => {
     setMode("manage");
     onRefresh();
+  };
+
+  const toggleFeatured = async (id: string | undefined, next: boolean) => {
+    if (!id) return;
+    try {
+      await axios.patch("/api/admin/feature-blog", { id, featured: next });
+      await onRefresh();
+    } catch {
+      alert("Failed to update featured status.");
+    }
   };
 
   const arr = Array.isArray(blogs) ? blogs : [];
@@ -147,14 +157,23 @@ export function BlogsSection({
                       readTime: string;
                       category: string;
                       image?: string;
+                      featured?: boolean;
                     },
                     idx: number
                   ) => (
                     <div key={blog._id || idx} className={listCard}>
                       <div className="flex-1">
                         {/* Blog Title */}
-                        <div className="text-lg font-bold text-stone-900">
-                          {blog.title}
+                        <div className="flex items-center gap-2">
+                          <div className="text-lg font-bold text-stone-900">
+                            {blog.title}
+                          </div>
+                          {blog.featured && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                              <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+                              Featured
+                            </span>
+                          )}
                         </div>
 
                         {/* Blog Meta Info */}
@@ -187,11 +206,29 @@ export function BlogsSection({
                         />
                       )}
 
+                      <div className="flex gap-2 self-start md:self-center">
+                        {/* Feature toggle */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={`gap-1.5 ${
+                            blog.featured
+                              ? "border-amber-300 text-amber-700 hover:bg-amber-50"
+                              : "border-stone-300 text-stone-600 hover:bg-stone-100"
+                          }`}
+                          onClick={() => toggleFeatured(blog._id, !blog.featured)}
+                        >
+                          <Star
+                            className={`h-4 w-4 ${blog.featured ? "fill-amber-500 text-amber-500" : ""}`}
+                          />
+                          {blog.featured ? "Unfeature" : "Feature"}
+                        </Button>
+
                       {/* Delete Button */}
                       <Button
                         variant="destructive"
                         size="sm"
-                        className="gap-1.5 self-start md:self-center"
+                        className="gap-1.5"
                         onClick={async () => {
                           if (
                             window.confirm(
@@ -213,6 +250,7 @@ export function BlogsSection({
                         <Trash2 className="h-4 w-4" />
                         Delete
                       </Button>
+                      </div>
                     </div>
                   )
                 )}

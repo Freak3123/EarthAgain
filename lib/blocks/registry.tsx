@@ -12,7 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { BlockType, IBlock } from "@/lib/models/site";
-import type { BlogPost, EventItem } from "./types";
+import type { BlogPost, EventItem, FeaturedItem } from "./types";
 import { blockDefaultData } from "./defaults";
 
 import HeroBlock from "@/components/subsite/blocks/HeroBlock";
@@ -147,14 +147,15 @@ export const blockTypeOrder: BlockType[] = [
 ];
 
 /**
- * Live data injected into "blog"/"events" blocks at render time — sourced
- * from the shared Blog/Event collections (same system as the main site),
- * filtered to the current site, rather than authored in block.data. See
- * app/s/[slug]/page.tsx, which fetches and maps this before rendering.
+ * Live data injected into "blog"/"events"/"featured" blocks at render time —
+ * sourced from the shared Blog/Event collections (same system as the main
+ * site), filtered to the current site, rather than authored in block.data.
+ * See app/s/[slug]/page.tsx, which fetches and maps this before rendering.
  */
 export interface BlockContext {
   blogPosts?: BlogPost[];
   eventItems?: EventItem[];
+  featuredItems?: FeaturedItem[];
 }
 
 /** Render one block, or null for an unknown type (forward-compatible). */
@@ -166,6 +167,7 @@ export function renderBlock(block: IBlock, context?: BlockContext) {
   let data: unknown = block.data;
   if (block.type === "blog") data = { ...block.data, posts: context?.blogPosts ?? [] };
   if (block.type === "events") data = { ...block.data, items: context?.eventItems ?? [] };
+  if (block.type === "featured") data = { ...block.data, items: context?.featuredItems ?? [] };
 
   const rendered = <Renderer data={data as never} />;
 

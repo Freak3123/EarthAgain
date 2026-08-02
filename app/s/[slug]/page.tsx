@@ -8,7 +8,7 @@ import { Event } from "@/lib/models/events";
 import SiteChrome from "@/components/subsite/SiteChrome";
 import ComingSoon from "@/components/subsite/ComingSoon";
 import { BlockList, type BlockContext } from "@/lib/blocks/registry";
-import { mapBlogsToPosts, mapEventsToItems } from "@/lib/blocks/liveContent";
+import { mapBlogsToPosts, mapEventsToItems, buildFeaturedItems } from "@/lib/blocks/liveContent";
 
 /* -------------------------------------------------------------------------- */
 /*  Public sub-site — app/s/[slug] (design §5).                                */
@@ -49,8 +49,9 @@ async function getSite(slug: string): Promise<SiteView | null> {
 
 /** Only queries the collections a site's blocks actually reference. */
 async function getBlockContext(siteId: string, blocks: IBlock[]): Promise<BlockContext> {
-  const needsBlog = blocks.some((b) => b.type === "blog" && !b.hidden);
-  const needsEvents = blocks.some((b) => b.type === "events" && !b.hidden);
+  const needsFeatured = blocks.some((b) => b.type === "featured" && !b.hidden);
+  const needsBlog = needsFeatured || blocks.some((b) => b.type === "blog" && !b.hidden);
+  const needsEvents = needsFeatured || blocks.some((b) => b.type === "events" && !b.hidden);
   if (!needsBlog && !needsEvents) return {};
 
   const [blogs, events] = await Promise.all([
@@ -61,6 +62,7 @@ async function getBlockContext(siteId: string, blocks: IBlock[]): Promise<BlockC
   return {
     blogPosts: mapBlogsToPosts(blogs as any),
     eventItems: mapEventsToItems(events as any),
+    featuredItems: needsFeatured ? buildFeaturedItems(blogs as any, events as any) : undefined,
   };
 }
 

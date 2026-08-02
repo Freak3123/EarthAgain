@@ -1,15 +1,12 @@
-import type { FeaturedData, FeaturedItem } from "@/lib/blocks/types";
-import { TextField, TextAreaField, ImageField, RepeaterField } from "../fields";
+import type { FeaturedData } from "@/lib/blocks/types";
+import { TextField } from "../fields";
 
-const blankItem = (): FeaturedItem => ({
-  badge: "",
-  title: "",
-  excerpt: "",
-  author: "",
-  meta: "",
-  imageUrl: "",
-});
-
+/**
+ * Heading-only — the actual items are whichever blog posts/events are marked
+ * "featured" (from the Blog/Events tabs), combined and shown here. Manage
+ * what's featured from the builder's own "Featured" tab, not here.
+ * See lib/blocks/registry.tsx.
+ */
 export default function FeaturedEditor({
   data,
   onChange,
@@ -27,33 +24,11 @@ export default function FeaturedEditor({
         value={data.viewAllLabel}
         onChange={(v) => set({ viewAllLabel: v })}
       />
-      <RepeaterField<FeaturedItem>
-        label="Items"
-        items={data.items}
-        onChange={(v) => set({ items: v })}
-        newItem={blankItem}
-        itemLabel={(it) => it.title || "New item"}
-        addLabel="Add item"
-        renderItem={(it, update) => (
-          <>
-            <div className="grid grid-cols-2 gap-2.5">
-              <TextField label="Badge" value={it.badge} onChange={(v) => update({ badge: v })} />
-              <TextField label="Title" value={it.title} onChange={(v) => update({ title: v })} />
-            </div>
-            <TextAreaField
-              label="Excerpt"
-              value={it.excerpt}
-              onChange={(v) => update({ excerpt: v })}
-              rows={2}
-            />
-            <div className="grid grid-cols-2 gap-2.5">
-              <TextField label="Author" value={it.author} onChange={(v) => update({ author: v })} />
-              <TextField label="Meta" value={it.meta} onChange={(v) => update({ meta: v })} />
-            </div>
-            <ImageField label="Image" value={it.imageUrl} onChange={(v) => update({ imageUrl: v })} />
-          </>
-        )}
-      />
+      <p className="rounded-lg border border-dashed border-stone-300 bg-stone-50/60 px-3.5 py-2.5 text-xs text-stone-500">
+        Mark blog posts or events as <strong>Featured</strong> from the Blog
+        or Events tab — manage the combined list from the{" "}
+        <strong>Featured</strong> tab.
+      </p>
     </div>
   );
 }

@@ -48,19 +48,16 @@ export const blockDefaultData: Record<BlockType, Record<string, unknown>> = {
       { value: "1,000", label: "Metric four" },
     ],
   },
+  // Featured/Events/Blog items are no longer authored here — Featured shows
+  // whichever blogs/events are marked "featured" (from the Blog/Events tabs);
+  // Events/Blog show all of the site's own. All three read from the shared
+  // Blog/Event collections the main site uses, filtered by site. See
+  // app/s/[slug]/page.tsx and lib/blocks/registry.tsx's BlockContext.
   featured: {
     kicker: "Featured",
     title: "Featured Section",
     viewAllLabel: "View All",
-    items: [
-      { badge: "Category", title: "Featured item one", excerpt: placeholder, author: "Author name", meta: "5 min read", imageUrl: "" },
-      { badge: "Category", title: "Featured item two", excerpt: placeholder, author: "Author name", meta: "6 min read", imageUrl: "" },
-      { badge: "Category", title: "Featured item three", excerpt: placeholder, author: "Author name", meta: "4 min read", imageUrl: "" },
-    ],
   },
-  // Events/Blog items are no longer authored here — they're the same shared
-  // Event/Blog collections the main site uses, filtered by site. See
-  // app/s/[slug]/page.tsx and lib/blocks/registry.tsx's BlockContext.
   events: {
     kicker: "Events",
     title: "Events Section",

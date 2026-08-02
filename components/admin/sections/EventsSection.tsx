@@ -60,6 +60,16 @@ export function EventsSection({
     onRefresh();
   };
 
+  const toggleFeatured = async (id: string | undefined, next: boolean) => {
+    if (!id) return;
+    try {
+      await axios.patch("/api/admin/feature-event", { id, featured: next });
+      await onRefresh();
+    } catch {
+      alert("Failed to update featured status.");
+    }
+  };
+
   const arr = Array.isArray(events) ? events : [];
   const scoped = showSiteFilter ? arr.filter((e: any) => matchesSiteFilter(e, siteFilter)) : arr;
   const newArr = scoped.filter((e: any) => !isOlderThanCutoff(e.date));
@@ -179,31 +189,48 @@ export function EventsSection({
                       </div>
                     </div>
 
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="gap-1.5 self-start md:self-center"
-                      onClick={async () => {
-                        if (
-                          window.confirm(
-                            `Are you sure you want to delete "${event.title}"?`
-                          )
-                        ) {
-                          try {
-                            await axios.delete("/api/admin/delete-events", {
-                              data: { id: event._id },
-                            });
+                    <div className="flex gap-2 self-start md:self-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`gap-1.5 ${
+                          event.featured
+                            ? "border-amber-300 text-amber-700 hover:bg-amber-50"
+                            : "border-stone-300 text-stone-600 hover:bg-stone-100"
+                        }`}
+                        onClick={() => toggleFeatured(event._id, !event.featured)}
+                      >
+                        <Star
+                          className={`h-4 w-4 ${event.featured ? "fill-amber-500 text-amber-500" : ""}`}
+                        />
+                        {event.featured ? "Unfeature" : "Feature"}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="gap-1.5"
+                        onClick={async () => {
+                          if (
+                            window.confirm(
+                              `Are you sure you want to delete "${event.title}"?`
+                            )
+                          ) {
+                            try {
+                              await axios.delete("/api/admin/delete-events", {
+                                data: { id: event._id },
+                              });
 
-                            await onRefresh();
-                          } catch (err) {
-                            alert("Failed to delete event.");
+                              await onRefresh();
+                            } catch (err) {
+                              alert("Failed to delete event.");
+                            }
                           }
-                        }
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </Button>
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                   )
                 )}

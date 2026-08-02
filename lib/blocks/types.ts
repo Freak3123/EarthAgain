@@ -46,19 +46,28 @@ export interface AboutData {
   stats: AboutStat[];
 }
 
+/**
+ * Shape the FeaturedBlock renderer expects for each item — no longer authored
+ * as part of block.data; built live by merging a site's featured Blog posts
+ * and featured Events (same shared collections the main site uses) into one
+ * mixed, date-sorted list. See lib/blocks/liveContent.ts's buildFeaturedItems.
+ *
+ * `kind` drives which icons/labels the renderer shows per card: line1/line2
+ * are "author"/"read time" for a blog, "location"/"date" for an event.
+ */
 export interface FeaturedItem {
+  kind: "blog" | "event";
   badge: string;
   title: string;
   excerpt: string;
-  author: string;
-  meta: string;
+  line1: string;
+  line2: string;
   imageUrl: string;
 }
 export interface FeaturedData {
   kicker: string;
   title: string;
   viewAllLabel: string;
-  items: FeaturedItem[];
 }
 
 /**
