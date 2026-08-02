@@ -14,6 +14,11 @@ import {
   matches,
   listCard,
   ClimatePanchayatFormData,
+  PeriodToggle,
+  PeriodView,
+  DeleteAllOlderButton,
+  isOlderThanCutoff,
+  CUTOFF_YEAR,
 } from "../shared";
 
 export function ClimatePanchayatSection({
@@ -30,9 +35,17 @@ export function ClimatePanchayatSection({
   onRefresh: () => Promise<void> | void;
 }) {
   const [mode, setMode] = useState<SectionMode>("manage");
+  const [view, setView] = useState<PeriodView>("new");
   const count = Array.isArray(climatePanchayats)
     ? climatePanchayats.length
     : 0;
+
+  const handleDeleteAllOlder = async () => {
+    await axios.post("/api/admin/delete-climatePanchayat", {});
+    await onRefresh();
+    setView("new");
+  };
+
   return (
     <div>
       <SectionToggle
@@ -45,6 +58,26 @@ export function ClimatePanchayatSection({
         <ClimatePanchayatForm />
       ) : (
         <div>
+          {(() => {
+            const arr = Array.isArray(climatePanchayats)
+              ? climatePanchayats
+              : [];
+            const newArr = arr.filter((e: any) => !isOlderThanCutoff(e.date));
+            const olderArr = arr.filter((e: any) => isOlderThanCutoff(e.date));
+            return (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <PeriodToggle
+                  view={view}
+                  onView={setView}
+                  newCount={newArr.length}
+                  olderCount={olderArr.length}
+                />
+                {view === "older" && olderArr.length > 0 && (
+                  <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
+                )}
+              </div>
+            );
+          })()}
           <SectionHeading
             title="All Climate Panchayat Events"
             count={count}
@@ -62,13 +95,26 @@ export function ClimatePanchayatSection({
                 const arr = Array.isArray(climatePanchayats)
                   ? climatePanchayats
                   : [];
+                const newArr = arr.filter((e: any) => !isOlderThanCutoff(e.date));
+                const olderArr = arr.filter((e: any) => isOlderThanCutoff(e.date));
+                const base = view === "older" ? olderArr : newArr;
                 if (loading) return <ListLoading />;
                 if (arr.length === 0)
                   return (
                     <EmptyState message="No Climate Panchayat events found." />
                   );
+                if (base.length === 0)
+                  return (
+                    <EmptyState
+                      message={
+                        view === "older"
+                          ? `No Climate Panchayat events before ${CUTOFF_YEAR}.`
+                          : `No Climate Panchayat events from ${CUTOFF_YEAR} onward.`
+                      }
+                    />
+                  );
                 const q = search.trim().toLowerCase();
-                const shown = [...arr]
+                const shown = [...base]
                   .filter((e: any) => matches(q, [e.title, e.description]))
                   .sort(
                     (a, b) =>

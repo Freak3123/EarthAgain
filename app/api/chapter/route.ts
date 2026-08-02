@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import { Chapter } from "@/lib/models/chapter";
 import { connectDB } from "@/config/mongoDB/connectDB";
+import { isFormLive } from "@/lib/formSettings";
 
 export async function POST(req: Request) {
   try {
     await connectDB();
+
+    if (!(await isFormLive("chapter"))) {
+      return NextResponse.json(
+        { success: false, message: "This form isn't open right now. We'll start this soon." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
 
     // Keep only the field that belongs to the selected type

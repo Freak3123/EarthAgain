@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CheckCircle } from "lucide-react"
+import { FormGate } from "@/components/FormGate"
 
 export default function StartChapterForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -77,6 +78,7 @@ export default function StartChapterForm() {
   }
 
   return (
+    <FormGate formKey="chapter">
     <div className="min-h-screen bg-[#fefaf2] pt-36 py-12 px-4 md:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <Card className="border-0 shadow-2xl">
@@ -202,5 +204,6 @@ export default function StartChapterForm() {
         </Card>
       </div>
     </div>
+    </FormGate>
   )
 }

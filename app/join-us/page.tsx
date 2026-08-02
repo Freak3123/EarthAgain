@@ -27,6 +27,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
+import { FormGate } from "@/components/FormGate";
 
 export default function JoinPage() {
   const [activeTab, setActiveTab] = useState("volunteer");
@@ -189,6 +190,7 @@ export default function JoinPage() {
             </TabsList>
 
             <TabsContent value="volunteer">
+              <FormGate formKey="volunteer">
               <Card className="border-0 shadow-2xl">
                 <CardHeader className="pb-8">
                   <CardTitle className="text-2xl text-center flex items-center justify-center gap-2">
@@ -326,9 +328,11 @@ export default function JoinPage() {
                   </form>
                 </CardContent>
               </Card>
+              </FormGate>
             </TabsContent>
 
             <TabsContent value="partner">
+              <FormGate formKey="partner">
               <Card className="border-0 shadow-2xl">
                 <CardHeader className="pb-8">
                   <CardTitle className="text-2xl text-center flex items-center justify-center gap-2">
@@ -506,6 +510,7 @@ export default function JoinPage() {
                   </form>
                 </CardContent>
               </Card>
+              </FormGate>
             </TabsContent>
           </Tabs>
         </div>

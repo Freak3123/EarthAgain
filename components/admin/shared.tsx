@@ -1,6 +1,25 @@
 "use client";
-import React from "react";
-import { Search, X, Loader2, Inbox, Plus, LayoutList } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Search,
+  X,
+  Loader2,
+  Inbox,
+  Plus,
+  LayoutList,
+  Trash2,
+  AlertTriangle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 /* ------------------------------- types -------------------------------- */
 export interface IEvent {
@@ -284,6 +303,346 @@ export const SectionToggle = ({
           {count}
         </span>
       </button>
+    </div>
+  );
+};
+
+/* ------------------------- older / new period split -------------------- */
+export const CUTOFF_YEAR = 2026;
+export const CUTOFF_DATE = new Date(`${CUTOFF_YEAR}-01-01T00:00:00.000Z`);
+
+// True when the given date falls before the CUTOFF_YEAR boundary.
+export const isOlderThanCutoff = (value: unknown) => {
+  if (!value) return false;
+  const t = new Date(value as string | Date).getTime();
+  return !Number.isNaN(t) && t < CUTOFF_DATE.getTime();
+};
+
+export type PeriodView = "new" | "older";
+
+export const PeriodToggle = ({
+  view,
+  onView,
+  newCount,
+  olderCount,
+}: {
+  view: PeriodView;
+  onView: (v: PeriodView) => void;
+  newCount: number;
+  olderCount: number;
+}) => {
+  const base =
+    "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600/40";
+  const countBadge = (active: boolean) =>
+    `rounded-full px-1.5 text-xs font-semibold ${
+      active ? "bg-white/25 text-white" : "bg-stone-100 text-stone-500"
+    }`;
+  return (
+    <div className="inline-flex gap-1 rounded-xl border border-stone-200 bg-white p-1 shadow-sm">
+      <button
+        type="button"
+        aria-pressed={view === "new"}
+        onClick={() => onView("new")}
+        className={`${base} ${
+          view === "new"
+            ? "bg-green-600 text-white shadow-sm"
+            : "text-stone-600 hover:bg-stone-100"
+        }`}
+      >
+        New
+        <span className={countBadge(view === "new")}>{newCount}</span>
+      </button>
+      <button
+        type="button"
+        aria-pressed={view === "older"}
+        onClick={() => onView("older")}
+        className={`${base} ${
+          view === "older"
+            ? "bg-green-600 text-white shadow-sm"
+            : "text-stone-600 hover:bg-stone-100"
+        }`}
+      >
+        Older
+        <span className={countBadge(view === "older")}>{olderCount}</span>
+      </button>
+    </div>
+  );
+};
+
+/**
+ * "Delete All" control shown in the Older view: a destructive button that
+ * opens a warning dialog before permanently removing every pre-cutoff entry
+ * in the current category via `onDeleteAll`.
+ */
+export const DeleteAllOlderButton = ({
+  onDeleteAll,
+  disabled,
+}: {
+  onDeleteAll: () => Promise<void>;
+  disabled?: boolean;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const handleConfirm = async () => {
+    setBusy(true);
+    try {
+      await onDeleteAll();
+      setOpen(false);
+    } catch {
+      alert("Failed to delete older entries.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <>
+      <Button
+        variant="destructive"
+        size="sm"
+        className="gap-1.5"
+        disabled={disabled}
+        onClick={() => setOpen(true)}
+      >
+        <Trash2 className="h-4 w-4" />
+        Delete All
+      </Button>
+      <Dialog open={open} onOpenChange={(v) => !busy && setOpen(v)}>
+        <DialogContent>
+          <DialogHeader>
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-600">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <DialogTitle>Delete all entries before {CUTOFF_YEAR}?</DialogTitle>
+            <DialogDescription>
+              Remember, this will remove all entries before {CUTOFF_YEAR}{" "}
+              permanently within this category.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                className="border-stone-300"
+                disabled={busy}
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button variant="destructive" onClick={handleConfirm} disabled={busy}>
+              {busy ? "Deleting…" : "Continue"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+/* --------------------------- form live/paused -------------------------- */
+export type FormCategoryKey =
+  | "registration"
+  | "volunteer"
+  | "partner"
+  | "chapter";
+
+export interface FormSettingsData {
+  masterLive: boolean;
+  registration: boolean;
+  volunteer: boolean;
+  partner: boolean;
+  chapter: boolean;
+}
+
+/** Plain on/off switch (no Radix dependency) — track + sliding knob. */
+export const ToggleSwitch = ({
+  checked,
+  onChange,
+  disabled,
+  label,
+  activeColor = "bg-green-600",
+}: {
+  checked: boolean;
+  onChange: () => void;
+  disabled?: boolean;
+  label?: string;
+  activeColor?: string;
+}) => (
+  <button
+    type="button"
+    role="switch"
+    aria-checked={checked}
+    aria-label={label}
+    disabled={disabled}
+    onClick={onChange}
+    className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600/40 disabled:cursor-not-allowed disabled:opacity-50 ${
+      checked ? activeColor : "bg-stone-300"
+    }`}
+  >
+    <span
+      className={`absolute left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${
+        checked ? "translate-x-5" : "translate-x-0"
+      }`}
+    />
+  </button>
+);
+
+/**
+ * Site-wide switch shown in the Form Data tab, below the logout button.
+ * Pausing hides every public submission form behind a "we'll start this
+ * soon" notice; it overrides (but doesn't change) each form's own toggle.
+ */
+export const MasterFormsToggle = ({
+  live,
+  onToggle,
+  busy,
+}: {
+  live: boolean;
+  onToggle: () => Promise<void>;
+  busy: boolean;
+}) => {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const handleConfirmPause = async () => {
+    await onToggle();
+    setConfirmOpen(false);
+  };
+
+  return (
+    <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 pt-6">
+      <div className="flex items-center gap-2 text-sm text-stone-600">
+        <span
+          className={`h-2 w-2 rounded-full ${
+            live ? "bg-green-500" : "bg-amber-500"
+          }`}
+        />
+        Public forms are currently{" "}
+        <span
+          className={`font-semibold ${
+            live ? "text-green-700" : "text-amber-700"
+          }`}
+        >
+          {live ? "live" : "paused"}
+        </span>
+      </div>
+
+      <div
+        className="flex items-center gap-2.5"
+        title={
+          live
+            ? "Pausing hides every public form and shows a “we’ll start this soon” message instead."
+            : "Resume accepting submissions on every public form."
+        }
+      >
+        <span
+          className={`text-sm font-medium ${
+            live ? "text-stone-500" : "text-amber-700"
+          }`}
+        >
+          Pause All Forms
+        </span>
+        <ToggleSwitch
+          checked={live}
+          disabled={busy}
+          label={live ? "Pause all forms" : "Live all forms"}
+          activeColor="bg-green-600"
+          onChange={() => (live ? setConfirmOpen(true) : onToggle())}
+        />
+        <span
+          className={`text-sm font-medium ${
+            live ? "text-green-700" : "text-stone-500"
+          }`}
+        >
+          Live All Forms
+        </span>
+      </div>
+
+      <Dialog open={confirmOpen} onOpenChange={(v) => !busy && setConfirmOpen(v)}>
+        <DialogContent>
+          <DialogHeader>
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <DialogTitle>Pause all public forms?</DialogTitle>
+            <DialogDescription>
+              This will disable every public form on the site — visitors
+              won’t be able to submit anything. They’ll see a message that
+              we’ll start this soon, until you switch this back to live.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                className="border-stone-300"
+                disabled={busy}
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              className="bg-amber-600 text-white hover:bg-amber-700"
+              onClick={handleConfirmPause}
+              disabled={busy}
+            >
+              {busy ? "Pausing…" : "Pause All Forms"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+/**
+ * Per-category toggle rendered inside each Form Data section. Disabled
+ * (shown as "Paused (all)") while the master switch above is paused, since
+ * the master switch overrides individual state without altering it.
+ */
+export const FormLiveToggle = ({
+  label,
+  live,
+  masterLive,
+  busy,
+  onToggle,
+}: {
+  label: string;
+  live: boolean;
+  masterLive: boolean;
+  busy: boolean;
+  onToggle: () => Promise<void>;
+}) => {
+  const effectiveLive = masterLive && live;
+  return (
+    <div
+      className="inline-flex items-center gap-2.5 rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm shadow-sm"
+      title={
+        !masterLive
+          ? "All forms are currently paused site-wide — switch that back to live to control this one individually."
+          : live
+          ? "Pause this form — visitors will see a “we’ll start this soon” message."
+          : "Resume accepting submissions for this form."
+      }
+    >
+      <span className="text-stone-600">{label}</span>
+      <ToggleSwitch
+        checked={live}
+        disabled={busy || !masterLive}
+        label={live ? `Pause ${label}` : `Resume ${label}`}
+        onChange={onToggle}
+      />
+      <span
+        className={`text-xs font-semibold ${
+          !masterLive
+            ? "text-stone-400"
+            : effectiveLive
+            ? "text-green-700"
+            : "text-amber-700"
+        }`}
+      >
+        {!masterLive ? "Paused (all)" : live ? "Live" : "Paused"}
+      </span>
     </div>
   );
 };

@@ -18,19 +18,40 @@ import {
   EmptyState,
   csvCell,
   IRegistration,
+  PeriodToggle,
+  PeriodView,
+  DeleteAllOlderButton,
+  isOlderThanCutoff,
+  CUTOFF_YEAR,
+  FormLiveToggle,
 } from "./shared";
 
 export function RegistrationsList({
   regList,
   onRefresh,
+  liveToggle,
 }: {
   regList: any[];
   onRefresh: () => Promise<void> | void;
+  liveToggle?: {
+    label: string;
+    live: boolean;
+    masterLive: boolean;
+    busy: boolean;
+    onToggle: () => Promise<void>;
+  };
 }) {
   const [regSearch, setRegSearch] = useState("");
+  const [view, setView] = useState<PeriodView>("new");
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     new Set()
   );
+
+  const handleDeleteAllOlder = async () => {
+    await axios.post("/api/admin/delete-registration", {});
+    await onRefresh();
+    setView("new");
+  };
 
   const toggleGroup = (key: string) => {
     setCollapsedGroups((prev) => {
@@ -89,7 +110,14 @@ export function RegistrationsList({
   return (
           <div className="space-y-6">
             {(() => {
-              const safeRegList = Array.isArray(regList) ? regList : [];
+              const allRegList = Array.isArray(regList) ? regList : [];
+              const newRegList = allRegList.filter(
+                (r: IRegistration) => !isOlderThanCutoff(r.createdAt)
+              );
+              const olderRegList = allRegList.filter((r: IRegistration) =>
+                isOlderThanCutoff(r.createdAt)
+              );
+              const safeRegList = view === "older" ? olderRegList : newRegList;
 
               // Group registrations by date • time • event title
               const grouped = safeRegList.reduce(
@@ -156,15 +184,18 @@ export function RegistrationsList({
                       title="Registrations"
                       count={totalRegistrations}
                     />
-                    <Button
-                      variant="outline"
-                      className="gap-2 border-stone-300 text-stone-700 hover:bg-stone-100"
-                      onClick={exportRegistrationsCsv}
-                      disabled={totalRegistrations === 0}
-                    >
-                      <Download className="h-4 w-4" />
-                      Export CSV
-                    </Button>
+                    <div className="flex flex-wrap items-center gap-3">
+                      {liveToggle && <FormLiveToggle {...liveToggle} />}
+                      <Button
+                        variant="outline"
+                        className="gap-2 border-stone-300 text-stone-700 hover:bg-stone-100"
+                        onClick={exportRegistrationsCsv}
+                        disabled={allRegList.length === 0}
+                      >
+                        <Download className="h-4 w-4" />
+                        Export CSV
+                      </Button>
+                    </div>
                   </div>
 
                   {/* Overview */}
@@ -184,6 +215,19 @@ export function RegistrationsList({
                       label="Unique registrants"
                       value={uniquePeople}
                     />
+                  </div>
+
+                  {/* Older / new toggle */}
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <PeriodToggle
+                      view={view}
+                      onView={setView}
+                      newCount={newRegList.length}
+                      olderCount={olderRegList.length}
+                    />
+                    {view === "older" && olderRegList.length > 0 && (
+                      <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
+                    )}
                   </div>
 
                   {/* Controls */}
@@ -223,8 +267,16 @@ export function RegistrationsList({
                   </div>
 
                   {/* Groups */}
-                  {safeRegList.length === 0 ? (
+                  {allRegList.length === 0 ? (
                     <EmptyState message="No registrations found." />
+                  ) : safeRegList.length === 0 ? (
+                    <EmptyState
+                      message={
+                        view === "older"
+                          ? `No registrations before ${CUTOFF_YEAR}.`
+                          : `No registrations from ${CUTOFF_YEAR} onward.`
+                      }
+                    />
                   ) : visibleGroups.length === 0 ? (
                     <EmptyState
                       message={`No registrations match “${regSearch}”.`}

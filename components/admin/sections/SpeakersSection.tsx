@@ -14,6 +14,11 @@ import {
   matches,
   listCard,
   ISpeaker,
+  PeriodToggle,
+  PeriodView,
+  DeleteAllOlderButton,
+  isOlderThanCutoff,
+  CUTOFF_YEAR,
 } from "../shared";
 
 export function SpeakersSection({
@@ -30,7 +35,15 @@ export function SpeakersSection({
   onRefresh: () => Promise<void> | void;
 }) {
   const [mode, setMode] = useState<SectionMode>("manage");
+  const [view, setView] = useState<PeriodView>("new");
   const count = Array.isArray(speakers) ? speakers.length : 0;
+
+  const handleDeleteAllOlder = async () => {
+    await axios.post("/api/admin/delete-speakers", {});
+    await onRefresh();
+    setView("new");
+  };
+
   return (
     <div>
       <SectionToggle
@@ -43,6 +56,24 @@ export function SpeakersSection({
         <SpeakerForm />
       ) : (
         <div>
+          {(() => {
+            const arr = Array.isArray(speakers) ? speakers : [];
+            const newArr = arr.filter((e: any) => !isOlderThanCutoff(e.createdAt));
+            const olderArr = arr.filter((e: any) => isOlderThanCutoff(e.createdAt));
+            return (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <PeriodToggle
+                  view={view}
+                  onView={setView}
+                  newCount={newArr.length}
+                  olderCount={olderArr.length}
+                />
+                {view === "older" && olderArr.length > 0 && (
+                  <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
+                )}
+              </div>
+            );
+          })()}
           <SectionHeading
             title="All Speakers"
             count={count}
@@ -58,11 +89,24 @@ export function SpeakersSection({
           />
           {(() => {
                 const arr = Array.isArray(speakers) ? speakers : [];
+                const newArr = arr.filter((e: any) => !isOlderThanCutoff(e.createdAt));
+                const olderArr = arr.filter((e: any) => isOlderThanCutoff(e.createdAt));
+                const base = view === "older" ? olderArr : newArr;
                 if (loading) return <ListLoading />;
                 if (arr.length === 0)
                   return <EmptyState message="No speakers found." />;
+                if (base.length === 0)
+                  return (
+                    <EmptyState
+                      message={
+                        view === "older"
+                          ? `No speakers added before ${CUTOFF_YEAR}.`
+                          : `No speakers added from ${CUTOFF_YEAR} onward.`
+                      }
+                    />
+                  );
                 const q = search.trim().toLowerCase();
-                const shown = [...arr]
+                const shown = [...base]
                   .filter((e: any) => matches(q, [e.name, e.session]))
                   .sort(
                     (a, b) =>

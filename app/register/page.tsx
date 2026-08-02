@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, Calendar, MapPin, CheckCircle, Clock } from "lucide-react";
 import { IRegEvent } from "@/lib/models/regevent";
 import { formatTo12Hour } from "@/lib/formatTime";
+import { FormGate } from "@/components/FormGate";
 
 export default function RegisterPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -124,6 +125,7 @@ export default function RegisterPage() {
   }
 
   return (
+    <FormGate formKey="registration">
     <div className="min-h-screen bg-[#fefaf2] pt-36 py-12 px-4 md:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
@@ -470,5 +472,6 @@ export default function RegisterPage() {
         </Card>
       </div>
     </div>
+    </FormGate>
   );
 }

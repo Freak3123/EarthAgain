@@ -3,11 +3,20 @@ import { connectDB } from "@/config/mongoDB/connectDB";
 import Registration from "@/lib/models/registrations";
 import { RegEvent } from "@/lib/models/regevent";
 import { sendConfirmationMail } from "@/lib/nodemailer";
+import { isFormLive } from "@/lib/formSettings";
 import mongoose from "mongoose";
 
 export async function POST(req: Request) {
   try {
     await connectDB();
+
+    if (!(await isFormLive("registration"))) {
+      return NextResponse.json(
+        { success: false, error: "Registration isn't open right now. We'll start this soon." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
 
     const registration = await Registration.create(body);

@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
-import { Volunteer } from "@/lib/models/join"; 
+import { Volunteer } from "@/lib/models/join";
 import { connectDB } from "@/config/mongoDB/connectDB";
+import { isFormLive } from "@/lib/formSettings";
 
 export async function POST(req: Request) {
   try {
     await connectDB();
+
+    if (!(await isFormLive("volunteer"))) {
+      return NextResponse.json(
+        { success: false, message: "This form isn't open right now. We'll start this soon." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
 
     const volunteer = new Volunteer(body);

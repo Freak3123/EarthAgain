@@ -14,6 +14,11 @@ import {
   matches,
   listCard,
   IEvent,
+  PeriodToggle,
+  PeriodView,
+  DeleteAllOlderButton,
+  isOlderThanCutoff,
+  CUTOFF_YEAR,
 } from "../shared";
 
 export function EventsSection({
@@ -30,7 +35,15 @@ export function EventsSection({
   onRefresh: () => Promise<void> | void;
 }) {
   const [mode, setMode] = useState<SectionMode>("manage");
+  const [view, setView] = useState<PeriodView>("new");
   const count = Array.isArray(events) ? events.length : 0;
+
+  const handleDeleteAllOlder = async () => {
+    await axios.post("/api/admin/delete-events", {});
+    await onRefresh();
+    setView("new");
+  };
+
   return (
     <div>
       <SectionToggle
@@ -43,6 +56,24 @@ export function EventsSection({
         <EventForm />
       ) : (
         <div>
+          {(() => {
+            const arr = Array.isArray(events) ? events : [];
+            const newArr = arr.filter((e: any) => !isOlderThanCutoff(e.date));
+            const olderArr = arr.filter((e: any) => isOlderThanCutoff(e.date));
+            return (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <PeriodToggle
+                  view={view}
+                  onView={setView}
+                  newCount={newArr.length}
+                  olderCount={olderArr.length}
+                />
+                {view === "older" && olderArr.length > 0 && (
+                  <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
+                )}
+              </div>
+            );
+          })()}
           <SectionHeading
             title="All Events"
             count={count}
@@ -58,11 +89,24 @@ export function EventsSection({
           />
           {(() => {
                 const arr = Array.isArray(events) ? events : [];
+                const newArr = arr.filter((e: any) => !isOlderThanCutoff(e.date));
+                const olderArr = arr.filter((e: any) => isOlderThanCutoff(e.date));
+                const base = view === "older" ? olderArr : newArr;
                 if (loading) return <ListLoading />;
                 if (arr.length === 0)
                   return <EmptyState message="No events found." />;
+                if (base.length === 0)
+                  return (
+                    <EmptyState
+                      message={
+                        view === "older"
+                          ? `No events before ${CUTOFF_YEAR}.`
+                          : `No events from ${CUTOFF_YEAR} onward.`
+                      }
+                    />
+                  );
                 const q = search.trim().toLowerCase();
-                const shown = [...arr]
+                const shown = [...base]
                   .filter((e: any) =>
                     matches(q, [e.title, e.location, e.district, e.type])
                   )

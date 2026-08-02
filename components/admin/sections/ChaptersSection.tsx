@@ -46,12 +46,20 @@ export function ChaptersSection({
   search,
   onSearch,
   onRefresh,
+  liveToggle,
 }: {
   chapters: any[];
   loading: boolean;
   search: string;
   onSearch: (v: string) => void;
   onRefresh: () => Promise<void> | void;
+  liveToggle?: {
+    label: string;
+    live: boolean;
+    masterLive: boolean;
+    busy: boolean;
+    onToggle: () => Promise<void>;
+  };
 }) {
   // Approve dialog state
   const [approving, setApproving] = useState<any | null>(null);
@@ -205,6 +213,7 @@ export function ChaptersSection({
         ]}
         columns={columns}
         renderRowActions={renderRowActions}
+        liveToggle={liveToggle}
       />
 
       {/* Approve dialog — confirm/edit slug */}

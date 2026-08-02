@@ -13,6 +13,11 @@ import {
   SectionMode,
   matches,
   listCard,
+  PeriodToggle,
+  PeriodView,
+  DeleteAllOlderButton,
+  isOlderThanCutoff,
+  CUTOFF_YEAR,
 } from "../shared";
 
 export function BlogsSection({
@@ -29,7 +34,15 @@ export function BlogsSection({
   onRefresh: () => Promise<void> | void;
 }) {
   const [mode, setMode] = useState<SectionMode>("manage");
+  const [view, setView] = useState<PeriodView>("new");
   const count = Array.isArray(blogs) ? blogs.length : 0;
+
+  const handleDeleteAllOlder = async () => {
+    await axios.post("/api/admin/delete-blogs", {});
+    await onRefresh();
+    setView("new");
+  };
+
   return (
     <div>
       <SectionToggle
@@ -42,6 +55,24 @@ export function BlogsSection({
         <BlogForm />
       ) : (
         <div>
+          {(() => {
+            const arr = Array.isArray(blogs) ? blogs : [];
+            const newArr = arr.filter((e: any) => !isOlderThanCutoff(e.date));
+            const olderArr = arr.filter((e: any) => isOlderThanCutoff(e.date));
+            return (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <PeriodToggle
+                  view={view}
+                  onView={setView}
+                  newCount={newArr.length}
+                  olderCount={olderArr.length}
+                />
+                {view === "older" && olderArr.length > 0 && (
+                  <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
+                )}
+              </div>
+            );
+          })()}
           <SectionHeading
             title="All Blogs"
             count={count}
@@ -57,11 +88,24 @@ export function BlogsSection({
           />
           {(() => {
                 const arr = Array.isArray(blogs) ? blogs : [];
+                const newArr = arr.filter((e: any) => !isOlderThanCutoff(e.date));
+                const olderArr = arr.filter((e: any) => isOlderThanCutoff(e.date));
+                const base = view === "older" ? olderArr : newArr;
                 if (loading) return <ListLoading />;
                 if (arr.length === 0)
                   return <EmptyState message="No blogs found." />;
+                if (base.length === 0)
+                  return (
+                    <EmptyState
+                      message={
+                        view === "older"
+                          ? `No blogs published before ${CUTOFF_YEAR}.`
+                          : `No blogs published from ${CUTOFF_YEAR} onward.`
+                      }
+                    />
+                  );
                 const q = search.trim().toLowerCase();
-                const shown = [...arr]
+                const shown = [...base]
                   .filter((e: any) =>
                     matches(q, [e.title, e.author, e.category, e.excerpt])
                   )

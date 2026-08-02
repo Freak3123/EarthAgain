@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useSession, signOut } from "next-auth/react";
@@ -17,9 +17,14 @@ import {
   UserPlus,
   Handshake,
   MapPin,
-  Home,
 } from "lucide-react";
-import { ISpeaker, ClimatePanchayatFormData } from "./shared";
+import {
+  ISpeaker,
+  ClimatePanchayatFormData,
+  FormSettingsData,
+  FormCategoryKey,
+  MasterFormsToggle,
+} from "./shared";
 import { LoginForm } from "./forms/LoginForm";
 import { EventsSection } from "./sections/EventsSection";
 import { RegEventsSection } from "./sections/RegEventsSection";
@@ -29,7 +34,7 @@ import { BlogsSection } from "./sections/BlogsSection";
 import { RegistrationsList } from "./RegistrationsList";
 import { FormDataList, Column, FormRecord } from "./FormDataList";
 import { ChaptersSection } from "./sections/ChaptersSection";
-import { prettify, ContactCell, BadgeList, LinkCell } from "./cells";
+import { prettify, ContactCell, BadgeList } from "./cells";
 import SubsiteBuilder from "./builder/SubsiteBuilder";
 
 type TabGroup = "content" | "forms";
@@ -60,9 +65,24 @@ const AdminDashboard = () => {
   const [volunteers, setVolunteers] = useState<any[]>([]);
   const [partners, setPartners] = useState<any[]>([]);
   const [chapters, setChapters] = useState<any[]>([]);
-  const [hosts, setHosts] = useState<any[]>([]);
   const [listSearch, setListSearch] = useState("");
   const [listLoading, setListLoading] = useState(false);
+  const [formSettings, setFormSettings] = useState<FormSettingsData | null>(
+    null
+  );
+  const [formSettingsBusy, setFormSettingsBusy] = useState(false);
+
+  useEffect(() => {
+    const fetchFormSettings = async () => {
+      try {
+        const res = await axios.get("/api/form-settings");
+        setFormSettings(res.data);
+      } catch {
+        // Toggles simply won't render until this loads.
+      }
+    };
+    fetchFormSettings();
+  }, []);
 
   if (status === "loading") {
     return (
@@ -132,14 +152,49 @@ const AdminDashboard = () => {
     const res = await axios.get("/api/get-chapters");
     setChapters(res.data);
   };
-  const fetchHosts = async () => {
-    const res = await axios.get("/api/get-hosts");
-    setHosts(res.data);
+
+  const updateFormSetting = async (
+    field: "masterLive" | FormCategoryKey,
+    value: boolean
+  ) => {
+    if (!formSettings) return;
+    const prev = formSettings;
+    setFormSettingsBusy(true);
+    setFormSettings({ ...formSettings, [field]: value });
+    try {
+      const res = await axios.patch("/api/admin/form-settings", {
+        field,
+        value,
+      });
+      setFormSettings(res.data);
+    } catch {
+      setFormSettings(prev);
+      alert("Failed to update form settings.");
+    } finally {
+      setFormSettingsBusy(false);
+    }
   };
+
+  const liveToggleFor = (field: FormCategoryKey, label: string) =>
+    formSettings
+      ? {
+          label,
+          live: formSettings[field],
+          masterLive: formSettings.masterLive,
+          busy: formSettingsBusy,
+          onToggle: () => updateFormSetting(field, !formSettings[field]),
+        }
+      : undefined;
 
   // Content Management: pages managed/authored by admins.
   const contentTabs = [
     { id: "events", label: "Events", icon: CalendarDays, load: fetchLiveEvents },
+    {
+      id: "regevents",
+      label: "Reg Events",
+      icon: ClipboardList,
+      load: fetchRegEvents,
+    },
     { id: "speakers", label: "Speakers", icon: Users, load: fetchSpeakers },
     {
       id: "climate-panchayat",
@@ -153,12 +208,6 @@ const AdminDashboard = () => {
   // Form Data: submissions collected from the public site.
   const formTabs = [
     {
-      id: "regevents",
-      label: "Reg Events",
-      icon: ClipboardList,
-      load: fetchRegEvents,
-    },
-    {
       id: "reglist",
       label: "Registrations",
       icon: UsersRound,
@@ -167,7 +216,6 @@ const AdminDashboard = () => {
     { id: "volunteers", label: "Volunteers", icon: UserPlus, load: fetchVolunteers },
     { id: "partners", label: "Partners", icon: Handshake, load: fetchPartners },
     { id: "chapters", label: "Chapters", icon: MapPin, load: fetchChapters },
-    { id: "hosts", label: "Hosts", icon: Home, load: fetchHosts },
   ];
 
   const groups = [
@@ -213,6 +261,17 @@ const AdminDashboard = () => {
           </Button>
         </div>
       </header>
+
+      {/* Master forms live/paused switch — Form Data tab only */}
+      {activeGroup === "forms" && formSettings && (
+        <MasterFormsToggle
+          live={formSettings.masterLive}
+          busy={formSettingsBusy}
+          onToggle={() =>
+            updateFormSetting("masterLive", !formSettings.masterLive)
+          }
+        />
+      )}
 
       {/* Group toggle */}
       <div className="mx-auto max-w-6xl px-6 pt-8">
@@ -344,7 +403,11 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === "reglist" ? (
-          <RegistrationsList regList={regList} onRefresh={fetchRegList} />
+          <RegistrationsList
+            regList={regList}
+            onRefresh={fetchRegList}
+            liveToggle={liveToggleFor("registration", "Registration form")}
+          />
         ) : (
           ""
         )}
@@ -359,6 +422,7 @@ const AdminDashboard = () => {
             search={listSearch}
             onSearch={setListSearch}
             onRefresh={fetchVolunteers}
+            liveToggle={liveToggleFor("volunteer", "Volunteer form")}
             deleteEndpoint="/api/admin/delete-volunteer"
             csvName="volunteers.csv"
             getLabel={(v) => (v.name as string) || "this volunteer"}
@@ -416,6 +480,7 @@ const AdminDashboard = () => {
             search={listSearch}
             onSearch={setListSearch}
             onRefresh={fetchPartners}
+            liveToggle={liveToggleFor("partner", "Partner form")}
             deleteEndpoint="/api/admin/delete-partner"
             csvName="partners.csv"
             getLabel={(p) => (p.organizationName as string) || "this partner"}
@@ -512,73 +577,12 @@ const AdminDashboard = () => {
             search={listSearch}
             onSearch={setListSearch}
             onRefresh={fetchChapters}
+            liveToggle={liveToggleFor("chapter", "Chapter form")}
           />
         ) : (
           ""
         )}
 
-        {activeTab === "hosts" ? (
-          <FormDataList
-            title="Hosts"
-            statLabel="Total hosts"
-            statIcon={Home}
-            items={hosts}
-            loading={listLoading}
-            search={listSearch}
-            onSearch={setListSearch}
-            onRefresh={fetchHosts}
-            deleteEndpoint="/api/admin/delete-host"
-            csvName="hosts.csv"
-            getLabel={(h) => (h.firstName as string) || "this host"}
-            searchFields={(h) => [
-              h.firstName as string,
-              h.email as string,
-              h.contact as string,
-              h.organisationName as string,
-            ]}
-            columns={
-              [
-                {
-                  header: "Name",
-                  cell: (h) => h.firstName as string,
-                  csv: (h) => (h.firstName as string) || "",
-                },
-                {
-                  header: "Contact",
-                  cell: (h) => (
-                    <ContactCell
-                      email={h.email as string}
-                      phone={h.contact as string}
-                    />
-                  ),
-                  csv: (h) => `${h.email ?? ""} / ${h.contact ?? ""}`,
-                },
-                {
-                  header: "Organisation",
-                  cell: (h) => (h.organisationName as string) || "—",
-                  csv: (h) => (h.organisationName as string) || "",
-                },
-                {
-                  header: "Type",
-                  cell: (h) => prettify(h.organisationType as string),
-                  csv: (h) => prettify(h.organisationType as string),
-                },
-                {
-                  header: "Activity",
-                  cell: (h) => prettify(h.activity as string),
-                  csv: (h) => prettify(h.activity as string),
-                },
-                {
-                  header: "Link",
-                  cell: (h) => <LinkCell href={h.organisationLink as string} />,
-                  csv: (h) => (h.organisationLink as string) || "",
-                },
-              ] as Column<FormRecord>[]
-            }
-          />
-        ) : (
-          ""
-        )}
       </main>
     </div>
   );
