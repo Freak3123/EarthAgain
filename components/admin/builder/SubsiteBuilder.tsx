@@ -7,12 +7,16 @@ import {
   LogOut,
   Settings as SettingsIcon,
   LayoutTemplate,
+  BookOpen,
+  CalendarDays,
   Leaf,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import type { IBlock, IBlockBorder, BlockType, ISiteSettings } from "@/lib/models/site";
 import { blockRegistry } from "@/lib/blocks/registry";
 import { defaultBlockStyle } from "@/lib/blocks/defaults";
+import { BlogsSection } from "@/components/admin/sections/BlogsSection";
+import { EventsSection } from "@/components/admin/sections/EventsSection";
 import BlockListPane from "./BlockListPane";
 import SettingsPanel from "./SettingsPanel";
 import BorderField from "./BorderField";
@@ -23,9 +27,15 @@ import BorderField from "./BorderField";
  * (top bar). Loads/saves draft.blocks + settings via /api/site/draft; Preview
  * and Publish (Phase 5) both require a clean save first, so what the admin
  * previews and publishes always matches what's actually stored.
+ *
+ * Blog and Events are a separate concern from the block builder: they reuse
+ * the exact same collections/forms/routes as the main site (BlogsSection,
+ * EventsSection, /api/admin/save-blogs, etc.), scoped to this site via
+ * /api/site/blogs and /api/site/events. Unlike draft.blocks, posting a blog
+ * or event goes live immediately — there's no draft/publish step for them.
  */
 
-type Tab = "content" | "settings";
+type Tab = "content" | "blog" | "events" | "settings";
 
 function newBlockId() {
   return typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -48,6 +58,15 @@ export default function SubsiteBuilder() {
   const [hasPublished, setHasPublished] = useState(false);
   const [publishedAt, setPublishedAt] = useState<Date | null>(null);
   const [publishing, setPublishing] = useState(false);
+
+  const [blogs, setBlogs] = useState<unknown[]>([]);
+  const [blogsLoading, setBlogsLoading] = useState(false);
+  const [blogsLoaded, setBlogsLoaded] = useState(false);
+  const [blogSearch, setBlogSearch] = useState("");
+  const [events, setEvents] = useState<unknown[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+  const [eventsLoaded, setEventsLoaded] = useState(false);
+  const [eventSearch, setEventSearch] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -173,6 +192,40 @@ export default function SubsiteBuilder() {
     }
   };
 
+  const fetchBlogs = async () => {
+    setBlogsLoading(true);
+    try {
+      const res = await fetch("/api/site/blogs");
+      const data = await res.json();
+      setBlogs(res.ok ? data : []);
+    } catch {
+      setBlogs([]);
+    } finally {
+      setBlogsLoading(false);
+      setBlogsLoaded(true);
+    }
+  };
+
+  const fetchEvents = async () => {
+    setEventsLoading(true);
+    try {
+      const res = await fetch("/api/site/events");
+      const data = await res.json();
+      setEvents(res.ok ? data : []);
+    } catch {
+      setEvents([]);
+    } finally {
+      setEventsLoading(false);
+      setEventsLoaded(true);
+    }
+  };
+
+  const openTab = (next: Tab) => {
+    setTab(next);
+    if (next === "blog" && !blogsLoaded) fetchBlogs();
+    if (next === "events" && !eventsLoaded) fetchEvents();
+  };
+
   const publishSite = async () => {
     if (!siteId) return;
     const message = hasPublished
@@ -223,9 +276,15 @@ export default function SubsiteBuilder() {
   const selectedEntry = selectedBlock ? blockRegistry[selectedBlock.type] : null;
 
   return (
-    <div className="flex h-screen flex-col bg-[#fefaf2]">
+    // pt-24 clears the main site's fixed Navbar (same convention used by the
+    // superadmin console's pt-28) — without it, this header renders right
+    // under the overlay and Save/Publish become invisible, not just offset.
+    <div className="flex h-screen flex-col bg-[#fefaf2] pt-24">
       {/* -------------------------------- TOP BAR -------------------------------- */}
-      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-stone-200 bg-white/80 px-5 py-3 backdrop-blur">
+      {/* sticky (not just shrink-0) so it stays pinned right below the main
+          Navbar regardless of how the content below it scrolls — top-24
+          matches the wrapper's pt-24 so it locks into that exact spot. */}
+      <header className="sticky top-24 z-30 flex shrink-0 items-center justify-between gap-4 border-b border-stone-200 bg-white/80 px-5 py-3 backdrop-blur">
         <div className="flex items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-600 text-white shadow-sm shadow-green-600/20">
             <Leaf className="h-4.5 w-4.5" />
@@ -237,10 +296,16 @@ export default function SubsiteBuilder() {
         </div>
 
         <div className="inline-flex gap-1 rounded-xl border border-stone-200 bg-stone-50 p-1">
-          <TabButton active={tab === "content"} onClick={() => setTab("content")} icon={LayoutTemplate}>
+          <TabButton active={tab === "content"} onClick={() => openTab("content")} icon={LayoutTemplate}>
             Content
           </TabButton>
-          <TabButton active={tab === "settings"} onClick={() => setTab("settings")} icon={SettingsIcon}>
+          <TabButton active={tab === "blog"} onClick={() => openTab("blog")} icon={BookOpen}>
+            Blog
+          </TabButton>
+          <TabButton active={tab === "events"} onClick={() => openTab("events")} icon={CalendarDays}>
+            Events
+          </TabButton>
+          <TabButton active={tab === "settings"} onClick={() => openTab("settings")} icon={SettingsIcon}>
             Site Settings
           </TabButton>
         </div>
@@ -325,6 +390,36 @@ export default function SubsiteBuilder() {
       {tab === "settings" ? (
         <div className="flex-1 overflow-y-auto p-8">
           <SettingsPanel settings={settings} onChange={updateSettings} />
+        </div>
+      ) : tab === "blog" ? (
+        <div className="flex-1 overflow-y-auto p-8">
+          <div className="mx-auto max-w-4xl">
+            <BlogsSection
+              blogs={blogs}
+              loading={blogsLoading}
+              search={blogSearch}
+              onSearch={setBlogSearch}
+              onRefresh={fetchBlogs}
+              formMode="site"
+              showSiteFilter={false}
+              allowBulkDelete={false}
+            />
+          </div>
+        </div>
+      ) : tab === "events" ? (
+        <div className="flex-1 overflow-y-auto p-8">
+          <div className="mx-auto max-w-4xl">
+            <EventsSection
+              events={events}
+              loading={eventsLoading}
+              search={eventSearch}
+              onSearch={setEventSearch}
+              onRefresh={fetchEvents}
+              formMode="site"
+              showSiteFilter={false}
+              allowBulkDelete={false}
+            />
+          </div>
         </div>
       ) : (
         <div className="flex flex-1 overflow-hidden">

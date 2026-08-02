@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/config/mongoDB/connectDB";
 import Blog from "@/lib/models/blogs";
 import { createClient } from "@supabase/supabase-js";
+import { getSessionUser } from "@/lib/auth/session";
+import { resolveContentScope } from "@/lib/auth/contentScope";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,6 +11,9 @@ const supabase = createClient(
 );
 
 export async function POST(req: Request) {
+  const user = await getSessionUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
     await connectDB();
     const formData = await req.formData();
@@ -21,6 +26,17 @@ export async function POST(req: Request) {
     const category = formData.get("category") as string;
     const featured = formData.get("featured") === "true";
     const file = formData.get("image") as File | null;
+
+    let siteIdsRaw: unknown = [];
+    try {
+      siteIdsRaw = JSON.parse((formData.get("siteIds") as string) || "[]");
+    } catch {
+      siteIdsRaw = [];
+    }
+    const scope = await resolveContentScope(user, {
+      siteIds: siteIdsRaw,
+      showOnMainSite: formData.get("showOnMainSite"),
+    });
 
     let imageUrl = "";
 
@@ -51,6 +67,9 @@ export async function POST(req: Request) {
       category,
       image: imageUrl,
       featured,
+      createdByAdminUserId: user.id,
+      siteIds: scope.siteIds,
+      showOnMainSite: scope.showOnMainSite,
     });
 
     await blog.save();

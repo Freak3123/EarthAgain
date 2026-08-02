@@ -61,6 +61,11 @@ export interface FeaturedData {
   items: FeaturedItem[];
 }
 
+/**
+ * Shape the EventsBlock renderer expects for each item — no longer authored
+ * as part of block.data; mapped live from the shared `Event` collection
+ * (same one the main site uses), filtered by site. See app/s/[slug]/page.tsx.
+ */
 export interface EventItem {
   place: string;
   title: string;
@@ -73,9 +78,13 @@ export interface EventsData {
   kicker: string;
   title: string;
   viewAllLabel: string;
-  items: EventItem[];
 }
 
+/**
+ * Shape the BlogBlock renderer expects for each item — no longer authored
+ * as part of block.data; mapped live from the shared `Blog` collection
+ * (same one the main site uses), filtered by site. See app/s/[slug]/page.tsx.
+ */
 export interface BlogPost {
   badge: string;
   title: string;
@@ -89,7 +98,6 @@ export interface BlogData {
   kicker: string;
   title: string;
   viewAllLabel: string;
-  posts: BlogPost[];
 }
 
 export interface TeamMember {

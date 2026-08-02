@@ -9,6 +9,7 @@ import SponsorsPartners from '@/components/home/SponsorsPartners';
 import CallAction from '@/components/home/CallAction';
 import EditorsMessage from '@/components/home/EditorsMessage';
 import FeaturedSpeakers from '@/components/home/FeaturedSpeakers';
+import InstaFeed from '@/components/home/InstaFeed';
 
 export default function Home() {
   return (
@@ -31,12 +32,10 @@ Join us in making the earth whole again.
       <KeyFeatures />
       <SponsorsPartners />
       {/* <ImpactTracker />  */}
-      
-     
       <SpeakersSection />
       <Testimonials />
       <Events />
-      {/* will make a map later */}
+      <InstaFeed />
       <CallAction />
     </div>
   );

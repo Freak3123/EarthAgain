@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { BlockType, IBlock } from "@/lib/models/site";
+import type { BlogPost, EventItem } from "./types";
 import { blockDefaultData } from "./defaults";
 
 import HeroBlock from "@/components/subsite/blocks/HeroBlock";
@@ -145,12 +146,28 @@ export const blockTypeOrder: BlockType[] = [
   "contact",
 ];
 
+/**
+ * Live data injected into "blog"/"events" blocks at render time — sourced
+ * from the shared Blog/Event collections (same system as the main site),
+ * filtered to the current site, rather than authored in block.data. See
+ * app/s/[slug]/page.tsx, which fetches and maps this before rendering.
+ */
+export interface BlockContext {
+  blogPosts?: BlogPost[];
+  eventItems?: EventItem[];
+}
+
 /** Render one block, or null for an unknown type (forward-compatible). */
-export function renderBlock(block: IBlock) {
+export function renderBlock(block: IBlock, context?: BlockContext) {
   const entry = blockRegistry[block.type];
   if (!entry) return null;
   const Renderer = entry.renderer;
-  const rendered = <Renderer data={block.data as never} />;
+
+  let data: unknown = block.data;
+  if (block.type === "blog") data = { ...block.data, posts: context?.blogPosts ?? [] };
+  if (block.type === "events") data = { ...block.data, items: context?.eventItems ?? [] };
+
+  const rendered = <Renderer data={data as never} />;
 
   // Section border is a cross-cutting presentation option, not block content
   // — applied once here rather than duplicated in every renderer. Absent on
@@ -169,6 +186,6 @@ export function renderBlock(block: IBlock) {
 }
 
 /** Render an ordered block array, skipping hidden blocks. */
-export function BlockList({ blocks }: { blocks: IBlock[] }) {
-  return <>{blocks.filter((b) => !b.hidden).map((b) => renderBlock(b))}</>;
+export function BlockList({ blocks, context }: { blocks: IBlock[]; context?: BlockContext }) {
+  return <>{blocks.filter((b) => !b.hidden).map((b) => renderBlock(b, context))}</>;
 }

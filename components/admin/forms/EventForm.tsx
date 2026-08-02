@@ -11,8 +11,17 @@ import {
   submitBtn,
   IEvent,
 } from "../shared";
+import SiteDistributionField, { Distribution } from "../SiteDistributionField";
 
-export const EventForm = () => {
+export const EventForm = ({
+  mode = "admin",
+  onSaved,
+}: {
+  /** "site" hides the distribution selector — a subadmin's event is always
+   *  auto-scoped to their own site server-side, never broadcast elsewhere. */
+  mode?: "admin" | "site";
+  onSaved?: () => void;
+}) => {
   const [formData, setFormData] = useState<IEvent>({
     title: "",
     date: new Date(),
@@ -27,6 +36,10 @@ export const EventForm = () => {
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [distribution, setDistribution] = useState<Distribution>({
+    showOnMainSite: true,
+    siteIds: [],
+  });
 
   const handleChange = (field: keyof IEvent, value: string) => {
     setFormData((prev) => ({
@@ -65,6 +78,8 @@ export const EventForm = () => {
       await axios.post("/api/admin/save-events", {
         ...formData,
         image: imagePath,
+        siteIds: distribution.siteIds,
+        showOnMainSite: distribution.showOnMainSite,
       });
 
       alert("Event created successfully!");
@@ -82,6 +97,8 @@ export const EventForm = () => {
         featured: false,
       });
       setSelectedFile(null);
+      setDistribution({ showOnMainSite: true, siteIds: [] });
+      onSaved?.();
     } catch (error) {
       console.error("Error creating event:", error);
     } finally {
@@ -234,6 +251,10 @@ export const EventForm = () => {
             alt="Preview"
             className="mt-2 h-48 w-full rounded-lg object-cover"
           />
+        )}
+
+        {mode === "admin" && (
+          <SiteDistributionField value={distribution} onChange={setDistribution} />
         )}
 
         {/* Submit */}

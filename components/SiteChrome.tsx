@@ -6,7 +6,8 @@ import { Footer } from "@/components/Footer";
 
 /**
  * Renders the main-site navbar/footer around the app — EXCEPT on tenant
- * sub-sites (e.g. /template), which ship their own self-contained chrome.
+ * sub-sites (/template, and live/preview sub-sites at /s/[slug]), which ship
+ * their own self-contained chrome (components/subsite/SiteChrome.tsx).
  */
 export default function SiteChrome({
   children,
@@ -14,7 +15,8 @@ export default function SiteChrome({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isTenantSite = pathname?.startsWith("/template") ?? false;
+  const isTenantSite =
+    pathname?.startsWith("/template") || pathname?.startsWith("/s/") || false;
 
   return (
     <>

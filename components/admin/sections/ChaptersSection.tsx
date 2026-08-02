@@ -9,6 +9,7 @@ import {
   Copy,
   ExternalLink,
   Loader2,
+  KeyRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormDataList, Column, FormRecord } from "../FormDataList";
@@ -66,9 +67,11 @@ export function ChaptersSection({
   const [slug, setSlug] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  // Credentials panel (shown once after approval)
+  // Credentials panel (shown once after approval, or after a regenerate)
   const [creds, setCreds] = useState<GeneratedCredentials | null>(null);
+  const [credsKind, setCredsKind] = useState<"created" | "regenerated">("created");
   const [copied, setCopied] = useState<string | null>(null);
+  const [regenerating, setRegenerating] = useState<string | null>(null);
 
   const openApprove = (chapter: any) => {
     setError("");
@@ -88,6 +91,7 @@ export function ChaptersSection({
         slug: slug || undefined,
       });
       setApproving(null);
+      setCredsKind("created");
       setCreds(res.data.credentials
         ? { ...res.data.credentials, slug: res.data.slug, url: res.data.url }
         : null);
@@ -96,6 +100,28 @@ export function ChaptersSection({
       setError(err.response?.data?.error || "Failed to approve chapter.");
     } finally {
       setBusy(false);
+    }
+  };
+
+  const regeneratePassword = async (chapter: any) => {
+    if (!chapter.siteId) return;
+    if (
+      !window.confirm(
+        `Regenerate the password for "${chapter.name}"'s sub-site? The current password will stop working immediately.`
+      )
+    )
+      return;
+    setRegenerating(chapter._id);
+    try {
+      const res = await axios.post("/api/admin/regenerate-password", {
+        siteId: chapter.siteId,
+      });
+      setCredsKind("regenerated");
+      setCreds(res.data);
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Failed to regenerate password.");
+    } finally {
+      setRegenerating(null);
     }
   };
 
@@ -158,8 +184,28 @@ export function ChaptersSection({
   ] as Column<FormRecord>[];
 
   const renderRowActions = (c: any) => {
-    // Approved chapters are managed from the Sites tab; nothing to do here.
-    if (c.status === "approved") return null;
+    // No dedicated "Sites" management tab (deliberately not built — see
+    // project memory); password regeneration is wired directly here since
+    // an approved chapter already links 1:1 to its site.
+    if (c.status === "approved") {
+      return (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1 text-stone-600 hover:bg-stone-100"
+          title={`Regenerate password for ${c.name}'s sub-site`}
+          disabled={regenerating === c._id}
+          onClick={() => regeneratePassword(c)}
+        >
+          {regenerating === c._id ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <KeyRound className="h-4 w-4" />
+          )}
+          Regenerate Password
+        </Button>
+      );
+    }
     if (c.status === "rejected") {
       return <span className="text-xs text-stone-400">Rejected</span>;
     }
@@ -278,7 +324,7 @@ export function ChaptersSection({
               </span>
               <div>
                 <h3 className="text-lg font-semibold text-stone-900">
-                  Sub-site created
+                  {credsKind === "regenerated" ? "Password regenerated" : "Sub-site created"}
                 </h3>
                 <p className="text-sm text-stone-500">
                   Copy these now — the password is shown only once.

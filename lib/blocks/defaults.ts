@@ -58,25 +58,18 @@ export const blockDefaultData: Record<BlockType, Record<string, unknown>> = {
       { badge: "Category", title: "Featured item three", excerpt: placeholder, author: "Author name", meta: "4 min read", imageUrl: "" },
     ],
   },
+  // Events/Blog items are no longer authored here — they're the same shared
+  // Event/Blog collections the main site uses, filtered by site. See
+  // app/s/[slug]/page.tsx and lib/blocks/registry.tsx's BlockContext.
   events: {
     kicker: "Events",
     title: "Events Section",
     viewAllLabel: "View All",
-    items: [
-      { place: "Location", title: "Event one", description: placeholder, time: "10:00 AM", date: "Month 00, 2026", imageUrl: "" },
-      { place: "Location", title: "Event two", description: placeholder, time: "11:00 AM", date: "Month 00, 2026", imageUrl: "" },
-      { place: "Location", title: "Event three", description: placeholder, time: "03:00 PM", date: "Month 00, 2026", imageUrl: "" },
-    ],
   },
   blog: {
     kicker: "Blog",
     title: "Blog Section",
     viewAllLabel: "View All",
-    posts: [
-      { badge: "Category", title: "Blog post one", excerpt: placeholder, author: "Author name", date: "Jan 01", read: "5 min", imageUrl: "" },
-      { badge: "Category", title: "Blog post two", excerpt: placeholder, author: "Author name", date: "Jan 02", read: "6 min", imageUrl: "" },
-      { badge: "Category", title: "Blog post three", excerpt: placeholder, author: "Author name", date: "Jan 03", read: "4 min", imageUrl: "" },
-    ],
   },
   team: {
     kicker: "Team",

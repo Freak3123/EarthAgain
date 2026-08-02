@@ -2,7 +2,11 @@ import { Calendar, Clock, MapPin } from "lucide-react";
 import type { EventsData, EventItem } from "@/lib/blocks/types";
 import { SectionHead, MediaBox, cardShell, asArray } from "../shared";
 
-export default function EventsBlock({ data }: { data: EventsData }) {
+// `items` is injected by the registry from the live Event collection
+// (BlockContext), not authored as part of the block's own stored data.
+type EventsBlockData = EventsData & { items: EventItem[] };
+
+export default function EventsBlock({ data }: { data: EventsBlockData }) {
   const items = asArray<EventItem>(data.items);
   return (
     <section

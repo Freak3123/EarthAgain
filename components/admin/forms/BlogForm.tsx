@@ -9,8 +9,17 @@ import {
   fileInput,
   submitBtn,
 } from "../shared";
+import SiteDistributionField, { Distribution } from "../SiteDistributionField";
 
-export const BlogForm = () => {
+export const BlogForm = ({
+  mode = "admin",
+  onSaved,
+}: {
+  /** "site" hides the distribution selector — a subadmin's post is always
+   *  auto-scoped to their own site server-side, never broadcast elsewhere. */
+  mode?: "admin" | "site";
+  onSaved?: () => void;
+}) => {
   const [formData, setFormData] = useState({
     title: "",
     excerpt: "",
@@ -23,6 +32,10 @@ export const BlogForm = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [distribution, setDistribution] = useState<Distribution>({
+    showOnMainSite: true,
+    siteIds: [],
+  });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -58,6 +71,8 @@ export const BlogForm = () => {
       if (selectedFile) {
         data.append("image", selectedFile);
       }
+      data.append("siteIds", JSON.stringify(distribution.siteIds));
+      data.append("showOnMainSite", String(distribution.showOnMainSite));
 
       const res = await fetch("/api/admin/save-blogs", {
         method: "POST",
@@ -77,6 +92,8 @@ export const BlogForm = () => {
         featured: false,
       });
       setSelectedFile(null);
+      setDistribution({ showOnMainSite: true, siteIds: [] });
+      onSaved?.();
     } catch (err) {
       console.error(err);
       setMessage("❌ Error saving blog");
@@ -203,6 +220,10 @@ export const BlogForm = () => {
             alt="Preview"
             className="mt-2 h-48 w-full rounded-lg object-cover"
           />
+        )}
+
+        {mode === "admin" && (
+          <SiteDistributionField value={distribution} onChange={setDistribution} />
         )}
 
         <button type="submit" disabled={loading} className={submitBtn}>

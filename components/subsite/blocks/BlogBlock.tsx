@@ -1,7 +1,11 @@
 import type { BlogData, BlogPost } from "@/lib/blocks/types";
 import { SectionHead, MediaBox, cardShell, asArray } from "../shared";
 
-export default function BlogBlock({ data }: { data: BlogData }) {
+// `posts` is injected by the registry from the live Blog collection
+// (BlockContext), not authored as part of the block's own stored data.
+type BlogBlockData = BlogData & { posts: BlogPost[] };
+
+export default function BlogBlock({ data }: { data: BlogBlockData }) {
   const posts = asArray<BlogPost>(data.posts);
   return (
     <section
