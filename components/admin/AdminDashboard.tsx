@@ -17,6 +17,7 @@ import {
   UserPlus,
   Handshake,
   MapPin,
+  Landmark,
 } from "lucide-react";
 import {
   ISpeaker,
@@ -65,6 +66,7 @@ const AdminDashboard = () => {
   const [volunteers, setVolunteers] = useState<any[]>([]);
   const [partners, setPartners] = useState<any[]>([]);
   const [chapters, setChapters] = useState<any[]>([]);
+  const [panchayatApps, setPanchayatApps] = useState<any[]>([]);
   const [listSearch, setListSearch] = useState("");
   const [listLoading, setListLoading] = useState(false);
   const [formSettings, setFormSettings] = useState<FormSettingsData | null>(
@@ -152,6 +154,10 @@ const AdminDashboard = () => {
     const res = await axios.get("/api/get-chapters");
     setChapters(res.data);
   };
+  const fetchPanchayatApps = async () => {
+    const res = await axios.get("/api/panchayat");
+    setPanchayatApps(res.data);
+  };
 
   const updateFormSetting = async (
     field: "masterLive" | FormCategoryKey,
@@ -216,6 +222,12 @@ const AdminDashboard = () => {
     { id: "volunteers", label: "Volunteers", icon: UserPlus, load: fetchVolunteers },
     { id: "partners", label: "Partners", icon: Handshake, load: fetchPartners },
     { id: "chapters", label: "Chapters", icon: MapPin, load: fetchChapters },
+    {
+      id: "panchayat",
+      label: "Panchayat Applications",
+      icon: Landmark,
+      load: fetchPanchayatApps,
+    },
   ];
 
   const groups = [
@@ -237,7 +249,7 @@ const AdminDashboard = () => {
       <header className="border-y border-stone-200 bg-white/70 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-5">
           <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-600 text-white shadow-sm shadow-green-600/20">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#79b727] text-white shadow-sm shadow-green-600/20">
               <Leaf className="h-6 w-6" />
             </span>
             <div>
@@ -285,7 +297,7 @@ const AdminDashboard = () => {
                 onClick={() => switchGroup(group.id)}
                 className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
                   active
-                    ? "bg-green-600 text-white shadow-sm"
+                    ? "bg-[#79b727] text-white shadow-sm"
                     : "text-stone-600 hover:bg-stone-100"
                 }`}
               >
@@ -316,7 +328,7 @@ const AdminDashboard = () => {
                 }}
                 className={`inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-medium transition ${
                   active
-                    ? "bg-green-600 text-white shadow-sm"
+                    ? "bg-[#79b727] text-white shadow-sm"
                     : "text-stone-600 hover:bg-stone-100"
                 }`}
               >
@@ -578,6 +590,120 @@ const AdminDashboard = () => {
             onSearch={setListSearch}
             onRefresh={fetchChapters}
             liveToggle={liveToggleFor("chapter", "Chapter form")}
+          />
+        ) : (
+          ""
+        )}
+
+        {activeTab === "panchayat" ? (
+          <FormDataList
+            title="Panchayat Applications"
+            statLabel="Total applications"
+            statIcon={Landmark}
+            items={panchayatApps}
+            loading={listLoading}
+            search={listSearch}
+            onSearch={setListSearch}
+            onRefresh={fetchPanchayatApps}
+            liveToggle={liveToggleFor("panchayat", "Panchayat form")}
+            deleteEndpoint="/api/admin/delete-panchayat"
+            csvName="panchayat-applications.csv"
+            splitDate={(p) => p.preferredDate}
+            getLabel={(p) => (p.organizerName as string) || "this applicant"}
+            searchFields={(p) => [
+              p.organizerName as string,
+              p.organizerEmail as string,
+              p.organizerPhone as string,
+              p.constituency as string,
+              p.location as string,
+            ]}
+            columns={
+              [
+                {
+                  header: "Organizer",
+                  cell: (p) => p.organizerName as string,
+                  csv: (p) => (p.organizerName as string) || "",
+                },
+                {
+                  header: "Contact",
+                  cell: (p) => (
+                    <ContactCell
+                      email={p.organizerEmail as string}
+                      phone={p.organizerPhone as string}
+                    />
+                  ),
+                  csv: (p) =>
+                    `${p.organizerEmail ?? ""} / ${p.organizerPhone ?? ""}`,
+                },
+                {
+                  header: "Constituency",
+                  cell: (p) => (p.constituency as string) || "—",
+                  csv: (p) => (p.constituency as string) || "",
+                },
+                {
+                  header: "Location",
+                  cell: (p) => (p.location as string) || "—",
+                  csv: (p) => (p.location as string) || "",
+                },
+                {
+                  header: "Expected Attendees",
+                  cell: (p) => (p.expectedAttendees as string) || "—",
+                  csv: (p) => (p.expectedAttendees as string) || "",
+                },
+                {
+                  header: "Preferred Date",
+                  cell: (p) =>
+                    p.preferredDate
+                      ? new Date(p.preferredDate as string).toLocaleDateString(
+                          "en-GB",
+                          { day: "2-digit", month: "short", year: "numeric" }
+                        )
+                      : "—",
+                  csv: (p) =>
+                    p.preferredDate
+                      ? new Date(p.preferredDate as string).toLocaleDateString(
+                          "en-GB"
+                        )
+                      : "",
+                },
+                {
+                  header: "Local Issues",
+                  cell: (p) => (
+                    <span
+                      className="block max-w-[220px] truncate"
+                      title={p.localIssues as string}
+                    >
+                      {(p.localIssues as string) || "—"}
+                    </span>
+                  ),
+                  csv: (p) => (p.localIssues as string) || "",
+                },
+                {
+                  header: "Experience",
+                  cell: (p) => (
+                    <span
+                      className="block max-w-[220px] truncate"
+                      title={p.experience as string}
+                    >
+                      {(p.experience as string) || "—"}
+                    </span>
+                  ),
+                  csv: (p) => (p.experience as string) || "",
+                },
+                {
+                  header: "Support Needed",
+                  cell: (p) => (
+                    <span
+                      className="block max-w-[220px] truncate"
+                      title={p.supportNeeded as string}
+                    >
+                      {(p.supportNeeded as string) || "—"}
+                    </span>
+                  ),
+                  csv: (p) => (p.supportNeeded as string) || "",
+                },
+              ] as Column<FormRecord>[]
+            }
           />
         ) : (
           ""

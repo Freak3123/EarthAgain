@@ -5,7 +5,8 @@ export type FormCategoryKey =
   | "registration"
   | "volunteer"
   | "partner"
-  | "chapter";
+  | "chapter"
+  | "panchayat";
 
 // There is exactly one settings document; findOneAndUpdate with an empty
 // filter/update and upsert creates it on first use and returns it thereafter.

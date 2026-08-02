@@ -11,6 +11,7 @@ export interface IFormSettings extends Document {
   volunteer: boolean;
   partner: boolean;
   chapter: boolean;
+  panchayat: boolean;
 }
 
 const formSettingsSchema = new Schema<IFormSettings>(
@@ -20,6 +21,7 @@ const formSettingsSchema = new Schema<IFormSettings>(
     volunteer: { type: Boolean, default: true },
     partner: { type: Boolean, default: true },
     chapter: { type: Boolean, default: true },
+    panchayat: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

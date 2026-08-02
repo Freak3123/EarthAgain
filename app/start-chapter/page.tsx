@@ -83,7 +83,7 @@ export default function StartChapterForm() {
       <div className="max-w-4xl mx-auto">
         <Card className="border-0 shadow-2xl">
           <CardHeader className="pb-8">
-            <CardTitle className="text-2xl text-center">Start A Local Chapter</CardTitle>
+            <CardTitle className="text-2xl text-center">Start A Chapter</CardTitle>
           </CardHeader>
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -195,7 +195,7 @@ export default function StartChapterForm() {
                 type="submit"
                 size="lg"
                 disabled={isSubmitting}
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full bg-[#79b727] hover:bg-[#338c20]"
               >
                 {isSubmitting ? "Submitting..." : "Start My Chapter"}
               </Button>

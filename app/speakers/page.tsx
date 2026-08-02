@@ -22,7 +22,7 @@ export default function SpeakersPage() {
       <SpeakersSection />
 
       {/* Speaker Application */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-green-600 text-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Want to Speak at Earth Again?

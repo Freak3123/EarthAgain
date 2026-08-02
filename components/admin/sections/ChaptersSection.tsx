@@ -298,7 +298,7 @@ export function ChaptersSection({
                 Cancel
               </Button>
               <Button
-                className="gap-2 bg-green-600 hover:bg-green-700"
+                className="gap-2 bg-[#79b727] hover:bg-[#338c20]"
                 onClick={confirmApprove}
                 disabled={busy || !slug}
               >
@@ -376,7 +376,7 @@ export function ChaptersSection({
                 Open site
               </a>
               <Button
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-[#79b727] hover:bg-[#338c20]"
                 onClick={() => setCreds(null)}
               >
                 Done

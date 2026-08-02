@@ -292,7 +292,7 @@ export default function SubsiteBuilder() {
           matches the wrapper's pt-24 so it locks into that exact spot. */}
       <header className="sticky top-24 z-30 flex shrink-0 items-center justify-between gap-4 border-b border-stone-200 bg-white/80 px-5 py-3 backdrop-blur">
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-600 text-white shadow-sm shadow-green-600/20">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#79b727] text-white shadow-sm shadow-green-600/20">
             <Leaf className="h-4.5 w-4.5" />
           </span>
           <div>
@@ -365,7 +365,7 @@ export default function SubsiteBuilder() {
             type="button"
             onClick={saveDraft}
             disabled={saving || !dirty}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-green-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[#79b727] px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#338c20] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="h-4 w-4 animate-spin" />

@@ -8,6 +8,7 @@ const FIELDS = [
   "volunteer",
   "partner",
   "chapter",
+  "panchayat",
 ] as const;
 
 export async function PATCH(req: Request) {
@@ -16,7 +17,7 @@ export async function PATCH(req: Request) {
 
     if (!FIELDS.includes(field) || typeof value !== "boolean") {
       return NextResponse.json(
-        { error: "Expected { field: one of masterLive/registration/volunteer/partner/chapter, value: boolean }" },
+        { error: "Expected { field: one of masterLive/registration/volunteer/partner/chapter/panchayat, value: boolean }" },
         { status: 400 }
       );
     }
@@ -34,6 +35,7 @@ export async function PATCH(req: Request) {
       volunteer: updated.volunteer,
       partner: updated.partner,
       chapter: updated.chapter,
+      panchayat: updated.panchayat,
     });
   } catch (error) {
     console.error("Error updating form settings:", error);

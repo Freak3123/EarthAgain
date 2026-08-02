@@ -89,7 +89,7 @@ export default function EventsPage() {
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-4 left-4">
-                        <Badge className="bg-green-600 text-white">
+                        <Badge className="bg-[#79b727] text-white">
                           {featuredEvent.type}
                         </Badge>
                       </div>
@@ -189,7 +189,7 @@ export default function EventsPage() {
                             : event.type === "Workshop"
                             ? "bg-orange-600"
                             : event.type === "Action Event"
-                            ? "bg-green-600"
+                            ? "bg-[#79b727]"
                             : "bg-gray-600"
                         } text-white`}
                       >
@@ -230,7 +230,7 @@ export default function EventsPage() {
                       </div>
                     </div>
 
-                    {/* <Button className="w-full bg-green-600 hover:bg-green-700">
+                    {/* <Button className="w-full bg-[#79b727] hover:bg-[#338c20]">
                     Register Now
                   </Button> */}
                   </CardContent>
@@ -250,7 +250,7 @@ export default function EventsPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-green-600 text-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Can&apos;t Find What You&apos;re Looking For?

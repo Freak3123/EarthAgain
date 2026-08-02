@@ -14,6 +14,7 @@ export async function GET() {
       volunteer: settings.volunteer,
       partner: settings.partner,
       chapter: settings.chapter,
+      panchayat: settings.panchayat,
     });
   } catch (error) {
     console.error("Error fetching form settings:", error);

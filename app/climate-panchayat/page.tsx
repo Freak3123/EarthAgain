@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import LoaderComp from "@/components/LoaderComp";
+import { FormGate } from "@/components/FormGate";
 import axios from "axios";
 
 interface IClimatePanchayat {
@@ -113,7 +114,7 @@ export default function ClimatePanchayatPage() {
               Your Climate Panchayat proposal has been submitted. Our team will
               contact you within 48 hours with a toolkit and support materials.
             </p>
-            <Button className="w-full bg-green-600 hover:bg-green-700">
+            <Button className="w-full bg-[#79b727] hover:bg-[#338c20]">
               Download Organizer Toolkit
             </Button>
           </CardContent>
@@ -200,7 +201,7 @@ export default function ClimatePanchayatPage() {
                     "Democratic participation in environmental decisions",
                   ].map((point, index) => (
                     <div key={index} className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                      <div className="w-2 h-2 bg-[#79b727] rounded-full"></div>
                       <span className="text-gray-700">{point}</span>
                     </div>
                   ))}
@@ -209,7 +210,7 @@ export default function ClimatePanchayatPage() {
 
               <Button
                 size="lg"
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-[#79b727] hover:bg-[#338c20]"
                 onClick={handleShowForm}
               >
                 <Users className="w-5 h-5 mr-2" />
@@ -335,7 +336,7 @@ export default function ClimatePanchayatPage() {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-green-600 text-white">Featured</Badge>
+                      <Badge className="bg-[#79b727] text-white">Featured</Badge>
                     </div>
                   </div>
 
@@ -522,6 +523,7 @@ export default function ClimatePanchayatPage() {
           className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]"
         >
           <div className="max-w-4xl mx-auto">
+            <FormGate formKey="panchayat">
             <Card className="border-0 shadow-2xl">
               <CardHeader className="pb-8">
                 <CardTitle className="text-2xl text-center">
@@ -645,19 +647,20 @@ export default function ClimatePanchayatPage() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    className="w-full bg-[#79b727] hover:bg-[#338c20]"
                   >
                     Submit Proposal
                   </Button>
                 </form>
               </CardContent>
             </Card>
+            </FormGate>
           </div>
         </section>
       )}
 
       {/* Call to Action */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-green-600 text-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Lead Climate Democracy?

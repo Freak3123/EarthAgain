@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('tailwindcss', \\(p.dependencies||{}\\).tailwindcss||\\(p.devDependencies||{}\\).tailwindcss\\)\")"
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('tailwindcss', \\(p.dependencies||{}\\).tailwindcss||\\(p.devDependencies||{}\\).tailwindcss\\)\")",
+      "Bash(cd \"c:/Users/sneha/Favorites/My Projects/EarthAgain\" && grep -iE \"error|warn|failed\" /tmp/eadev.log | head -10; echo \"--- tile markup ---\"; grep -o 'font-mono text-\\\\[10px\\\\] tracking-\\\\[0.3em\\\\] text-\\\\[#74B729\\\\]' /tmp/home.html | head -2; grep -c 'aspect-4/5' /tmp/home.html)",
+      "Read(//tmp/**)",
+      "Bash(grep -o \"animate-marquee{[^}]*}\\\\|@keyframes marquee{[^}]*}\\\\|aspect-4\\\\\\\\\\\\\\\\/5{[^}]*}\")",
+      "Bash(curl -s \"http://localhost:3111/_next/static/css/app/layout.css\" -o /tmp/ea.css)",
+      "Bash(taskkill //F //IM node.exe //FI \"WINDOWTITLE eq *\")",
+      "Bash(cd \"c:/Users/sneha/Favorites/My Projects/EarthAgain\" && grep -o \"@keyframes[^{]*{[^}]*}[^}]*}\" /tmp/ea.css | head -6)",
+      "Bash(cd \"c:/Users/sneha/Favorites/My Projects/EarthAgain\" && grep -o \"keyframes\" /tmp/ea.css | wc -l; grep -n \"keyframes\" /tmp/ea.css | head -5 | cut -c1-300)",
+      "Bash(cd \"c:/Users/sneha/Favorites/My Projects/EarthAgain\" && sed -n '5188,5205p' /tmp/ea.css)",
+      "Bash(awk -F: '{print $NF}')"
     ]
   }
 }

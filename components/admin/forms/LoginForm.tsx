@@ -29,7 +29,7 @@ export const LoginForm = () => {
     <div className="flex min-h-screen items-center justify-center bg-[#fefaf2] px-4 pb-16 pt-28">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-600 text-white shadow-lg shadow-green-600/20">
+          <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#79b727] text-white shadow-lg shadow-green-600/20">
             <Leaf className="h-7 w-7" />
           </span>
           <h1 className="text-2xl font-bold tracking-tight text-stone-900">

@@ -52,7 +52,7 @@ export default function AboutPage() {
               </div>
 
               <Link href="/join">
-                <Button size="lg" className="bg-green-600 hover:bg-green-700">
+                <Button size="lg" className="bg-[#79b727] hover:bg-[#338c20]">
                   <Users className="w-5 h-5 mr-2" />
                   Join Our Mission
                 </Button>
@@ -197,7 +197,7 @@ export default function AboutPage() {
                       </CardContent>
                     </Card>
                   </div>
-                  <div className="w-4 h-4 bg-green-600 rounded-full border-4 border-white shadow-lg z-10"></div>
+                  <div className="w-4 h-4 bg-[#79b727] rounded-full border-4 border-white shadow-lg z-10"></div>
                   <div className="w-1/2"></div>
                 </div>
               ))}
@@ -208,7 +208,7 @@ export default function AboutPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-green-600 text-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Be Part of History</h2>
           <p className="text-xl mb-8 opacity-90">

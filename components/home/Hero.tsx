@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ImagesSlider } from "@/components/ui/images-slider";
 import Link from "next/link";
-import { Users, CalendarDays } from "lucide-react";
+import { Users, CalendarDays, TreePine } from "lucide-react";
 import { CountdownTimer } from "@/components/home/CountdownTimer";
 
 export default function Hero() {
@@ -40,7 +40,7 @@ export default function Hero() {
           >
             <h1 className="text-5xl md:text-8xl font-bold mb-4 leading-tight">
               Earth{" "}
-              <span className="text-green-600">
+              <span className="text-[#79b727]">
                 Again
                 {/* <br />
                 RESHAPING TOMORROW! */}
@@ -65,11 +65,11 @@ export default function Hero() {
               <Link
                 // 
                 href="/start-chapter"
-                className=" bg-green-600 hover:bg-green-700 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
+                className=" bg-[#79b727] hover:bg-[#338c20] w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
               >
                 <Users className="inline mr-2 h-5" />
                 {/* Join the Movement */}
-                Start A Local Chapter
+                Start A Chapter
               </Link>
               {/* <Link
                 href="/citizen-voice"
@@ -78,13 +78,20 @@ export default function Hero() {
                 <CalendarDays className="inline mr-2 h-5" />
                 Vote your Issues
               </Link> */}
+              <Link
+                href="/register"
+                className=" hover:bg-white/20 border-1 border-green-50 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
+              >
+                <TreePine className="inline mr-2 h-5" />
+                Host Climate Panchayat
+              </Link>
             </div>
           </motion.div>
         </section>
 
         {/* Countdown Timer */}
-        <section className="py-8 sm:px-10 px-2 bg-green-600">
-          <CountdownTimer target="2025-10-06T09:00:00" />
+        <section className="py-8 sm:px-10 px-2 bg-[#a6783f]">
+          <CountdownTimer target="2026-10-06T09:00:00" />
         </section>
       </div>
     </div>

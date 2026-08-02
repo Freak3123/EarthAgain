@@ -462,7 +462,7 @@ export default function RegisterPage() {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full bg-[#79b727] hover:bg-[#338c20]"
                 disabled={formData.selectedEvents.length === 0}
               >
                 Join Earth Again Movement

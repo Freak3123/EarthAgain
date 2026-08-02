@@ -130,7 +130,7 @@ export default function BlogPage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-6 left-6">
-                    <Badge className="bg-green-600 text-white">Featured</Badge>
+                    <Badge className="bg-[#79b727] text-white">Featured</Badge>
                   </div>
                 </div>
                 <CardContent className="p-8 lg:p-12">
@@ -164,7 +164,7 @@ export default function BlogPage() {
                   <Link href={`/blog/${featuredArticle._id}`}>
                     <Button
                       size="lg"
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-[#79b727] hover:bg-[#338c20]"
                     >
                       Read Full Article <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
@@ -266,7 +266,7 @@ export default function BlogPage() {
       </section>
 
       {/* Newsletter Subscription */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-green-600 text-white">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Stay Updated</h2>
           <p className="text-xl mb-8 opacity-90">

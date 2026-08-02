@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import ClimatePanchayat, { IClimatePanchayat } from "@/lib/models/panchayat";
 import { connectDB } from "@/config/mongoDB/connectDB";
+import { isFormLive } from "@/lib/formSettings";
 
 export async function POST(req: Request) {
   try {
     await connectDB();
+
+    if (!(await isFormLive("panchayat"))) {
+      return NextResponse.json(
+        { error: "This form isn't open right now. We'll start this soon." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
 
     const newEntry: IClimatePanchayat = await ClimatePanchayat.create(body);

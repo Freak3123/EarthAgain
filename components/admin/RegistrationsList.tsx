@@ -305,7 +305,7 @@ export function RegistrationsList({
                                   isCollapsed ? "-rotate-90" : ""
                                 }`}
                               />
-                              <div className="h-5 w-1 rounded-full bg-green-600" />
+                              <div className="h-5 w-1 rounded-full bg-[#79b727]" />
                               <span className="font-mono text-sm font-semibold text-stone-800">
                                 {key}
                               </span>

@@ -108,9 +108,9 @@ export const label =
 export const input =
   "w-full rounded-lg border border-stone-200 bg-white px-3.5 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 transition focus:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-600/25";
 export const fileInput =
-  "w-full cursor-pointer rounded-lg border border-dashed border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-600 transition hover:border-green-500 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-green-600 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white hover:file:bg-green-700";
+  "w-full cursor-pointer rounded-lg border border-dashed border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-600 transition hover:border-green-500 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-[#79b727] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white hover:file:bg-[#338c20]";
 export const submitBtn =
-  "flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-green-600 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600/40 disabled:cursor-not-allowed disabled:opacity-60";
+  "flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#79b727] py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-[#338c20] focus:outline-none focus:ring-2 focus:ring-green-600/40 disabled:cursor-not-allowed disabled:opacity-60";
 export const checkbox =
   "h-4 w-4 rounded border-stone-300 text-green-600 focus:ring-green-600/40";
 export const panel = "rounded-xl border border-stone-200/80 bg-white shadow-sm";
@@ -173,7 +173,7 @@ export const SectionHeading = ({
   right?: React.ReactNode;
 }) => (
   <div className="mb-6 flex flex-wrap items-center gap-3">
-    <div className="h-6 w-1 rounded-full bg-green-600" />
+    <div className="h-6 w-1 rounded-full bg-[#79b727]" />
     <h3 className="text-lg font-semibold text-stone-900">{title}</h3>
     {typeof count === "number" && (
       <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-500">
@@ -274,7 +274,7 @@ export const SectionToggle = ({
         onClick={() => onMode("create")}
         className={`${base} ${
           mode === "create"
-            ? "bg-green-600 text-white shadow-sm"
+            ? "bg-[#79b727] text-white shadow-sm"
             : "text-stone-600 hover:bg-stone-100"
         }`}
       >
@@ -287,7 +287,7 @@ export const SectionToggle = ({
         onClick={() => onMode("manage")}
         className={`${base} ${
           mode === "manage"
-            ? "bg-green-600 text-white shadow-sm"
+            ? "bg-[#79b727] text-white shadow-sm"
             : "text-stone-600 hover:bg-stone-100"
         }`}
       >
@@ -345,7 +345,7 @@ export const PeriodToggle = ({
         onClick={() => onView("new")}
         className={`${base} ${
           view === "new"
-            ? "bg-green-600 text-white shadow-sm"
+            ? "bg-[#79b727] text-white shadow-sm"
             : "text-stone-600 hover:bg-stone-100"
         }`}
       >
@@ -358,7 +358,7 @@ export const PeriodToggle = ({
         onClick={() => onView("older")}
         className={`${base} ${
           view === "older"
-            ? "bg-green-600 text-white shadow-sm"
+            ? "bg-[#79b727] text-white shadow-sm"
             : "text-stone-600 hover:bg-stone-100"
         }`}
       >
@@ -445,7 +445,8 @@ export type FormCategoryKey =
   | "registration"
   | "volunteer"
   | "partner"
-  | "chapter";
+  | "chapter"
+  | "panchayat";
 
 export interface FormSettingsData {
   masterLive: boolean;
@@ -453,6 +454,7 @@ export interface FormSettingsData {
   volunteer: boolean;
   partner: boolean;
   chapter: boolean;
+  panchayat: boolean;
 }
 
 /** Plain on/off switch (no Radix dependency) — track + sliding knob. */
@@ -461,7 +463,7 @@ export const ToggleSwitch = ({
   onChange,
   disabled,
   label,
-  activeColor = "bg-green-600",
+  activeColor = "bg-[#79b727]",
 }: {
   checked: boolean;
   onChange: () => void;
@@ -546,7 +548,7 @@ export const MasterFormsToggle = ({
           checked={live}
           disabled={busy}
           label={live ? "Pause all forms" : "Live all forms"}
-          activeColor="bg-green-600"
+          activeColor="bg-[#79b727]"
           onChange={() => (live ? setConfirmOpen(true) : onToggle())}
         />
         <span

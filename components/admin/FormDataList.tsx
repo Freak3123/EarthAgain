@@ -55,6 +55,7 @@ export function FormDataList<T extends FormRecord>({
   csvName,
   renderRowActions,
   liveToggle,
+  splitDate,
 }: {
   title: string;
   statLabel: string;
@@ -79,12 +80,19 @@ export function FormDataList<T extends FormRecord>({
     busy: boolean;
     onToggle: () => Promise<void>;
   };
+  /**
+   * Date used to split Older/New — defaults to createdAt (submission time).
+   * Pass a content date (e.g. a preferred/event date) when the category has
+   * one, per the "content's own date, else createdAt" convention.
+   */
+  splitDate?: (item: T) => unknown;
 }) {
   const [view, setView] = useState<PeriodView>("new");
+  const getSplitDate = splitDate ?? ((item: T) => item.createdAt);
 
   const safe = Array.isArray(items) ? items : [];
-  const newItems = safe.filter((item) => !isOlderThanCutoff(item.createdAt));
-  const olderItems = safe.filter((item) => isOlderThanCutoff(item.createdAt));
+  const newItems = safe.filter((item) => !isOlderThanCutoff(getSplitDate(item)));
+  const olderItems = safe.filter((item) => isOlderThanCutoff(getSplitDate(item)));
   const base = view === "older" ? olderItems : newItems;
   const q = search.trim().toLowerCase();
   const visible = base.filter((item) => matches(q, searchFields(item)));

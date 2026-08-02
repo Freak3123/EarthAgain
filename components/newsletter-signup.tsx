@@ -50,7 +50,7 @@ export function NewsletterSignup() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
+          <Button type="submit" className="w-full bg-[#79b727] hover:bg-[#338c20]">
             Subscribe to Newsletter
           </Button>
         </form>

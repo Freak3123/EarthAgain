@@ -13,17 +13,26 @@ export default function InstaFeed() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Follow Our Journey</h2>
             <p className="text-xl text-gray-600 mb-8">Stay connected with daily updates from the movement</p>
             <div className="flex justify-center gap-4">
-              <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                <Instagram className="w-5 h-5 mr-2" />
-                Follow @EarthAgainOdisha
+              <Button
+                asChild
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              >
+                <a
+                  href="https://www.instagram.com/theearthagain_movement"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Instagram className="w-5 h-5 mr-2" />
+                  Follow @EarthAgainOdisha
+                </a>
               </Button>
-              <Button variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 bg-transparent">
+              {/* <Button variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 bg-transparent">
                 Share Your Story
-              </Button>
+              </Button> */}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[
               {
                 image: "tree plantation drive with volunteers",
@@ -77,7 +86,7 @@ export default function InstaFeed() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </div> */}
         </div>
       </section>
     </div>

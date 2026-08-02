@@ -32,10 +32,10 @@ Join us in making the earth whole again.
       <KeyFeatures />
       <SponsorsPartners />
       {/* <ImpactTracker />  */}
-      <SpeakersSection />
-      <Testimonials />
+      {/* <SpeakersSection /> */}
       <Events />
-      <InstaFeed />
+      <Testimonials />
+      {/* <InstaFeed /> */}
       <CallAction />
     </div>
   );

@@ -142,7 +142,7 @@ const cardShell =
 const primaryBtn =
   "inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-[#16a34a] px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#15803d] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16a34a]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fefaf2]";
 const ghostBtn =
-  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-green-600 px-6 py-3 text-sm font-semibold text-green-700 transition-colors duration-200 hover:bg-green-600 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fefaf2]";
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-green-600 px-6 py-3 text-sm font-semibold text-green-700 transition-colors duration-200 hover:bg-[#79b727] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fefaf2]";
 
 /* --------------------------- placeholder data ---------------------------- */
 const featured = [
@@ -431,7 +431,7 @@ export default function SubSiteTemplate() {
                       </div>
                     </div>
                   </div>
-                  <Button className="w-full cursor-pointer bg-green-600 text-white hover:bg-green-700">
+                  <Button className="w-full cursor-pointer bg-[#79b727] text-white hover:bg-[#338c20]">
                     <Calendar className="h-4 w-4" />
                     RSVP
                   </Button>
@@ -520,7 +520,7 @@ export default function SubSiteTemplate() {
           aria-labelledby="subscribe-title"
           className="scroll-mt-24 px-5 pb-20 sm:px-8"
         >
-          <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-green-600 px-6 py-14 text-white sm:px-14">
+          <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-[#79b727] px-6 py-14 text-white sm:px-14">
             <div className="grid gap-10 md:grid-cols-2 md:items-center">
               <div>
                 <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/85">

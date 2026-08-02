@@ -7,7 +7,8 @@ export type FormCategoryKey =
   | "registration"
   | "volunteer"
   | "partner"
-  | "chapter";
+  | "chapter"
+  | "panchayat";
 
 interface FormSettingsData {
   masterLive: boolean;
@@ -15,6 +16,7 @@ interface FormSettingsData {
   volunteer: boolean;
   partner: boolean;
   chapter: boolean;
+  panchayat: boolean;
 }
 
 /**

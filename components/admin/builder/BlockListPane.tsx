@@ -59,7 +59,7 @@ export default function BlockListPane({
               <div className="flex items-center gap-2">
                 <span
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
-                    active ? "bg-green-600 text-white" : "bg-stone-100 text-stone-500"
+                    active ? "bg-[#79b727] text-white" : "bg-stone-100 text-stone-500"
                   }`}
                 >
                   <Icon className="h-3.5 w-3.5" />

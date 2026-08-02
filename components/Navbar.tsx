@@ -73,7 +73,7 @@ const Navbar = () => {
                 href={item.href}
                 className={`text-base transition-colors ${
                   isActive
-                    ? "text-green-600 font-semibold"
+                    ? "text-[#79b727] font-semibold"
                     : isHome && !scrolled
                     ? "text-white"
                     : "text-gray-700 font-semibold"
@@ -89,7 +89,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Link
             href="/register"
-            className="hidden lg:inline-block text-white bg-[#74B729] hover:bg-green-600 px-5 py-2.5 rounded-md transition"
+            className="hidden lg:inline-block text-white bg-[#79b727] hover:bg-[#338c20] px-5 py-2.5 rounded-md transition"
           >
             Register
           </Link>
@@ -144,7 +144,7 @@ const Navbar = () => {
             ))}
             <Link
               href="/register"
-              className="text-center text-xl text-white bg-green-600 hover:bg-green-700 mt-3 px-4 py-2 rounded-md transition"
+              className="text-center text-xl text-white bg-[#79b727] hover:bg-[#338c20] mt-3 px-4 py-2 rounded-md transition"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Register

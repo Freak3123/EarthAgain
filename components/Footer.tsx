@@ -50,7 +50,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-[#79b727] rounded-full flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold">Earth Again</span>
@@ -150,7 +150,7 @@ export function Footer() {
               <Button
                 onClick={handleSubscribe}
                 disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full bg-[#79b727] hover:bg-[#338c20]"
               >
                 {loading ? "Sending..." : "Send"}
               </Button>

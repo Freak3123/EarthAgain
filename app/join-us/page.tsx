@@ -95,7 +95,7 @@ export default function JoinPage() {
               24 hours with next steps and onboarding information.
             </p>
             {/* <div className="space-y-4">
-              <Button className="w-full bg-green-600 hover:bg-green-700">
+              <Button className="w-full bg-[#79b727] hover:bg-[#338c20]">
                 Join WhatsApp Group
               </Button>
               <Button
@@ -142,7 +142,7 @@ export default function JoinPage() {
                   environmental impact in your community.
                 </p>
                 <Button
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-[#79b727] hover:bg-[#338c20]"
                   onClick={() => setActiveTab("volunteer")}
                 >
                   Become a Volunteer
@@ -321,7 +321,7 @@ export default function JoinPage() {
                     <Button
                       type="submit"
                       size="lg"
-                      className="w-full bg-green-600 hover:bg-green-700"
+                      className="w-full bg-[#79b727] hover:bg-[#338c20]"
                     >
                       Join as Volunteer
                     </Button>
@@ -626,7 +626,7 @@ export default function JoinPage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-4 right-4">
-                    <Badge className="bg-green-600 text-white">{story.impact}</Badge>
+                    <Badge className="bg-[#79b727] text-white">{story.impact}</Badge>
                   </div>
                 </div>
                 <CardContent className="p-6">

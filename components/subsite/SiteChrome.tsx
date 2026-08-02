@@ -287,7 +287,7 @@ export default function SiteChrome({
                     { label: "Home", href: "/" },
                     { label: "Register", href: "/register" },
                     { label: "Join Us", href: "/join-us" },
-                    { label: "Start A Local Chapter", href: "/start-chapter" },
+                    { label: "Start A Chapter", href: "/start-chapter" },
                   ].map((l) => (
                     <li key={l.href}>
                       <Link
