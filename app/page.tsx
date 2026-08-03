@@ -28,7 +28,7 @@ Climate change affects our farmers, coastal communities, and forests today. Toge
 Join us in making the earth whole again.
 `}
       />
-      <FeaturedSpeakers />
+      {/* <FeaturedSpeakers /> */}
       <KeyFeatures />
       <SponsorsPartners />
       {/* <ImpactTracker />  */}
