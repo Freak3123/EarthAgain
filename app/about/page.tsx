@@ -147,7 +147,7 @@ export default function AboutPage() {
       </section> */}
 
       {/* Timeline */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
+      {/* <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"><span className="text-green-600">60-Day</span> Movement Timeline</h2>
@@ -204,8 +204,8 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-        {/* <InstaFeed /> */}
-      </section>
+      </section> */}
+      {/* <InstaFeed /> */}
 
       {/* Call to Action */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
