@@ -14,8 +14,10 @@ const Navbar = () => {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
+  // Goes solid almost immediately — at 200px the hero copy scrolled up behind a
+  // still-transparent bar, so white-on-photo text collided with the nav links.
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 200);
+    setScrolled(latest > 40);
   });
 
   const navItems = [
