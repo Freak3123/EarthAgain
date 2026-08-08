@@ -44,6 +44,16 @@ export function SpeakersSection({
     setView("new");
   };
 
+  const toggleFeatured = async (id: string | undefined, next: boolean) => {
+    if (!id) return;
+    try {
+      await axios.patch("/api/admin/feature-speakers", { id, isFeatured: next });
+      await onRefresh();
+    } catch {
+      alert("Failed to update featured status.");
+    }
+  };
+
   return (
     <div>
       <SectionToggle
@@ -149,35 +159,60 @@ export function SpeakersSection({
                             </div>
                           </div>
 
-                          {/* Delete */}
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            className="gap-1.5 self-start md:self-center"
-                            onClick={async () => {
-                              if (
-                                window.confirm(
-                                  `Are you sure you want to delete "${speaker.name}"?`
-                                )
-                              ) {
-                                try {
-                                  await axios.delete(
-                                    "/api/admin/delete-speakers",
-                                    {
-                                      data: { id: speaker._id },
-                                    }
-                                  );
-
-                                  await onRefresh();
-                                } catch (err) {
-                                  alert("Failed to delete speaker.");
-                                }
+                          <div className="flex gap-2 self-start md:self-center">
+                            {/* Feature / Unfeature */}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className={`gap-1.5 ${
+                                speaker.isFeatured
+                                  ? "border-amber-300 text-amber-700 hover:bg-amber-50"
+                                  : "border-stone-300 text-stone-600 hover:bg-stone-100"
+                              }`}
+                              onClick={() =>
+                                toggleFeatured(speaker._id, !speaker.isFeatured)
                               }
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            Delete
-                          </Button>
+                            >
+                              <Star
+                                className={`h-4 w-4 ${
+                                  speaker.isFeatured
+                                    ? "fill-amber-500 text-amber-500"
+                                    : ""
+                                }`}
+                              />
+                              {speaker.isFeatured ? "Unfeature" : "Feature"}
+                            </Button>
+
+                            {/* Delete */}
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="gap-1.5"
+                              onClick={async () => {
+                                if (
+                                  window.confirm(
+                                    `Are you sure you want to delete "${speaker.name}"?`
+                                  )
+                                ) {
+                                  try {
+                                    await axios.delete(
+                                      "/api/admin/delete-speakers",
+                                      {
+                                        data: { id: speaker._id },
+                                      }
+                                    );
+
+                                    await onRefresh();
+                                  } catch (err) {
+                                    alert("Failed to delete speaker.");
+                                  }
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                       )
                     )}

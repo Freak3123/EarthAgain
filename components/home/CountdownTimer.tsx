@@ -16,9 +16,8 @@ export function CountdownTimer({ target }: { target: string }) {
   const targetDate = new Date(target).getTime();
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const difference = targetDate - now;
+    const tick = () => {
+      const difference = targetDate - new Date().getTime();
 
       if (difference > 0) {
         setTimeLeft({
@@ -29,11 +28,17 @@ export function CountdownTimer({ target }: { target: string }) {
           minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((difference % (1000 * 60)) / 1000),
         });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
-    }, 1000);
+    };
+
+    tick(); // fill in immediately rather than showing 00s for a second
+    const timer = setInterval(tick, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+    // Re-runs when an admin changes the target, so the closure never goes stale.
+  }, [targetDate]);
   if (targetDate < Date.now()) {
     mytext = "Event ended";
   }

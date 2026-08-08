@@ -10,11 +10,18 @@ import CallAction from '@/components/home/CallAction';
 import EditorsMessage from '@/components/home/EditorsMessage';
 import FeaturedSpeakers from '@/components/home/FeaturedSpeakers';
 import InstaFeed from '@/components/home/InstaFeed';
+import { getCountdownTarget } from '@/lib/homeSettings';
 
-export default function Home() {
+// The hero countdown is admin-editable, so this page can't be frozen at build
+// time. Regenerating each minute keeps it fresh without going fully dynamic.
+export const revalidate = 60;
+
+export default async function Home() {
+  const countdownTarget = await getCountdownTarget();
+
   return (
     <div className='min-w-sw'>
-      <Hero />
+      <Hero countdownTarget={countdownTarget} />
       <Navbar />
       <EditorsMessage
         name="Tanaya Patnaik"

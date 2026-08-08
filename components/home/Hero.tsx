@@ -7,7 +7,11 @@ import Link from "next/link";
 import { Users, CalendarDays, TreePine } from "lucide-react";
 import { CountdownTimer } from "@/components/home/CountdownTimer";
 
-export default function Hero() {
+// Only used if the page couldn't supply one; the live value is set by a
+// superadmin in the console and read from the HomeSettings singleton.
+const FALLBACK_COUNTDOWN_TARGET = "2026-10-06T09:00:00+05:30";
+
+export default function Hero({ countdownTarget }: { countdownTarget?: string }) {
   const scrollRef = useRef(null);
 
   const { scrollY } = useScroll();
@@ -91,7 +95,9 @@ export default function Hero() {
 
         {/* Countdown Timer */}
         <section className="py-8 sm:px-10 px-2 bg-[#a6783f]">
-          <CountdownTimer target="2026-10-06T09:00:00" />
+          <CountdownTimer
+            target={countdownTarget ?? FALLBACK_COUNTDOWN_TARGET}
+          />
         </section>
       </div>
     </div>

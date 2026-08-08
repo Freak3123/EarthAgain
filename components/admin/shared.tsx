@@ -9,6 +9,7 @@ import {
   LayoutList,
   Trash2,
   AlertTriangle,
+  CalendarClock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -495,6 +496,93 @@ export const ToggleSwitch = ({
  * Pausing hides every public submission form behind a "we'll start this
  * soon" notice; it overrides (but doesn't change) each form's own toggle.
  */
+/**
+ * `<input type="datetime-local">` speaks local wall-clock time in
+ * "YYYY-MM-DDTHH:mm"; the stored value is a UTC instant. These convert between
+ * the two so the picker shows the admin their own timezone.
+ */
+const toPickerValue = (iso: string) => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}`;
+};
+
+/** Superadmin control for the home hero countdown's target date and time. */
+export const CountdownTargetControl = ({
+  value,
+  onSave,
+}: {
+  /** The stored target, as an ISO instant. */
+  value: string;
+  onSave: (iso: string) => Promise<void>;
+}) => {
+  const [draft, setDraft] = useState(() => toPickerValue(value));
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  // Re-sync when the parent reloads the setting (e.g. after a save).
+  React.useEffect(() => setDraft(toPickerValue(value)), [value]);
+
+  const dirty = draft !== toPickerValue(value);
+
+  const handleSave = async () => {
+    const parsed = new Date(draft);
+    if (Number.isNaN(parsed.getTime())) {
+      alert("Pick a valid date and time.");
+      return;
+    }
+    setBusy(true);
+    try {
+      await onSave(parsed.toISOString());
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-4 px-6 pt-6">
+      <div>
+        <span className={label}>Home page countdown</span>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <input
+            type="datetime-local"
+            value={draft}
+            disabled={busy}
+            onChange={(e) => setDraft(e.target.value)}
+            className={`${input} w-auto`}
+          />
+          <Button
+            className="gap-1.5 bg-[#79b727] hover:bg-[#338c20]"
+            disabled={busy || !dirty}
+            onClick={handleSave}
+          >
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <CalendarClock className="h-4 w-4" />
+            )}
+            Save
+          </Button>
+          {saved && (
+            <span className="text-sm font-medium text-green-700">Saved</span>
+          )}
+        </div>
+      </div>
+
+      <p className="max-w-sm text-xs text-stone-500">
+        Sets the countdown in the home page hero. Entered in your own timezone
+        and stored as a fixed moment, so every visitor sees the same time
+        remaining.
+      </p>
+    </div>
+  );
+};
+
 export const MasterFormsToggle = ({
   live,
   onToggle,

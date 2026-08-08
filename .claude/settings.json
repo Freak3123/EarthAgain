@@ -10,7 +10,11 @@
       "Bash(cd \"c:/Users/sneha/Favorites/My Projects/EarthAgain\" && grep -o \"@keyframes[^{]*{[^}]*}[^}]*}\" /tmp/ea.css | head -6)",
       "Bash(cd \"c:/Users/sneha/Favorites/My Projects/EarthAgain\" && grep -o \"keyframes\" /tmp/ea.css | wc -l; grep -n \"keyframes\" /tmp/ea.css | head -5 | cut -c1-300)",
       "Bash(cd \"c:/Users/sneha/Favorites/My Projects/EarthAgain\" && sed -n '5188,5205p' /tmp/ea.css)",
-      "Bash(awk -F: '{print $NF}')"
+      "Bash(awk -F: '{print $NF}')",
+      "Bash(curl -s -X PATCH -H \"Content-Type: application/json\" -d '{\"countdownTarget\":\"2027-01-01T00:00:00.000Z\"}' -w \"\\\\nstatus=%{http_code}\\\\n\" http://localhost:3117/api/admin/home-settings)",
+      "Bash(curl -s http://localhost:3117/api/home-settings)",
+      "Bash(curl -s -X PATCH -H \"Content-Type: application/json\" -d '{\"countdownTarget\":\"not-a-date\"}' -w \" status=%{http_code}\\\\n\" http://localhost:3117/api/admin/home-settings)",
+      "Bash(taskkill //F //IM node.exe)"
     ]
   }
 }

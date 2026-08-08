@@ -25,6 +25,7 @@ import {
   FormSettingsData,
   FormCategoryKey,
   MasterFormsToggle,
+  CountdownTargetControl,
 } from "./shared";
 import { LoginForm } from "./forms/LoginForm";
 import { EventsSection } from "./sections/EventsSection";
@@ -73,6 +74,7 @@ const AdminDashboard = () => {
     null
   );
   const [formSettingsBusy, setFormSettingsBusy] = useState(false);
+  const [countdownTarget, setCountdownTarget] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFormSettings = async () => {
@@ -84,6 +86,18 @@ const AdminDashboard = () => {
       }
     };
     fetchFormSettings();
+  }, []);
+
+  useEffect(() => {
+    const fetchCountdownTarget = async () => {
+      try {
+        const res = await axios.get("/api/home-settings");
+        setCountdownTarget(res.data.countdownTarget);
+      } catch {
+        // The picker simply won't render until this loads.
+      }
+    };
+    fetchCountdownTarget();
   }, []);
 
   if (status === "loading") {
@@ -181,6 +195,17 @@ const AdminDashboard = () => {
     }
   };
 
+  const updateCountdownTarget = async (iso: string) => {
+    try {
+      const res = await axios.patch("/api/admin/home-settings", {
+        countdownTarget: iso,
+      });
+      setCountdownTarget(res.data.countdownTarget);
+    } catch {
+      alert("Failed to update the countdown date.");
+    }
+  };
+
   const liveToggleFor = (field: FormCategoryKey, label: string) =>
     formSettings
       ? {
@@ -273,6 +298,14 @@ const AdminDashboard = () => {
           </Button>
         </div>
       </header>
+
+      {/* Home hero countdown target — Content Management tab only */}
+      {activeGroup === "content" && countdownTarget && (
+        <CountdownTargetControl
+          value={countdownTarget}
+          onSave={updateCountdownTarget}
+        />
+      )}
 
       {/* Master forms live/paused switch — Form Data tab only */}
       {activeGroup === "forms" && formSettings && (
