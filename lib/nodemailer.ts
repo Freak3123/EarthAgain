@@ -8,64 +8,95 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
+/** Escapes the handful of characters that would otherwise break the markup. */
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export async function sendConfirmationMail(
   to: string,
   name: string,
   registrationDays: string[],
-  sessions: { title: string; date: string; time: string; speakers: string[] }[] // ✅ has time
+  sessions: { title: string; date: string; time: string; speakers: string[] }[],
+  options: {
+    /** "dates" registers whole days, so no session list is printed. */
+    mode: "dates" | "dates-events";
+    /** Site-wide venue; blank omits the Venue line entirely. */
+    venue: string;
+    /** Earliest start time across the registered days, when one is known. */
+    startTime?: string;
+  }
 ) {
-  const formattedDays = registrationDays.join(", "); // e.g., "6 Oct 2025, 7 Oct 2025"
+  const { mode, venue, startTime } = options;
 
-  const sessionsHtml = sessions
-    .map((s) => {
-      const day = new Date(s.date).toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-      }); 
-      return `
-        <li>
-          <b>Session:</b> ${s.title}, ${s.time}, ${day}<br/>
-          <b>Speakers details -</b> ${s.speakers.join(", ")}
-        </li>
-      `;
-    })
-    .join("");
+  const dateLine = registrationDays.includes("all")
+    ? "All event days"
+    : registrationDays.join(", ");
+
+  // Every line is conditional — an unknown time or a blank venue drops out
+  // rather than printing an empty label.
+  const detailLines = [
+    dateLine ? `<b>Date:</b> ${escapeHtml(dateLine)}` : "",
+    mode === "dates" && startTime
+      ? `<b>Time:</b> ${escapeHtml(startTime)} onwards`
+      : "",
+    venue ? `<b>Venue:</b> ${escapeHtml(venue)}` : "",
+  ].filter(Boolean);
+
+  const sessionsHtml =
+    mode === "dates-events"
+      ? sessions
+          .map((s) => {
+            const day = new Date(s.date).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            });
+            const speakers = s.speakers?.length
+              ? `<br/><span style="color:#555">Speakers: ${escapeHtml(
+                  s.speakers.join(", ")
+                )}</span>`
+              : "";
+            return `<li><b>${escapeHtml(s.title)}</b> — ${escapeHtml(
+              day
+            )}${s.time ? `, ${escapeHtml(s.time)}` : ""}${speakers}</li>`;
+          })
+          .join("")
+      : "";
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to,
-    subject: "🎉 Registration Confirmed – Earth Again 2025 Conference",
+    subject: "Confirmation: Registration for Earth Again Event",
     html: `
-      <p>Dear <b>${name}</b>,</p>
+      <p>Dear ${escapeHtml(name)},</p>
 
-      <p>Thank you for registering for <b>Earth Again 2025 Conference</b>. 
-      We are delighted to confirm your participation in this three-day event dedicated to sustainability, climate action, and innovative solutions for a greener future.</p>
+      <p>Thank you for registering for the Earth Again event, organized by
+      Sambad. We are delighted to have you join us in our commitment to
+      environmental sustainability and a greener future.</p>
 
-      <p><b>You have selected to join the following sessions. Please note you will only be allowed to attend these sessions only:</b></p>
+      <p><b>Event Details</b><br/>
+      ${detailLines.join("<br/>")}</p>
 
-      <p>
-        📅 <b>Event Dates:</b> ${formattedDays}<br/>
-        📍 <b>Venue:</b> Swosti Premium, Bhubaneswar
-      </p>
+      ${
+        sessionsHtml
+          ? `<p><b>Your Sessions</b></p><ul>${sessionsHtml}</ul>`
+          : ""
+      }
 
-      <p><b>Your Selected Sessions:</b></p>
-      <ul>
-        ${sessionsHtml || "<li>No sessions selected</li>"}
-      </ul>
+      <p>Please keep this email for your records. If you have any questions or
+      require special assistance, feel free to reply directly to this message.</p>
 
-      <p>This year’s conference will bring together environmental leaders, youth voices, changemakers, and innovators to engage in powerful discussions, workshops, and action-driven sessions.</p>
-
-      <p>
-        <b>For updates, connect with us here:</b><br/>
-        🌐 <a href="https://share.google/pfYHJYJvuGtWqCGnc">Website</a><br/>
-        📷 <a href="https://www.instagram.com/theearthagain_movement?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">Instagram</a><br/>
-        📘 <a href="https://www.facebook.com/earthagainmovement">Facebook</a>
-      </p>
-
-      <p><b>Important:</b> Please show this email at the registration desk on the first day of the event to collect your entry badge.</p>
+      <p>We look forward to welcoming you.</p>
 
       <p>Warm regards,<br/>
-      <b>Team Earth Again</b></p>
+      Team Earth Again<br/>
+      Sambad<br/>
+      <a href="https://www.earthagain.in">https://www.earthagain.in</a></p>
     `,
   };
 

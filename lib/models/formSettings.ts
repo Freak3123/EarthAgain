@@ -12,6 +12,20 @@ export interface IFormSettings extends Document {
   partner: boolean;
   chapter: boolean;
   panchayat: boolean;
+  /**
+   * "dates-events": registrants pick days, then individual sessions.
+   * "dates": registrants pick days only and attend everything scheduled that
+   * day — the sessions are resolved from the day at read time.
+   */
+  registrationMode: "dates" | "dates-events";
+  /** Site-wide venue printed on confirmation emails; blank omits the line. */
+  venue: string;
+  /**
+   * Hides every session from the public registration form and its confirmation
+   * email, without deleting anything. Registration then behaves as whole-day
+   * ("dates") registration regardless of registrationMode.
+   */
+  regEventsHidden: boolean;
 }
 
 const formSettingsSchema = new Schema<IFormSettings>(
@@ -22,6 +36,13 @@ const formSettingsSchema = new Schema<IFormSettings>(
     partner: { type: Boolean, default: true },
     chapter: { type: Boolean, default: true },
     panchayat: { type: Boolean, default: true },
+    registrationMode: {
+      type: String,
+      enum: ["dates", "dates-events"],
+      default: "dates-events",
+    },
+    venue: { type: String, default: "Swosti Premium, Bhubaneswar" },
+    regEventsHidden: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,10 +20,27 @@ import { IRegEvent } from "@/lib/models/regevent";
 import { formatTo12Hour } from "@/lib/formatTime";
 import { FormGate } from "@/components/FormGate";
 
+/** The day format stored in `registrationDays` — e.g. "6 Oct 2025". */
+const dayLabel = (date: string | Date) =>
+  new Date(date).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
 export default function RegisterPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [events, setEvents] = useState<IRegEvent[]>([]);
-  const [dates, setDates] = useState<string[]>([]);
+  // Days added by an admin on their own, independent of any session.
+  const [standaloneDates, setStandaloneDates] = useState<string[]>([]);
+  // "dates" registers whole days and hides the session picker; set by an admin
+  // in the console. Defaults to the session picker until the setting loads.
+  const [registrationMode, setRegistrationMode] = useState<
+    "dates" | "dates-events"
+  >("dates-events");
+  // An admin can hide every session without deleting them; the form then falls
+  // back to whole-day registration whatever the mode says.
+  const [eventsHidden, setEventsHidden] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -37,33 +54,51 @@ export default function RegisterPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("/api/get-regEvent");
-        const data = await res.json();
+        const [eventsRes, datesRes] = await Promise.all([
+          fetch("/api/get-regEvent"),
+          fetch("/api/get-regDates"),
+        ]);
+        const data = await eventsRes.json();
+        const standalone = datesRes.ok ? await datesRes.json() : [];
         setEvents(data);
-
-        // Extract unique dates
-        const uniqueDates = Array.from(
-          new Set(
-            data.map((ev: IRegEvent) =>
-              new Date(ev.date).toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })
-            )
-          )
-        ) as string[];
-        uniqueDates.sort(
-          (a, b) => new Date(a).getTime() - new Date(b).getTime()
-        );
-
-        setDates(["all", ...uniqueDates]);
+        setStandaloneDates(standalone.map((d: { date: string }) => d.date));
       } catch (err) {
         console.error(err);
       }
     };
     fetchEvents();
   }, []);
+
+  useEffect(() => {
+    const fetchMode = async () => {
+      try {
+        const res = await fetch("/api/form-settings");
+        const data = await res.json();
+        if (data?.registrationMode) setRegistrationMode(data.registrationMode);
+        setEventsHidden(Boolean(data?.regEventsHidden));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchMode();
+  }, []);
+
+  // Hiding every session leaves nothing to pick, so it forces day-only
+  // registration — otherwise the submit button could never enable.
+  const datesOnly = registrationMode === "dates" || eventsHidden;
+
+  // Hidden sessions contribute nothing at all — not their days either. Only the
+  // days an admin added on their own remain selectable while they're hidden.
+  const dates = useMemo(() => {
+    const labels = new Set<string>();
+    if (!eventsHidden) {
+      events.forEach((ev) => labels.add(dayLabel(ev.date)));
+    }
+    standaloneDates.forEach((d) => labels.add(dayLabel(d)));
+    return Array.from(labels).sort(
+      (a, b) => new Date(a).getTime() - new Date(b).getTime()
+    );
+  }, [events, standaloneDates, eventsHidden]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -281,27 +316,36 @@ export default function RegisterPage() {
                       Select Registration Days
                     </Label>
                     <div className="flex flex-col gap-2">
-                      {/* "All" checkbox */}
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={formData.registrationDays.includes("all")}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData((prev) => ({
-                                ...prev,
-                                registrationDays: ["all"],
-                              }));
-                            } else {
-                              setFormData((prev) => ({
-                                ...prev,
-                                registrationDays: [],
-                              }));
-                            }
-                          }}
-                        />
-                        <span>All</span>
-                      </label>
+                      {dates.length === 0 && (
+                        <p className="text-sm text-gray-500">
+                          No registration days are open yet. Please check back
+                          soon.
+                        </p>
+                      )}
+
+                      {/* "All" checkbox — pointless with nothing to select */}
+                      {dates.length > 0 && (
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            checked={formData.registrationDays.includes("all")}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  registrationDays: ["all"],
+                                }));
+                              } else {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  registrationDays: [],
+                                }));
+                              }
+                            }}
+                          />
+                          <span>All</span>
+                        </label>
+                      )}
 
                       {/* Dynamic date checkboxes */}
                       {dates
@@ -342,8 +386,19 @@ export default function RegisterPage() {
                     </div>
                   </div>
                 </div>
+                {/* Whole-day registration: no session picker, so say what the
+                    day includes instead of leaving the step unexplained. */}
+                {datesOnly && formData.registrationDays.length > 0 && (
+                  <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-900">
+                    You&apos;re registering for the full day. You&apos;ll be
+                    added to every session scheduled on the day
+                    {formData.registrationDays.length > 1 ? "s" : ""} you
+                    selected — no need to pick sessions individually.
+                  </div>
+                )}
+
                 {/* Events list for selected days */}
-                <div className="space-y-6 mb-6">
+                <div className={`space-y-6 mb-6 ${datesOnly ? "hidden" : ""}`}>
                   <Label className="font-semibold text-gray-900">
                     Select Sessions to Attend
                   </Label>
@@ -463,7 +518,11 @@ export default function RegisterPage() {
                 type="submit"
                 size="lg"
                 className="w-full bg-[#79b727] hover:bg-[#338c20]"
-                disabled={formData.selectedEvents.length === 0}
+                disabled={
+                  datesOnly
+                    ? formData.registrationDays.length === 0
+                    : formData.selectedEvents.length === 0
+                }
               >
                 Join Earth Again Movement
               </Button>

@@ -3,7 +3,8 @@ import { connectDB } from "@/config/mongoDB/connectDB";
 import Registration from "@/lib/models/registrations";
 import { RegEvent } from "@/lib/models/regevent";
 import { sendConfirmationMail } from "@/lib/nodemailer";
-import { isFormLive } from "@/lib/formSettings";
+import { isFormLive, getFormSettings } from "@/lib/formSettings";
+import { eventsOnDays, formatTo12Hour } from "@/lib/registrationDays";
 import mongoose from "mongoose";
 
 export async function POST(req: Request) {
@@ -17,33 +18,46 @@ export async function POST(req: Request) {
       );
     }
 
+    const settings = await getFormSettings();
+    // Hiding every session removes them from the form and the email alike, so
+    // it registers people for whole days regardless of the configured mode.
+    const mode = settings.regEventsHidden ? "dates" : settings.registrationMode;
+
     const body = await req.json();
 
-    const registration = await Registration.create(body);
-
-    // const sessions =
-    //   registration.selectedEvents && registration.selectedEvents.length > 0
-    //     ? await RegEvent.find({
-    //         _id: { $in: registration.selectedEvents },
-    //       }).select("title date speakers")
-    //     : [];
+    // In "dates" mode the day is the whole registration — sessions are resolved
+    // from the day whenever they're needed, so nothing is stored per-session.
+    const registration = await Registration.create(
+      mode === "dates"
+        ? { ...body, selectedEvents: [], registrationMode: mode }
+        : { ...body, registrationMode: mode }
+    );
 
     const sessions =
-  registration.selectedEvents && registration.selectedEvents.length > 0
-    ? await RegEvent.find({
-        _id: { $in: registration.selectedEvents.map((id: string) => new mongoose.Types.ObjectId(id)) },
-      }).select("title date speakers time")
-    : [];
+      mode === "dates-events" &&
+      registration.selectedEvents &&
+      registration.selectedEvents.length > 0
+        ? await RegEvent.find({
+            _id: {
+              $in: registration.selectedEvents.map(
+                (id: string) => new mongoose.Types.ObjectId(id)
+              ),
+            },
+          }).select("title date speakers time")
+        : [];
 
-
-    function formatTo12Hour(time24: string) {
-      if (!time24) return "";
-      const [hours, minutes] = time24.split(":").map(Number);
-      const suffix = hours >= 12 ? "PM" : "AM";
-      const hours12 = ((hours + 11) % 12) + 1; // convert 0–23 → 1–12
-      return `${hours12.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")} ${suffix}`;
+    // Whole-day registrants get a single "from X onwards" time, taken from the
+    // earliest session across the days they picked.
+    // Skipped while sessions are hidden — their times are part of what's
+    // hidden, so the email simply omits the Time line.
+    let startTime: string | undefined;
+    if (mode === "dates" && !settings.regEventsHidden) {
+      const dayEvents = await eventsOnDays(registration.registrationDays);
+      const times = dayEvents
+        .map((ev) => ev.time)
+        .filter((t): t is string => Boolean(t) && /^\d{1,2}:\d{2}/.test(t))
+        .sort();
+      if (times.length > 0) startTime = formatTo12Hour(times[0]);
     }
 
     await sendConfirmationMail(
@@ -52,10 +66,14 @@ export async function POST(req: Request) {
       registration.registrationDays,
       sessions.map((ev) => ({
         title: ev.title,
-        date: ev.date instanceof Date ? ev.date.toISOString() : new Date(ev.date).toISOString(),
-        time: ev.time,
+        date:
+          ev.date instanceof Date
+            ? ev.date.toISOString()
+            : new Date(ev.date).toISOString(),
+        time: formatTo12Hour(ev.time),
         speakers: ev.speakers,
-      }))
+      })),
+      { mode, venue: settings.venue ?? "", startTime }
     );
 
     return NextResponse.json(

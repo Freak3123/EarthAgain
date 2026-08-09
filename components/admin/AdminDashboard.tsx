@@ -26,6 +26,7 @@ import {
   FormCategoryKey,
   MasterFormsToggle,
   CountdownTargetControl,
+  RegistrationSettingsControl,
 } from "./shared";
 import { LoginForm } from "./forms/LoginForm";
 import { EventsSection } from "./sections/EventsSection";
@@ -174,8 +175,13 @@ const AdminDashboard = () => {
   };
 
   const updateFormSetting = async (
-    field: "masterLive" | FormCategoryKey,
-    value: boolean
+    field:
+      | "masterLive"
+      | FormCategoryKey
+      | "registrationMode"
+      | "venue"
+      | "regEventsHidden",
+    value: boolean | string
   ) => {
     if (!formSettings) return;
     const prev = formSettings;
@@ -222,7 +228,7 @@ const AdminDashboard = () => {
     { id: "events", label: "Events", icon: CalendarDays, load: fetchLiveEvents },
     {
       id: "regevents",
-      label: "Reg Events",
+      label: "Registration",
       icon: ClipboardList,
       load: fetchRegEvents,
     },
@@ -400,13 +406,32 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === "regevents" ? (
-          <RegEventsSection
-            regevents={regevents}
-            loading={listLoading}
-            search={listSearch}
-            onSearch={setListSearch}
-            onRefresh={fetchRegEvents}
-          />
+          <>
+            {/* Sits with Reg Events because it governs what the public
+                registration form asks for and what its email says. */}
+            {formSettings && (
+              <RegistrationSettingsControl
+                mode={formSettings.registrationMode}
+                venue={formSettings.venue}
+                busy={formSettingsBusy}
+                onMode={(mode) => updateFormSetting("registrationMode", mode)}
+                onVenue={(venue) => updateFormSetting("venue", venue)}
+                className="mb-6 rounded-xl border border-stone-200/80 bg-white p-5 shadow-sm"
+              />
+            )}
+            <RegEventsSection
+              regevents={regevents}
+              loading={listLoading}
+              search={listSearch}
+              onSearch={setListSearch}
+              onRefresh={fetchRegEvents}
+              eventsHidden={formSettings?.regEventsHidden ?? false}
+              settingsBusy={formSettingsBusy}
+              onToggleHidden={(hidden) =>
+                updateFormSetting("regEventsHidden", hidden)
+              }
+            />
+          </>
         ) : (
           ""
         )}

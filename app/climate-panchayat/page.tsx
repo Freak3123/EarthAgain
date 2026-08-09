@@ -17,6 +17,13 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
   Users,
   MessageCircle,
   Calendar,
@@ -50,6 +57,10 @@ export default function ClimatePanchayatPage() {
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [events, setEvents] = useState<IClimatePanchayat[]>([]);
+  // The card grid shows a clamped preview; the full record opens in a dialog.
+  const [selectedEvent, setSelectedEvent] = useState<IClimatePanchayat | null>(
+    null
+  );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -103,14 +114,14 @@ export default function ClimatePanchayatPage() {
     return (
       <div className="min-h-screen bg-[#fefaf2] flex items-center justify-center px-4">
         <Card className="max-w-2xl w-full border-0 shadow-2xl">
-          <CardContent className="p-12 text-center">
+          <CardContent className="p-8 sm:p-12 text-center">
             <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
               Thank You for Leading Change!
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-base sm:text-xl text-gray-600 mb-8">
               Your Climate Panchayat proposal has been submitted. Our team will
               contact you within 48 hours with a toolkit and support materials.
             </p>
@@ -145,17 +156,23 @@ export default function ClimatePanchayatPage() {
     );
   }
 
-  const featuredEvents = events.filter((event) => event.featured);
+  // Cap the featured band at the three most recent — past that it just repeats
+  // what the "All Climate Panchayats" grid below already shows. A no-op while
+  // three or fewer are flagged.
+  const featuredEvents = events
+    .filter((event) => event.featured)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
   const allEvents = [...events].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
   return (
-    <div className="min-h-screen pt-22 bg-[#fefaf2">
+    <div className="min-h-screen pt-22 bg-[#fefaf2]">
       {/* Hero Section */}
       <section className="py-0 px-4 pt-10 bg-[#fefaf2] md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-16">
             {/* <Badge className="bg-green-100 text-green-800 hover:bg-green-200 mb-6">
               Climate Panchayat Initiative
             </Badge> */}
@@ -163,20 +180,32 @@ export default function ClimatePanchayatPage() {
               Host Your Own{" "}
               <span className="text-green-600">Climate Panchayat</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto">
               Bring democracy to climate action. Organize community discussions
               that empower local voices, create awareness, and drive grassroots
               environmental solutions in your constituency.
             </p>
+
+            {/* Below lg the two-column layout stacks, pushing the main CTA
+                under the whole explainer — a long scroll from the top. This
+                one carries it up beside the headline. */}
+            <Button
+              size="lg"
+              className="lg:hidden mt-8 w-full sm:w-auto bg-[#79b727] hover:bg-[#338c20]"
+              onClick={handleShowForm}
+            >
+              <Users className="w-5 h-5 mr-2" />
+              Host a Climate Panchayat
+            </Button>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-gray-900">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="space-y-6 sm:space-y-8">
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
                   What is a Climate Panchayat?
                 </h2>
-                <p className="text-lg text-gray-600">
+                <p className="text-base sm:text-lg text-gray-600">
                   A Climate Panchayat is a grassroots community forum where
                   local citizens gather to discuss environmental issues, share
                   indigenous knowledge, and develop collective solutions to
@@ -185,7 +214,7 @@ export default function ClimatePanchayatPage() {
                   in action for a sustainable future, shaped by the voices of
                   those who live closest to the land.
                 </p>
-                <p className="text-lg text-gray-600">
+                <p className="text-base sm:text-lg text-gray-600">
                   This initiative is part of Earth Again, a Sambad Group effort
                   and a people-led movement that empowers communities to reclaim
                   their role in protecting the planet - reflecting a growing
@@ -210,7 +239,7 @@ export default function ClimatePanchayatPage() {
 
               <Button
                 size="lg"
-                className="bg-[#79b727] hover:bg-[#338c20]"
+                className="hidden lg:inline-flex bg-[#79b727] hover:bg-[#338c20]"
                 onClick={handleShowForm}
               >
                 <Users className="w-5 h-5 mr-2" />
@@ -224,7 +253,8 @@ export default function ClimatePanchayatPage() {
                 alt="Climate Panchayat - Community Discussion"
                 width={800}
                 height={600}
-                className="rounded-2xl h-[25rem] shadow-2xl object-cover"
+                sizes="(max-width: 1024px) 100vw, 800px"
+                className="w-full rounded-2xl h-64 sm:h-80 lg:h-[25rem] shadow-2xl object-cover"
               />
             </div>
           </div>
@@ -232,19 +262,19 @@ export default function ClimatePanchayatPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
+      <section className="py-12 sm:py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               How to Organize a Climate Panchayat
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg sm:text-xl text-gray-600">
               Follow these simple steps to bring climate democracy to your
               community
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:gap-8">
             {[
               {
                 step: "01",
@@ -281,23 +311,27 @@ export default function ClimatePanchayatPage() {
             ].map((step, index) => (
               <Card
                 key={index}
-                className="border-0 shadow-lg hover:shadow-xl transition-shadow relative"
+                className="border-0 rounded-sm py-2 sm:py-6 shadow-lg hover:shadow-xl transition-shadow relative"
               >
-                <CardContent className="p-8 text-center">
-                  <div className="text-4xl font-bold text-gray-200 mb-4">
+                <CardContent className="p-3 sm:p-6 lg:p-8 text-center">
+                  <div className="text-xl sm:text-3xl lg:text-4xl font-bold text-gray-200 mb-1 sm:mb-3">
                     {step.step}
                   </div>
                   <div
-                    className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 ${step.color}`}
+                    className={`w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mx-auto rounded-full flex items-center justify-center mb-2 sm:mb-4 lg:mb-6 ${step.color}`}
                   >
-                    <step.icon className="w-8 h-8" />
+                    <step.icon className="w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  <h3 className="text-xs leading-tight sm:text-lg lg:text-xl font-semibold text-gray-900 mb-1 sm:mb-2 lg:mb-3">
                     {step.title}
                   </h3>
-                  <p className="text-gray-600">{step.description}</p>
+                  <p className="text-[11px] leading-snug sm:text-sm lg:text-base text-gray-600">
+                    {step.description}
+                  </p>
                 </CardContent>
-                {index < 3 && (
+                {/* Only between columns — the right-hand tile of each row ends
+                    the row and has nothing to point at. */}
+                {(index + 1) % 2 !== 0 && index < 3 && (
                   <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
                     <ArrowRight className="w-8 h-8 text-gray-300" />
                   </div>
@@ -309,7 +343,7 @@ export default function ClimatePanchayatPage() {
       </section>
  
       {/*Events */}
-      <section className="pt-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
+      <section className="pt-12 sm:pt-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]">
       <div className="max-w-7xl mx-auto text-center">
         {/* Featured Climate Panchayat */}
         {featuredEvents.length > 0 && (
@@ -323,7 +357,7 @@ export default function ClimatePanchayatPage() {
             {featuredEvents.map((featuredEvent) => (
               <Card
                 key={featuredEvent._id}
-                className="border-0 p-0 my-2 mb-20 shadow-xl overflow-hidden"
+                className="border-0 rounded-sm p-0 my-2 mb-10 sm:mb-20 shadow-xl overflow-hidden"
               >
                 <div className="grid lg:grid-cols-2">
                   {/* Image Section */}
@@ -341,15 +375,15 @@ export default function ClimatePanchayatPage() {
                   </div>
 
                   {/* Content Section */}
-                  <CardContent className="p-8 lg:p-10 lg:px-12">
-                    <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  <CardContent className="p-6 text-left sm:p-8 lg:p-10 lg:px-12">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
                       {featuredEvent.title}
                     </h3>
-                    <p className="text-lg text-gray-600 mb-6">
+                    <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">
                       {featuredEvent.description}
                     </p>
 
-                    <div className="space-y-3 mb-8">
+                    <div className="space-y-3 mb-2 sm:mb-8">
                       <div className="flex items-center gap-3 text-gray-600">
                         <Calendar className="w-5 h-5 text-green-600" />
                         <span>{featuredEvent.date.slice(0, 10)}</span>
@@ -383,34 +417,63 @@ export default function ClimatePanchayatPage() {
           </h2>
         </div>
 
-        <section className="py-4 pb-10 px-4 md:px-6 lg:px-8">
+        {/* No horizontal padding here — the parent section already pads, and
+            doubling it squeezed the cards on phones. */}
+        <section className="py-4 pb-10">
           <div className="max-w-7xl mx-auto">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5 lg:gap-8">
               {allEvents.map((event) => (
                 <Card
                   key={event._id}
-                  className="border-0 pt-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                  role="button"
+                  tabIndex={0}
+                  aria-haspopup="dialog"
+                  onClick={() => setSelectedEvent(event)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedEvent(event);
+                    }
+                  }}
+                  className="border-0 rounded-sm pt-0 pb-2 sm:pb-6 gap-2 sm:gap-6 shadow-lg hover:shadow-xl transition-shadow overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#79b727] focus-visible:ring-offset-2"
                 >
-                  <div className="relative h-60">
+                  <div className="relative h-32 sm:h-48 lg:h-60">
                     <Image
                       src={event.image}
                       alt={event.title}
                       width={400}
                       height={200}
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-4 right-4">
+                    {/* The date badge needs more width than a phone tile has,
+                        so below sm it moves under the title instead. */}
+                    <div className="hidden sm:block absolute top-4 right-4">
                       <Badge className="bg-white/90 text-gray-900">
                         {event.date.slice(0, 10)}
                       </Badge>
                     </div>
                   </div>
 
-                  <CardContent className="px-6 py-0 pb-2">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  <CardContent className="px-2 sm:px-6 py-0 pb-0 sm:pb-2 text-left">
+                    <h3 className="text-xs leading-tight line-clamp-2 sm:text-lg lg:text-xl font-semibold text-gray-900 mb-1 sm:mb-3">
                       {event.title}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    <div className="sm:hidden space-y-0.5 text-[11px] leading-tight text-gray-500">
+                      <p className="flex items-center gap-1">
+                        <Clock className="h-3 w-3 shrink-0" />
+                        <span className="truncate">
+                          {event.date.slice(0, 10)}
+                        </span>
+                      </p>
+                      {event.location && (
+                        <p className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{event.location}</span>
+                        </p>
+                      )}
+                    </div>
+                    <p className="hidden sm:block text-gray-600 text-sm mb-4 line-clamp-2">
                       {event.description}
                     </p>
 
@@ -444,15 +507,80 @@ export default function ClimatePanchayatPage() {
                 </p>
               </div>
             )}
+
+            {/* Full detail for whichever card was clicked. */}
+            <Dialog
+              open={selectedEvent !== null}
+              onOpenChange={(open) => !open && setSelectedEvent(null)}
+            >
+              {/* The close button sits over the photo, so it gets its own
+                  chip — a bare dark icon disappears on a light image. */}
+              <DialogContent className="max-h-[85vh] overflow-y-auto p-0 sm:max-w-lg [&_[data-slot=dialog-close]]:top-3 [&_[data-slot=dialog-close]]:right-3 [&_[data-slot=dialog-close]]:rounded-full [&_[data-slot=dialog-close]]:bg-white/90 [&_[data-slot=dialog-close]]:p-1.5 [&_[data-slot=dialog-close]]:text-gray-900 [&_[data-slot=dialog-close]]:shadow-md">
+                {selectedEvent && (
+                  <>
+                    <div className="relative h-48 w-full sm:h-60">
+                      <Image
+                        src={selectedEvent.image}
+                        alt={selectedEvent.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 32rem"
+                        className="object-cover"
+                      />
+                    </div>
+
+                    <div className="px-5 pb-6 text-left sm:px-6">
+                      <DialogHeader className="text-left">
+                        <DialogTitle className="text-xl font-bold text-gray-900 sm:text-2xl">
+                          {selectedEvent.title}
+                        </DialogTitle>
+                        <DialogDescription className="sr-only">
+                          Climate Panchayat event details
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
+                        <Calendar className="h-4 w-4 text-[#79b727]" />
+                        <span>{selectedEvent.date.slice(0, 10)}</span>
+                      </div>
+
+                      {selectedEvent.location && (
+                        <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                          <MapPin className="h-4 w-4 text-[#79b727]" />
+                          <span>{selectedEvent.location}</span>
+                        </div>
+                      )}
+
+                      {selectedEvent.time && (
+                        <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                          <Clock className="h-4 w-4 text-[#79b727]" />
+                          <span>{selectedEvent.time}</span>
+                        </div>
+                      )}
+
+                      {selectedEvent.attendees && (
+                        <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                          <Users className="h-4 w-4 text-[#79b727]" />
+                          <span>{selectedEvent.attendees} attended</span>
+                        </div>
+                      )}
+
+                      <p className="mt-4 whitespace-pre-line text-base leading-relaxed text-gray-600">
+                        {selectedEvent.description}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </DialogContent>
+            </Dialog>
           </div>
         </section>
       </div>
     </section>
 
       {/* Benefits */}
-      {/* <section className="py-20 px-4 md:px-6 lg:px-8">
+      {/* <section className="py-12 sm:py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Why Host a Climate Panchayat?</h2>
             <p className="text-xl text-gray-600">The impact goes beyond just one meeting</p>
           </div>
@@ -520,22 +648,22 @@ export default function ClimatePanchayatPage() {
       {showForm && (
         <section
           ref={formRef}
-          className="py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]"
+          className="py-12 sm:py-20 px-4 md:px-6 lg:px-8 bg-[#fefaf2]"
         >
           <div className="max-w-4xl mx-auto">
             <FormGate formKey="panchayat">
             <Card className="border-0 shadow-2xl">
-              <CardHeader className="pb-8">
-                <CardTitle className="text-2xl text-center">
+              <CardHeader className="pb-6 sm:pb-8">
+                <CardTitle className="text-xl sm:text-2xl text-center">
                   Host a Climate Panchayat
                 </CardTitle>
-                <p className="text-center text-gray-600">
+                <p className="text-sm sm:text-base text-center text-gray-600">
                   Fill out this form to register your interest in hosting a
                   Climate Panchayat
                 </p>
               </CardHeader>
-              <CardContent className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-8">
+              <CardContent className="p-5 sm:p-8">
+                <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="organizer-name">Your Name *</Label>
@@ -660,12 +788,12 @@ export default function ClimatePanchayatPage() {
       )}
 
       {/* Call to Action */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
+      <section className="py-12 sm:py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Lead Climate Democracy?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-lg sm:text-xl mb-8 opacity-90">
             Join hundreds of community leaders across Odisha who are hosting
             Climate Panchayats. Your leadership can spark the change your
             community needs.
@@ -673,7 +801,7 @@ export default function ClimatePanchayatPage() {
           {!showForm && (
             <Button
               size="lg"
-              className="bg-white text-green-600 hover:bg-gray-100"
+              className="w-full sm:w-auto bg-white text-[#338c20] hover:bg-gray-100"
               onClick={handleShowForm}
             >
               <Users className="w-5 h-5 mr-2" />

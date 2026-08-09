@@ -77,10 +77,10 @@ export function CountdownTimer({ target }: { target: string }) {
 
       <div className="grid grid-cols-4 gap-2 sm:gap-4 md:max-w-2xl md:min-w-xl max-mr-10">
         {[
-          { label: "Days", value: timeLeft.days },
-          { label: "Hours", value: timeLeft.hours },
-          { label: "Minutes", value: timeLeft.minutes },
-          { label: "Seconds", value: timeLeft.seconds },
+          { label: "Days", short: "Days", value: timeLeft.days },
+          { label: "Hours", short: "Hrs", value: timeLeft.hours },
+          { label: "Minutes", short: "Min", value: timeLeft.minutes },
+          { label: "Seconds", short: "Sec", value: timeLeft.seconds },
         ].map((item, index) => (
           <Card key={index} className="bg-white/10 border-white/20 md:py-4 py-0 px-2">
             <CardContent className="p-4 text-center">
@@ -96,7 +96,14 @@ export function CountdownTimer({ target }: { target: string }) {
                   {item.value.toString().padStart(2, "0")}
                 </motion.div>
               </AnimatePresence>
-              <div className="text-sm text-white/80">{item.label}</div>
+              {/* Abbreviated on phones so the four cards don't crowd; the full
+                  word stays in the accessibility tree at every size. */}
+              <div className="text-sm text-white/80">
+                <span className="sm:hidden" aria-hidden="true">
+                  {item.short}
+                </span>
+                <span className="sr-only sm:not-sr-only">{item.label}</span>
+              </div>
             </CardContent>
           </Card>
         ))}

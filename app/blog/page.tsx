@@ -83,10 +83,10 @@ export default function BlogPage() {
           {/* <Badge className="bg-green-100 mt-8 text-green-800 hover:bg-green-200 mb-6">
             Earth Again Blog
           </Badge> */}
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Stories of <span className="text-green-600">Change</span>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 mb-4 sm:mb-6">
+            Stories of <span className="text-[#79b727]">Change</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-12">
+          <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto mb-8 sm:mb-12">
             Discover insights, success stories, and expert knowledge about
             sustainability, climate action, and environmental conservation in
             Odisha and beyond.
@@ -111,17 +111,17 @@ export default function BlogPage() {
 
       {/* Featured Article */}
       {featuredArticle && (
-        <section className="py-10 px-4 md:px-6 lg:px-8">
+        <section className="py-8 sm:py-10 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 Featured Article
               </h2>
             </div>
 
-            <Card className="border-0 shadow-2xl overflow-hidden">
+            <Card className="border-0 rounded-sm py-0 shadow-2xl overflow-hidden">
               <div className="grid lg:grid-cols-2">
-                <div className="relative h-96 lg:h-auto">
+                <div className="relative h-56 sm:h-96 lg:h-auto">
                   <Image
                     src={`${featuredArticle.image}`}
                     alt={featuredArticle.title}
@@ -133,21 +133,21 @@ export default function BlogPage() {
                     <Badge className="bg-[#79b727] text-white">Featured</Badge>
                   </div>
                 </div>
-                <CardContent className="p-8 lg:p-12">
+                <CardContent className="p-6 text-left sm:p-8 lg:p-12">
                   <div className="mb-4">
                     <Badge className="bg-blue-100 text-blue-800">
                       {featuredArticle.category}
                     </Badge>
                   </div>
 
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
                     {featuredArticle.title}
                   </h3>
-                  <p className="text-lg text-gray-600 mb-8">
+                  <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
                     {featuredArticle.excerpt}
                   </p>
 
-                  <div className="flex items-center gap-6 text-sm text-gray-500 mb-8">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-6 text-sm text-gray-500 mb-6 sm:mb-8">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4" />
                       <span>{featuredArticle.author}</span>
@@ -161,10 +161,13 @@ export default function BlogPage() {
                       <span>{featuredArticle.readTime}</span>
                     </div>
                   </div>
-                  <Link href={`/blog/${featuredArticle._id}`}>
+                  <Link
+                    href={`/blog/${featuredArticle._id}`}
+                    className="block w-full sm:inline-block sm:w-auto"
+                  >
                     <Button
                       size="lg"
-                      className="bg-[#79b727] hover:bg-[#338c20]"
+                      className="w-full sm:w-auto bg-[#79b727] hover:bg-[#338c20]"
                     >
                       Read Full Article <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
@@ -177,14 +180,14 @@ export default function BlogPage() {
       )}
 
       {/* All Articles */}
-      <section className="py-20 px-4 md:px-6 lg:px-8">
+      <section className="py-12 sm:py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-12">
+          <div className="flex justify-between items-center mb-8 sm:mb-12">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">
                 Latest Articles
               </h2>
-              <p className="text-xl text-gray-600">
+              <p className="text-lg sm:text-xl text-gray-600">
                 {filteredArticles.length} articles found
               </p>
             </div>
@@ -197,60 +200,79 @@ export default function BlogPage() {
             </Button> */}
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5 lg:gap-8">
+            {/* The whole card is the link — a phone tile has no room for a
+                "Read More" button, and the button was the only target before. */}
             {otherArticles.map((article) => (
-              <Card
+              <Link
                 key={article._id}
-                className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden group"
+                href={`/blog/${article._id}`}
+                className="group block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#79b727] focus-visible:ring-offset-2"
               >
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={`${article.image}`}
-                    alt={article.title}
-                    width={400}
-                    height={200}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-white/90 text-gray-900">
-                      {article.category}
-                    </Badge>
-                  </div>
-                </div>
-
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-green-600 transition-colors">
-                    {article.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                    {article.excerpt}
-                  </p>
-
-                  <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                    <div className="flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      <span>{article.author}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      <span>{article.date.slice(0,10)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      <span>{article.readTime}</span>
+                <Card className="h-full border-0 rounded-sm pt-0 pb-2 sm:pb-6 gap-2 sm:gap-6 shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+                  <div className="relative h-32 sm:h-40 lg:h-48 overflow-hidden">
+                    <Image
+                      src={`${article.image}`}
+                      alt={article.title}
+                      width={400}
+                      height={200}
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="hidden sm:block absolute top-4 left-4">
+                      <Badge className="bg-white/90 text-gray-900">
+                        {article.category}
+                      </Badge>
                     </div>
                   </div>
 
-                  <Link href={`/blog/${article._id}`}>
-                    <Button
-                      variant="outline"
-                      className="w-full border-green-600 text-green-600 hover:bg-green-50 bg-transparent"
-                    >
-                      Read More <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                  <CardContent className="px-2 sm:px-6 py-0 pb-0 sm:pb-2 text-left">
+                    <h3 className="text-xs leading-tight line-clamp-2 sm:text-lg lg:text-xl font-semibold text-gray-900 mb-1 sm:mb-3 group-hover:text-[#79b727] transition-colors">
+                      {article.title}
+                    </h3>
+                    {/* No location on an article, so read time takes the
+                        second line the other routes give to the map pin. */}
+                    <div className="sm:hidden space-y-0.5 text-[11px] leading-tight text-gray-500">
+                      <p className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3 shrink-0" />
+                        <span className="truncate">
+                          {article.date.slice(0, 10)}
+                        </span>
+                      </p>
+                      {article.readTime && (
+                        <p className="flex items-center gap-1">
+                          <Clock className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{article.readTime}</span>
+                        </p>
+                      )}
+                    </div>
+                    <p className="hidden sm:block text-gray-600 text-sm mb-4 line-clamp-3">
+                      {article.excerpt}
+                    </p>
+
+                    <div className="hidden sm:flex items-center gap-4 text-xs text-gray-500 mb-4">
+                      <div className="flex items-center gap-1">
+                        <User className="w-3 h-3" />
+                        <span>{article.author}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        <span>{article.date.slice(0, 10)}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        <span>{article.readTime}</span>
+                      </div>
+                    </div>
+
+                    {/* Styled as the button it replaces, but a span — the whole
+                        card is already an anchor and nesting one is invalid. */}
+                    <span className="hidden sm:inline-flex w-full items-center justify-center gap-2 rounded-md border border-[#79b727] px-4 py-2 text-sm font-medium text-[#338c20] transition-colors group-hover:bg-green-50">
+                      Read More <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
 
@@ -266,10 +288,12 @@ export default function BlogPage() {
       </section>
 
       {/* Newsletter Subscription */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
+      <section className="py-12 sm:py-20 px-4 md:px-6 lg:px-8 bg-[#79b727] text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Stay Updated</h2>
-          <p className="text-xl mb-8 opacity-90">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
+            Stay Updated
+          </h2>
+          <p className="text-lg sm:text-xl mb-8 opacity-90">
             Subscribe to our newsletter and never miss the latest insights,
             stories, and updates from the Earth Again movement.
           </p>
@@ -281,7 +305,7 @@ export default function BlogPage() {
             />
             <Button
               size="lg"
-              className="bg-white text-green-600 hover:bg-gray-100"
+              className="w-full sm:w-auto bg-white text-[#338c20] hover:bg-gray-100"
             >
               Subscribe
             </Button>

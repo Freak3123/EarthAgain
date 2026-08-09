@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { Trash2 } from "lucide-react";
+import { Trash2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RegEventForm } from "../forms/RegEventForm";
+import { RegDatesPanel } from "./RegDatesPanel";
 import {
   SectionHeading,
   SearchBar,
@@ -27,14 +28,24 @@ export function RegEventsSection({
   search,
   onSearch,
   onRefresh,
+  eventsHidden = false,
+  settingsBusy = false,
+  onToggleHidden,
 }: {
   regevents: unknown;
   loading: boolean;
   search: string;
   onSearch: (v: string) => void;
   onRefresh: () => Promise<void> | void;
+  /** True when sessions are hidden from the public form and its email. */
+  eventsHidden?: boolean;
+  settingsBusy?: boolean;
+  onToggleHidden?: (hidden: boolean) => void;
 }) {
   const [mode, setMode] = useState<SectionMode>("manage");
+  // Sits alongside the create/manage pair rather than inside SectionMode, so
+  // the other five sections keep their two-state toggle unchanged.
+  const [showDates, setShowDates] = useState(false);
   const [view, setView] = useState<PeriodView>("new");
   const count = Array.isArray(regevents) ? regevents.length : 0;
 
@@ -48,11 +59,21 @@ export function RegEventsSection({
     <div>
       <SectionToggle
         mode={mode}
-        onMode={setMode}
+        onMode={(m) => {
+          setShowDates(false);
+          setMode(m);
+        }}
         count={count}
         createLabel="Add Reg Event"
+        extra={{
+          label: "Add Dates",
+          active: showDates,
+          onClick: () => setShowDates(true),
+        }}
       />
-      {mode === "create" ? (
+      {showDates ? (
+        <RegDatesPanel />
+      ) : mode === "create" ? (
         <RegEventForm />
       ) : (
         <div>
@@ -68,12 +89,45 @@ export function RegEventsSection({
                   newCount={newArr.length}
                   olderCount={olderArr.length}
                 />
-                {view === "older" && olderArr.length > 0 && (
-                  <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
-                )}
+                <div className="flex flex-wrap items-center gap-2">
+                  {onToggleHidden && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={settingsBusy}
+                      onClick={() => onToggleHidden(!eventsHidden)}
+                      className={`gap-1.5 ${
+                        eventsHidden
+                          ? "border-amber-300 text-amber-700 hover:bg-amber-50"
+                          : "border-stone-300 text-stone-600 hover:bg-stone-100"
+                      }`}
+                    >
+                      {eventsHidden ? (
+                        <Eye className="h-4 w-4" />
+                      ) : (
+                        <EyeOff className="h-4 w-4" />
+                      )}
+                      {eventsHidden ? "Show All" : "Hide All"}
+                    </Button>
+                  )}
+                  {view === "older" && olderArr.length > 0 && (
+                    <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
+                  )}
+                </div>
               </div>
             );
           })()}
+
+          {eventsHidden && (
+            <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">
+              <EyeOff className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>
+                Sessions are hidden from the registration form and its
+                confirmation email. People register for whole days instead —
+                nothing here has been deleted.
+              </span>
+            </div>
+          )}
           <SectionHeading
             title="All Registration Events"
             count={count}

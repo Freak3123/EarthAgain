@@ -10,6 +10,7 @@ import {
   Trash2,
   AlertTriangle,
   CalendarClock,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -259,22 +260,29 @@ export const SectionToggle = ({
   onMode,
   count,
   createLabel = "Add New",
+  extra,
 }: {
   mode: SectionMode;
   onMode: (m: SectionMode) => void;
   count: number;
   createLabel?: string;
+  /** An optional third button, e.g. "Add Date" alongside "Add Reg Event". */
+  extra?: { label: string; active: boolean; onClick: () => void };
 }) => {
   const base =
     "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600/40";
+  // The extra button owns the panel while it's active, so `mode` — which still
+  // holds its last value underneath — must not light up a second button.
+  const createActive = mode === "create" && !extra?.active;
+  const manageActive = mode === "manage" && !extra?.active;
   return (
     <div className="mb-8 inline-flex gap-1 rounded-xl border border-stone-200 bg-white p-1 shadow-sm">
       <button
         type="button"
-        aria-pressed={mode === "create"}
+        aria-pressed={createActive}
         onClick={() => onMode("create")}
         className={`${base} ${
-          mode === "create"
+          createActive
             ? "bg-[#79b727] text-white shadow-sm"
             : "text-stone-600 hover:bg-stone-100"
         }`}
@@ -282,12 +290,27 @@ export const SectionToggle = ({
         <Plus className="h-4 w-4" />
         {createLabel}
       </button>
+      {extra && (
+        <button
+          type="button"
+          aria-pressed={extra.active}
+          onClick={extra.onClick}
+          className={`${base} ${
+            extra.active
+              ? "bg-[#79b727] text-white shadow-sm"
+              : "text-stone-600 hover:bg-stone-100"
+          }`}
+        >
+          <CalendarClock className="h-4 w-4" />
+          {extra.label}
+        </button>
+      )}
       <button
         type="button"
-        aria-pressed={mode === "manage"}
+        aria-pressed={manageActive}
         onClick={() => onMode("manage")}
         className={`${base} ${
-          mode === "manage"
+          manageActive
             ? "bg-[#79b727] text-white shadow-sm"
             : "text-stone-600 hover:bg-stone-100"
         }`}
@@ -296,7 +319,7 @@ export const SectionToggle = ({
         Manage
         <span
           className={`rounded-full px-1.5 text-xs font-semibold ${
-            mode === "manage"
+            manageActive
               ? "bg-white/25 text-white"
               : "bg-stone-100 text-stone-500"
           }`}
@@ -449,6 +472,8 @@ export type FormCategoryKey =
   | "chapter"
   | "panchayat";
 
+export type RegistrationMode = "dates" | "dates-events";
+
 export interface FormSettingsData {
   masterLive: boolean;
   registration: boolean;
@@ -456,6 +481,9 @@ export interface FormSettingsData {
   partner: boolean;
   chapter: boolean;
   panchayat: boolean;
+  registrationMode: RegistrationMode;
+  venue: string;
+  regEventsHidden: boolean;
 }
 
 /** Plain on/off switch (no Radix dependency) — track + sliding knob. */
@@ -508,6 +536,118 @@ const toPickerValue = (iso: string) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
     d.getHours()
   )}:${pad(d.getMinutes())}`;
+};
+
+/**
+ * What the public registration form asks for, plus the venue printed on
+ * confirmation emails. "Only dates" hides the session picker entirely and
+ * registers people for whole days.
+ */
+export const RegistrationSettingsControl = ({
+  mode,
+  venue,
+  busy,
+  onMode,
+  onVenue,
+  className = "",
+}: {
+  mode: RegistrationMode;
+  venue: string;
+  busy: boolean;
+  onMode: (mode: RegistrationMode) => void;
+  onVenue: (venue: string) => Promise<void>;
+  className?: string;
+}) => {
+  const [venueDraft, setVenueDraft] = useState(venue);
+  const [venueBusy, setVenueBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  React.useEffect(() => setVenueDraft(venue), [venue]);
+
+  const handleVenueSave = async () => {
+    setVenueBusy(true);
+    try {
+      await onVenue(venueDraft.trim());
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } finally {
+      setVenueBusy(false);
+    }
+  };
+
+  const options: { value: RegistrationMode; label: string; hint: string }[] = [
+    {
+      value: "dates",
+      label: "Only dates",
+      hint: "Register for whole days — attendees join every session that day.",
+    },
+    {
+      value: "dates-events",
+      label: "Dates + events",
+      hint: "Pick days, then choose individual sessions to attend.",
+    },
+  ];
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      <div>
+        <span className={label}>Registration form</span>
+        <div className="inline-flex gap-1 rounded-xl border border-stone-200/80 bg-white p-1 shadow-sm">
+          {options.map((option) => {
+            const active = mode === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                title={option.hint}
+                disabled={busy}
+                onClick={() => !active && onMode(option.value)}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                  active
+                    ? "bg-[#79b727] text-white shadow-sm"
+                    : "text-stone-600 hover:bg-stone-100"
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-1.5 text-xs text-stone-500">
+          {options.find((o) => o.value === mode)?.hint}
+        </p>
+      </div>
+
+      <div>
+        <span className={label}>Venue on confirmation emails</span>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <input
+            type="text"
+            value={venueDraft}
+            disabled={venueBusy}
+            placeholder="Leave blank to omit the venue line"
+            onChange={(e) => setVenueDraft(e.target.value)}
+            className={`${input} w-auto min-w-72`}
+          />
+          <Button
+            className="gap-1.5 bg-[#79b727] hover:bg-[#338c20]"
+            disabled={venueBusy || venueDraft.trim() === venue}
+            onClick={handleVenueSave}
+          >
+            {venueBusy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <MapPin className="h-4 w-4" />
+            )}
+            Save
+          </Button>
+          {saved && (
+            <span className="text-sm font-medium text-green-700">Saved</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 /** Superadmin control for the home hero countdown's target date and time. */

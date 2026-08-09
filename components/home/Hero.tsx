@@ -11,6 +11,23 @@ import { CountdownTimer } from "@/components/home/CountdownTimer";
 // superadmin in the console and read from the HomeSettings singleton.
 const FALLBACK_COUNTDOWN_TARGET = "2026-10-06T09:00:00+05:30";
 
+// One shared shape for every hero CTA so they read as a set: full width while
+// they stack on phones, a fixed width once they sit in a row. Centring the
+// icon and label keeps them aligned regardless of how long the text is.
+const heroButton =
+  "inline-flex w-full sm:w-72 items-center justify-center gap-2 rounded-md px-6 py-3 text-base font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/40";
+
+// Dark text on the brand green rather than white: white lands at ~2.5:1 here,
+// forest black at ~8:1. Hover therefore *lightens* — darkening would collapse
+// the contrast the dark label depends on.
+const heroPrimary =
+  "bg-[#79b727] text-[#0F140F] shadow-lg shadow-black/25 hover:bg-[#8ecf35]";
+
+// Tinted glass, not a bare outline: the photo slider runs green, so a plain
+// border loses its edge against foliage.
+const heroSecondary =
+  "border border-white/60 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20";
+
 export default function Hero({ countdownTarget }: { countdownTarget?: string }) {
   const scrollRef = useRef(null);
 
@@ -26,16 +43,18 @@ export default function Hero({ countdownTarget }: { countdownTarget?: string }) 
   return (
     <div ref={scrollRef} className="relative overflow-hidden">
       {/* ✅ Background image with parallax */}
-      <motion.div style={{ y: imageY }} className="w-full sm:h-[85vh] h-[110vh] z-0">
+      <motion.div style={{ y: imageY }} className="w-full sm:h-[85vh] h-[125vh] z-0">
         <ImagesSlider className="h-full" images={images}>
           {/* You can put any overlay or content here, or leave it empty if not needed */}
         </ImagesSlider>
       </motion.div>
 
       {/* ✅ Foreground content scrolls normally */}
-      <div className="-mt-[80vh] relative z-10">
-        {/* Hero text */}
-        <section className="h-[80vh] flex items-end pb-6 px-2 sm:pb-12 sm:px-10">
+      <div className="-mt-[115vh] sm:-mt-[80vh] relative z-10">
+        {/* Hero text — a little taller on phones, where the copy plus three
+            stacked buttons runs past one screen and would otherwise ride up
+            under the fixed navbar. pt-24 keeps a hard floor below it. */}
+        <section className="h-[115vh] sm:h-[80vh] flex items-end pt-24 sm:pt-0 pb-6 px-2 sm:pb-12 sm:px-10">
           <motion.div
             initial={{ opacity: 0, y: -80 }}
             animate={{ opacity: 1, y: 0 }}
@@ -51,8 +70,8 @@ export default function Hero({ countdownTarget }: { countdownTarget?: string }) 
               </span>
             </h1>
 
-            <div className="text-lg mb-8 max-w-[45rem]">
-              <h2 className="text-2xl font-semibold">
+            <div className="text-base sm:text-lg mb-6 sm:mb-8 max-w-[45rem]">
+              <h2 className="text-lg sm:text-2xl font-semibold">
                 Earth Again, a flagship initiative by Sambad Group, one of India's leading regional media houses - empowering communities, building future-proof enterprises. 
               </h2>
               <br />
@@ -65,28 +84,33 @@ export default function Hero({ countdownTarget }: { countdownTarget?: string }) 
               Earth Again brings together citizens, entrepreneurs, and innovators to co-create enterprises that are resilient, sustainable, and rooted in local needs. Through community-led workshops, collaborative innovation programs, and Climate Panchayats, we are shaping an Odisha where thriving communities and future-ready businesses grow together in harmony with the planet.
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
+              {/* The navbar's Register button is hidden below lg, so the hero
+                  carries the CTA on phones and tablets instead. */}
               <Link
-                // 
-                href="/start-chapter"
-                className=" bg-[#79b727] hover:bg-[#338c20] w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
+                href="/register"
+                className={`${heroButton} ${heroPrimary} lg:hidden`}
               >
-                <Users className="inline mr-2 h-5" />
+                <CalendarDays className="h-5 w-5" />
+                Register Now
+              </Link>
+              {/* Secondary on phones/tablets where Register Now leads, and the
+                  filled button from lg up, where Register Now is hidden — so
+                  exactly one button is filled at every breakpoint. */}
+              <Link
+                //
+                href="/start-chapter"
+                className={`${heroButton} ${heroSecondary} lg:border-transparent lg:bg-[#79b727] lg:text-[#0F140F] lg:shadow-lg lg:shadow-black/25 lg:hover:bg-[#8ecf35]`}
+              >
+                <Users className="h-5 w-5" />
                 {/* Join the Movement */}
                 Start A Chapter
               </Link>
-              {/* <Link
-                href="/citizen-voice"
-                className=" hover:bg-white/20 border-1 border-green-50 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
-              >
-                <CalendarDays className="inline mr-2 h-5" />
-                Vote your Issues
-              </Link> */}
               <Link
                 href="/register"
-                className=" hover:bg-white/20 border-1 border-green-50 w-fit text-white px-6 py-3 rounded-md text-md font-medium transition"
+                className={`${heroButton} ${heroSecondary}`}
               >
-                <TreePine className="inline mr-2 h-5" />
+                <TreePine className="h-5 w-5" />
                 Host Climate Panchayat
               </Link>
             </div>
