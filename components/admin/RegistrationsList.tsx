@@ -62,6 +62,29 @@ const dayOrder = (label: string) => {
   return Number.isNaN(t) ? Number.POSITIVE_INFINITY : t;
 };
 
+/** A day added under Content Management → Registration → Add Dates. */
+type RegDate = { date: string; note?: string };
+
+/**
+ * Which day bucket(s) a registration falls into. "all" and "none" have no day
+ * of their own, so they get placed by submission date instead.
+ */
+const dayBucketsOf = (reg: IRegistration) => {
+  const days = reg.registrationDays ?? [];
+  if (days.some((d) => String(d).toLowerCase() === "all"))
+    return { kind: "all" as const, keys: [] as string[] };
+  const concrete = days.filter(Boolean).map(normaliseDay);
+  // Older rows can carry sessions but no stored days — infer the days from
+  // the sessions rather than losing the row.
+  const inferred = concrete.length
+    ? []
+    : (reg.selectedEvents ?? []).map((ev) => dayLabel(ev.date));
+  const keys = Array.from(new Set([...concrete, ...inferred]));
+  return keys.length
+    ? { kind: "days" as const, keys }
+    : { kind: "none" as const, keys: [] as string[] };
+};
+
 /** Session ⇄ date view switch. The session side locks when sessions are hidden. */
 const GroupByToggle = ({
   groupBy,
@@ -142,12 +165,32 @@ export function RegistrationsList({
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     new Set()
   );
+  // The days an admin configured under Content Management → Registration.
+  // They drive the order of the by-date view and appear even with nobody on
+  // them yet, so the configured schedule is always visible in full.
+  const [regDates, setRegDates] = useState<RegDate[]>([]);
 
   // Hiding sessions while the session view is open pulls the rug out from
   // under it, so fall back to by-date the moment the setting flips.
   useEffect(() => {
     if (sessionsHidden) setGroupBy("date");
   }, [sessionsHidden]);
+
+  useEffect(() => {
+    let cancelled = false;
+    axios
+      .get("/api/get-regDates")
+      .then((res) => {
+        if (!cancelled) setRegDates(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch(() => {
+        // Without them the by-date view still works — it just falls back to
+        // ordering purely by the days present in the registrations.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleDeleteAllOlder = async () => {
     await axios.post("/api/admin/delete-registration", {});
@@ -213,19 +256,43 @@ export function RegistrationsList({
           <div className="space-y-6">
             {(() => {
               const allRegList = Array.isArray(regList) ? regList : [];
-              const newRegList = allRegList.filter(
-                (r: IRegistration) => !isOlderThanCutoff(r.createdAt)
+              const isOlder = view === "older";
+              const inPeriod = (value: unknown) =>
+                isOlderThanCutoff(value) === isOlder;
+
+              /**
+               * Which side(s) of the cutoff a registration shows up on. By
+               * session that's its submission date; by date it's the day(s)
+               * attended, per the repo's "content's own date, else createdAt"
+               * rule. A registration spanning both sides appears in both.
+               */
+              const sidesOf = (reg: IRegistration) => {
+                const bucket =
+                  groupBy === "date" ? dayBucketsOf(reg) : { kind: "none" as const, keys: [] };
+                if (bucket.kind !== "days") {
+                  const older = isOlderThanCutoff(reg.createdAt);
+                  return { new: !older, older };
+                }
+                return {
+                  new: bucket.keys.some((k) => !isOlderThanCutoff(k)),
+                  older: bucket.keys.some((k) => isOlderThanCutoff(k)),
+                };
+              };
+
+              const sides = allRegList.map(sidesOf);
+              const newCount = sides.filter((s) => s.new).length;
+              const olderCount = sides.filter((s) => s.older).length;
+              const safeRegList = allRegList.filter(
+                (_: IRegistration, i: number) =>
+                  isOlder ? sides[i].older : sides[i].new
               );
-              const olderRegList = allRegList.filter((r: IRegistration) =>
-                isOlderThanCutoff(r.createdAt)
-              );
-              const safeRegList = view === "older" ? olderRegList : newRegList;
 
               const grouped: Record<string, GroupEntry[]> = {};
-              let allKeys: string[] = [];
-              // Days that carry real registrants — the denominator for the
-              // "Days" stat, and what "All days" people get spread across.
-              let dayKeys: string[] = [];
+              // Header text per group — only configured days differ from the key.
+              const groupLabels: Record<string, string> = {};
+              // Groups in render order, optionally under a heading.
+              let sections: { title: string | null; keys: string[] }[] = [];
+              let dayCount = 0;
 
               if (groupBy === "session") {
                 // Group by date • time • event title
@@ -235,42 +302,49 @@ export function RegistrationsList({
                     (grouped[key] ??= []).push({ reg });
                   });
                 });
-                allKeys = Object.keys(grouped);
+                sections = [{ title: null, keys: Object.keys(grouped) }];
               } else {
-                // Group by the day(s) each person registered to attend.
+                // Group by the day(s) each person registered to attend, in the
+                // order those days are listed in Content Management.
+                const configured = regDates
+                  .map((d) => ({ key: dayLabel(d.date), note: d.note, raw: d.date }))
+                  .filter((d) => inPeriod(d.raw));
+
                 const allDayRegs: IRegistration[] = [];
                 const noDayRegs: IRegistration[] = [];
 
-                safeRegList.forEach((reg: IRegistration) => {
-                  const days = reg.registrationDays ?? [];
-                  if (days.some((d) => String(d).toLowerCase() === "all")) {
-                    allDayRegs.push(reg);
+                allRegList.forEach((reg: IRegistration) => {
+                  const bucket = dayBucketsOf(reg);
+                  if (bucket.kind === "all") {
+                    if (inPeriod(reg.createdAt)) allDayRegs.push(reg);
                     return;
                   }
-                  const concrete = days.filter(Boolean).map(normaliseDay);
-                  // Older rows can carry sessions but no stored days — infer
-                  // the days from the sessions rather than losing the row.
-                  const inferred = concrete.length
-                    ? []
-                    : (reg.selectedEvents ?? []).map((ev) => dayLabel(ev.date));
-                  const keys = Array.from(new Set([...concrete, ...inferred]));
-                  if (keys.length === 0) {
-                    noDayRegs.push(reg);
+                  if (bucket.kind === "none") {
+                    if (inPeriod(reg.createdAt)) noDayRegs.push(reg);
                     return;
                   }
-                  keys.forEach((k) => (grouped[k] ??= []).push({ reg }));
+                  bucket.keys
+                    .filter((k) => inPeriod(k))
+                    .forEach((k) => (grouped[k] ??= []).push({ reg }));
                 });
 
-                dayKeys = Object.keys(grouped).sort(
-                  (a, b) => dayOrder(a) - dayOrder(b)
-                );
+                // A configured day is listed even with nobody on it yet.
+                configured.forEach((c) => {
+                  grouped[c.key] ??= [];
+                  if (c.note) groupLabels[c.key] = `${c.key} • ${c.note}`;
+                });
+
+                const configuredKeys = new Set(configured.map((c) => c.key));
+                const looseKeys = Object.keys(grouped)
+                  .filter((k) => !configuredKeys.has(k))
+                  .sort((a, b) => dayOrder(a) - dayOrder(b));
 
                 // "All days" registrants attend every day, so each day's count
                 // reflects the real expected headcount — and they also get
                 // their own group so the raw figure stays visible.
                 allDayRegs.forEach((reg) =>
-                  dayKeys.forEach((k) =>
-                    grouped[k].push({ reg, allDays: true })
+                  Object.values(grouped).forEach((entries) =>
+                    entries.push({ reg, allDays: true })
                   )
                 );
                 if (allDayRegs.length)
@@ -281,10 +355,20 @@ export function RegistrationsList({
                 if (noDayRegs.length)
                   grouped[NO_DAY_KEY] = noDayRegs.map((reg) => ({ reg }));
 
-                allKeys = [
-                  ...(allDayRegs.length ? [ALL_DAYS_KEY] : []),
-                  ...dayKeys,
-                  ...(noDayRegs.length ? [NO_DAY_KEY] : []),
+                dayCount = configured.length + looseKeys.length;
+                sections = [
+                  { title: null, keys: allDayRegs.length ? [ALL_DAYS_KEY] : [] },
+                  {
+                    title: "Registration days",
+                    keys: configured.map((c) => c.key),
+                  },
+                  {
+                    title: "Not sure",
+                    keys: [
+                      ...looseKeys,
+                      ...(noDayRegs.length ? [NO_DAY_KEY] : []),
+                    ],
+                  },
                 ];
               }
 
@@ -292,8 +376,8 @@ export function RegistrationsList({
               const totalRegistrations = safeRegList.length;
               const groupStat =
                 groupBy === "session"
-                  ? { label: "Sessions", value: allKeys.length }
-                  : { label: "Days", value: dayKeys.length };
+                  ? { label: "Sessions", value: sections[0].keys.length }
+                  : { label: "Days", value: dayCount };
               const uniquePeople = new Set(
                 safeRegList
                   .map((r: IRegistration) => r.email?.toLowerCase().trim())
@@ -312,13 +396,38 @@ export function RegistrationsList({
                         .some((f) => String(f).toLowerCase().includes(q))
                     );
 
-              const visibleGroups = allKeys
-                .map((key) => ({ key, entries: filterEntries(grouped[key]) }))
-                .filter((g) => g.entries.length > 0);
+              let visibleSections = sections
+                .map((s) => ({
+                  title: s.title,
+                  groups: s.keys
+                    .map((key) => ({
+                      key,
+                      label: groupLabels[key] ?? key,
+                      entries: filterEntries(grouped[key] ?? []),
+                    }))
+                    // A configured day with nobody on it still shows, but only
+                    // while a search isn't narrowing the list.
+                    .filter(
+                      (g) =>
+                        g.entries.length > 0 ||
+                        (!searchActive && (grouped[g.key]?.length ?? 0) === 0)
+                    ),
+                }))
+                .filter((s) => s.groups.length > 0);
 
+              // A lone heading labels nothing useful — drop it.
+              if (visibleSections.filter((s) => s.title).length < 2)
+                visibleSections = visibleSections.map((s) => ({
+                  ...s,
+                  title: null,
+                }));
+
+              const renderedKeys = visibleSections.flatMap((s) =>
+                s.groups.map((g) => g.key)
+              );
               const allCollapsed =
-                allKeys.length > 0 &&
-                allKeys.every((k) => collapsedGroups.has(k));
+                renderedKeys.length > 0 &&
+                renderedKeys.every((k) => collapsedGroups.has(k));
 
               return (
                 <>
@@ -366,12 +475,18 @@ export function RegistrationsList({
                     <PeriodToggle
                       view={view}
                       onView={setView}
-                      newCount={newRegList.length}
-                      olderCount={olderRegList.length}
+                      newCount={newCount}
+                      olderCount={olderCount}
                     />
-                    {view === "older" && olderRegList.length > 0 && (
-                      <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
-                    )}
+                    {/* Withheld in the by-date view: the bulk delete removes
+                        by submission date, which is not the split shown. */}
+                    {groupBy === "session" &&
+                      view === "older" &&
+                      olderCount > 0 && (
+                        <DeleteAllOlderButton
+                          onDeleteAll={handleDeleteAllOlder}
+                        />
+                      )}
                   </div>
 
                   {/* Session / date grouping */}
@@ -414,13 +529,13 @@ export function RegistrationsList({
                         </button>
                       )}
                     </div>
-                    {allKeys.length > 0 && !searchActive && (
+                    {renderedKeys.length > 0 && !searchActive && (
                       <Button
                         variant="outline"
                         className="gap-2 border-stone-300 text-stone-700 hover:bg-stone-100"
                         onClick={() =>
                           setCollapsedGroups(
-                            allCollapsed ? new Set() : new Set(allKeys)
+                            allCollapsed ? new Set() : new Set(renderedKeys)
                           )
                         }
                       >
@@ -432,7 +547,7 @@ export function RegistrationsList({
                   {/* Groups */}
                   {allRegList.length === 0 ? (
                     <EmptyState message="No registrations found." />
-                  ) : safeRegList.length === 0 ? (
+                  ) : renderedKeys.length === 0 && !searchActive ? (
                     <EmptyState
                       message={
                         view === "older"
@@ -440,13 +555,23 @@ export function RegistrationsList({
                           : `No registrations from ${CUTOFF_YEAR} onward.`
                       }
                     />
-                  ) : visibleGroups.length === 0 ? (
+                  ) : renderedKeys.length === 0 ? (
                     <EmptyState
                       message={`No registrations match “${regSearch}”.`}
                     />
                   ) : (
-                    <div className="space-y-4">
-                      {visibleGroups.map(({ key, entries }) => {
+                    <div className="space-y-6">
+                      {visibleSections.map((section, si) => (
+                      <div key={section.title ?? si} className="space-y-4">
+                      {section.title && (
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+                            {section.title}
+                          </span>
+                          <div className="h-px flex-1 bg-stone-200" />
+                        </div>
+                      )}
+                      {section.groups.map(({ key, label, entries }) => {
                         const isCollapsed =
                           !searchActive && collapsedGroups.has(key);
                         const sorted = [...entries].sort(
@@ -460,24 +585,52 @@ export function RegistrationsList({
                             className="overflow-hidden rounded-xl border border-stone-200/80 bg-white shadow-sm"
                           >
                             <button
-                              onClick={() => !searchActive && toggleGroup(key)}
-                              className="flex w-full items-center gap-2.5 px-5 py-4 text-left transition hover:bg-stone-50"
+                              onClick={() =>
+                                !searchActive &&
+                                entries.length > 0 &&
+                                toggleGroup(key)
+                              }
+                              className={`flex w-full items-center gap-2.5 px-5 py-4 text-left transition ${
+                                entries.length === 0
+                                  ? "cursor-default"
+                                  : "hover:bg-stone-50"
+                              }`}
                             >
                               <ChevronDown
                                 className={`h-4 w-4 shrink-0 text-stone-400 transition-transform ${
-                                  isCollapsed ? "-rotate-90" : ""
+                                  isCollapsed || entries.length === 0
+                                    ? "-rotate-90"
+                                    : ""
                                 }`}
                               />
-                              <div className="h-5 w-1 rounded-full bg-[#79b727]" />
-                              <span className="font-mono text-sm font-semibold text-stone-800">
-                                {key}
+                              <div
+                                className={`h-5 w-1 rounded-full ${
+                                  entries.length === 0
+                                    ? "bg-stone-300"
+                                    : "bg-[#79b727]"
+                                }`}
+                              />
+                              <span
+                                className={`font-mono text-sm font-semibold ${
+                                  entries.length === 0
+                                    ? "text-stone-500"
+                                    : "text-stone-800"
+                                }`}
+                              >
+                                {label}
                               </span>
-                              <span className="ml-auto rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                              <span
+                                className={`ml-auto rounded-full px-2 py-0.5 text-xs font-medium ${
+                                  entries.length === 0
+                                    ? "bg-stone-100 text-stone-500"
+                                    : "bg-green-50 text-green-700"
+                                }`}
+                              >
                                 {entries.length}
                               </span>
                             </button>
 
-                            {!isCollapsed && (
+                            {!isCollapsed && entries.length > 0 && (
                               <div className="overflow-x-auto border-t border-stone-100">
                                 <table className="w-full min-w-[760px] text-left text-sm">
                                   <thead className="bg-stone-50/60 text-xs uppercase tracking-wide text-stone-500">
@@ -607,6 +760,8 @@ export function RegistrationsList({
                           </div>
                         );
                       })}
+                      </div>
+                      ))}
                     </div>
                   )}
                 </>
