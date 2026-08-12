@@ -477,6 +477,7 @@ const AdminDashboard = () => {
             regList={regList}
             onRefresh={fetchRegList}
             liveToggle={liveToggleFor("registration", "Registration form")}
+            sessionsHidden={formSettings?.regEventsHidden ?? false}
           />
         ) : (
           ""

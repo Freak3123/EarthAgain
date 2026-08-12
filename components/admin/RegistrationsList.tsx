@@ -1,9 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import {
   UsersRound,
   CalendarDays,
+  CalendarRange,
+  LayoutList,
+  EyeOff,
   Users,
   Search,
   Download,
@@ -26,10 +29,94 @@ import {
   FormLiveToggle,
 } from "./shared";
 
+/* --------------------------- grouping helpers --------------------------- */
+
+/** How the list is broken into groups: by session, or by day attended. */
+type GroupBy = "session" | "date";
+
+/** One registrant inside a group. `allDays` marks a whole-event registrant. */
+type GroupEntry = { reg: IRegistration; allDays?: boolean };
+
+/** Bucket for people who ticked "All days" on the form. */
+const ALL_DAYS_KEY = "All days";
+/** Bucket for rows with neither a registration day nor a session to infer one. */
+const NO_DAY_KEY = "No day selected";
+
+const dayLabel = (value: string | Date) =>
+  new Date(value).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+/**
+ * `registrationDays` stores the label the form showed (e.g. "6 Oct 2025"),
+ * so re-format it to match the session view's day format. Anything that
+ * doesn't parse is kept verbatim rather than dropped.
+ */
+const normaliseDay = (label: string) =>
+  Number.isNaN(new Date(label).getTime()) ? label : dayLabel(label);
+
+const dayOrder = (label: string) => {
+  const t = new Date(label).getTime();
+  return Number.isNaN(t) ? Number.POSITIVE_INFINITY : t;
+};
+
+/** Session ⇄ date view switch. The session side locks when sessions are hidden. */
+const GroupByToggle = ({
+  groupBy,
+  onGroupBy,
+  sessionsDisabled,
+}: {
+  groupBy: GroupBy;
+  onGroupBy: (g: GroupBy) => void;
+  sessionsDisabled: boolean;
+}) => {
+  const base =
+    "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600/40";
+  const state = (active: boolean) =>
+    active
+      ? "bg-[#79b727] text-white shadow-sm"
+      : "text-stone-600 hover:bg-stone-100";
+  return (
+    <div className="inline-flex gap-1 rounded-xl border border-stone-200 bg-white p-1 shadow-sm">
+      <button
+        type="button"
+        aria-pressed={groupBy === "date"}
+        onClick={() => onGroupBy("date")}
+        className={`${base} cursor-pointer ${state(groupBy === "date")}`}
+      >
+        <CalendarRange className="h-4 w-4" />
+        By date
+      </button>
+      <button
+        type="button"
+        aria-pressed={groupBy === "session"}
+        disabled={sessionsDisabled}
+        title={
+          sessionsDisabled
+            ? "Sessions are hidden from the registration form"
+            : undefined
+        }
+        onClick={() => onGroupBy("session")}
+        className={`${base} ${
+          sessionsDisabled
+            ? "cursor-not-allowed text-stone-400 opacity-60"
+            : `cursor-pointer ${state(groupBy === "session")}`
+        }`}
+      >
+        <LayoutList className="h-4 w-4" />
+        By session
+      </button>
+    </div>
+  );
+};
+
 export function RegistrationsList({
   regList,
   onRefresh,
   liveToggle,
+  sessionsHidden = false,
 }: {
   regList: any[];
   onRefresh: () => Promise<void> | void;
@@ -40,12 +127,27 @@ export function RegistrationsList({
     busy: boolean;
     onToggle: () => Promise<void>;
   };
+  /**
+   * True when sessions are hidden from the public form and its confirmation
+   * email. New registrations then carry no sessions at all, so grouping by
+   * session would show a misleading picture — the view locks to by-date.
+   */
+  sessionsHidden?: boolean;
 }) {
   const [regSearch, setRegSearch] = useState("");
   const [view, setView] = useState<PeriodView>("new");
+  const [groupBy, setGroupBy] = useState<GroupBy>(
+    sessionsHidden ? "date" : "session"
+  );
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     new Set()
   );
+
+  // Hiding sessions while the session view is open pulls the rug out from
+  // under it, so fall back to by-date the moment the setting flips.
+  useEffect(() => {
+    if (sessionsHidden) setGroupBy("date");
+  }, [sessionsHidden]);
 
   const handleDeleteAllOlder = async () => {
     await axios.post("/api/admin/delete-registration", {});
@@ -119,35 +221,79 @@ export function RegistrationsList({
               );
               const safeRegList = view === "older" ? olderRegList : newRegList;
 
-              // Group registrations by date • time • event title
-              const grouped = safeRegList.reduce(
-                (
-                  acc: Record<
-                    string,
-                    { eventTitle: string; reg: IRegistration }[]
-                  >,
-                  reg: IRegistration
-                ) => {
-                  reg.selectedEvents?.forEach((ev) => {
-                    const day = new Date(ev.date).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    });
-                    const key = `${day} • ${ev.time} • ${ev.title}`;
-                    if (!acc[key]) acc[key] = [];
-                    acc[key].push({ eventTitle: ev.title, reg });
-                  });
-                  return acc;
-                },
-                {}
-              );
+              const grouped: Record<string, GroupEntry[]> = {};
+              let allKeys: string[] = [];
+              // Days that carry real registrants — the denominator for the
+              // "Days" stat, and what "All days" people get spread across.
+              let dayKeys: string[] = [];
 
-              const allKeys = Object.keys(grouped);
+              if (groupBy === "session") {
+                // Group by date • time • event title
+                safeRegList.forEach((reg: IRegistration) => {
+                  reg.selectedEvents?.forEach((ev) => {
+                    const key = `${dayLabel(ev.date)} • ${ev.time} • ${ev.title}`;
+                    (grouped[key] ??= []).push({ reg });
+                  });
+                });
+                allKeys = Object.keys(grouped);
+              } else {
+                // Group by the day(s) each person registered to attend.
+                const allDayRegs: IRegistration[] = [];
+                const noDayRegs: IRegistration[] = [];
+
+                safeRegList.forEach((reg: IRegistration) => {
+                  const days = reg.registrationDays ?? [];
+                  if (days.some((d) => String(d).toLowerCase() === "all")) {
+                    allDayRegs.push(reg);
+                    return;
+                  }
+                  const concrete = days.filter(Boolean).map(normaliseDay);
+                  // Older rows can carry sessions but no stored days — infer
+                  // the days from the sessions rather than losing the row.
+                  const inferred = concrete.length
+                    ? []
+                    : (reg.selectedEvents ?? []).map((ev) => dayLabel(ev.date));
+                  const keys = Array.from(new Set([...concrete, ...inferred]));
+                  if (keys.length === 0) {
+                    noDayRegs.push(reg);
+                    return;
+                  }
+                  keys.forEach((k) => (grouped[k] ??= []).push({ reg }));
+                });
+
+                dayKeys = Object.keys(grouped).sort(
+                  (a, b) => dayOrder(a) - dayOrder(b)
+                );
+
+                // "All days" registrants attend every day, so each day's count
+                // reflects the real expected headcount — and they also get
+                // their own group so the raw figure stays visible.
+                allDayRegs.forEach((reg) =>
+                  dayKeys.forEach((k) =>
+                    grouped[k].push({ reg, allDays: true })
+                  )
+                );
+                if (allDayRegs.length)
+                  grouped[ALL_DAYS_KEY] = allDayRegs.map((reg) => ({
+                    reg,
+                    allDays: true,
+                  }));
+                if (noDayRegs.length)
+                  grouped[NO_DAY_KEY] = noDayRegs.map((reg) => ({ reg }));
+
+                allKeys = [
+                  ...(allDayRegs.length ? [ALL_DAYS_KEY] : []),
+                  ...dayKeys,
+                  ...(noDayRegs.length ? [NO_DAY_KEY] : []),
+                ];
+              }
 
               // Overview stats
               const totalRegistrations = safeRegList.length;
-              const sessionCount = allKeys.length;
+              const groupStat =
+                groupBy === "session"
+                  ? { label: "Sessions", value: allKeys.length }
+                  : { label: "Days", value: dayKeys.length };
               const uniquePeople = new Set(
                 safeRegList
                   .map((r: IRegistration) => r.email?.toLowerCase().trim())
@@ -157,9 +303,7 @@ export function RegistrationsList({
               // Search filtering
               const q = regSearch.trim().toLowerCase();
               const searchActive = q.length > 0;
-              const filterEntries = (
-                entries: { eventTitle: string; reg: IRegistration }[]
-              ) =>
+              const filterEntries = (entries: GroupEntry[]) =>
                 !searchActive
                   ? entries
                   : entries.filter(({ reg }) =>
@@ -207,8 +351,8 @@ export function RegistrationsList({
                     />
                     <StatCard
                       icon={CalendarDays}
-                      label="Sessions"
-                      value={sessionCount}
+                      label={groupStat.label}
+                      value={groupStat.value}
                     />
                     <StatCard
                       icon={Users}
@@ -227,6 +371,25 @@ export function RegistrationsList({
                     />
                     {view === "older" && olderRegList.length > 0 && (
                       <DeleteAllOlderButton onDeleteAll={handleDeleteAllOlder} />
+                    )}
+                  </div>
+
+                  {/* Session / date grouping */}
+                  <div className="space-y-3">
+                    <GroupByToggle
+                      groupBy={groupBy}
+                      onGroupBy={setGroupBy}
+                      sessionsDisabled={sessionsHidden}
+                    />
+                    {sessionsHidden && (
+                      <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">
+                        <EyeOff className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span>
+                          Sessions are hidden from the registration form and its
+                          confirmation email, so session-wise grouping is
+                          unavailable. People register for whole days instead.
+                        </span>
+                      </div>
                     )}
                   </div>
 
@@ -343,13 +506,20 @@ export function RegistrationsList({
                                     </tr>
                                   </thead>
                                   <tbody className="divide-y divide-stone-100">
-                                    {sorted.map(({ reg }, idx) => (
+                                    {sorted.map(({ reg, allDays }, idx) => (
                                       <tr
                                         key={reg._id || idx}
                                         className="transition hover:bg-stone-50/60"
                                       >
                                         <td className="px-5 py-3 font-medium text-stone-900">
                                           {reg.name}
+                                          {/* Explains why this person also
+                                              appears under every other day. */}
+                                          {allDays && key !== ALL_DAYS_KEY && (
+                                            <span className="ml-2 rounded-full bg-amber-50 px-2 py-0.5 align-middle text-[11px] font-medium text-amber-700">
+                                              all days
+                                            </span>
+                                          )}
                                         </td>
                                         <td className="px-4 py-3">
                                           <div className="font-mono text-xs text-stone-600">
@@ -383,7 +553,10 @@ export function RegistrationsList({
                                                     key={i}
                                                     className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700"
                                                   >
-                                                    {d}
+                                                    {String(d).toLowerCase() ===
+                                                    "all"
+                                                      ? "All days"
+                                                      : d}
                                                   </span>
                                                 )
                                               )}
