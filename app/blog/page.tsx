@@ -160,7 +160,7 @@ export default function BlogPage() {
                       </h3>
 
                       <div className="mb-4 sm:mb-5">
-                        <Badge className="bg-blue-100 text-blue-800">
+                        <Badge className="bg-[#79b727]/10 text-[#79b727]">
                           {featuredArticle.category}
                         </Badge>
                       </div>

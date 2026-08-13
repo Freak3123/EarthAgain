@@ -59,7 +59,7 @@ export default async function BlogPage({ params }: { params: Promise<UnwrappedPa
         <span>•</span>
         <span>{blog.readTime}</span>
         <span>•</span>
-        <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md">
+        <span className="bg-[#79b727]/10 text-[#79b727] px-2 py-0.5 rounded-md">
           {blog.category}
         </span>
       </div>
