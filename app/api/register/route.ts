@@ -60,24 +60,37 @@ export async function POST(req: Request) {
       if (times.length > 0) startTime = formatTo12Hour(times[0]);
     }
 
-    await sendConfirmationMail(
-      registration.email,
-      registration.name,
-      registration.registrationDays,
-      sessions.map((ev) => ({
-        title: ev.title,
-        date:
-          ev.date instanceof Date
-            ? ev.date.toISOString()
-            : new Date(ev.date).toISOString(),
-        time: formatTo12Hour(ev.time),
-        speakers: ev.speakers,
-      })),
-      { mode, venue: settings.venue ?? "", startTime }
-    );
+    // The registration is already saved by this point, so a mail failure must
+    // not fail the request — the person is registered either way, and telling
+    // them otherwise would invite a duplicate submission.
+    let mailSent = true;
+    try {
+      await sendConfirmationMail(
+        registration.email,
+        registration.name,
+        registration.registrationDays,
+        sessions.map((ev) => ({
+          title: ev.title,
+          date:
+            ev.date instanceof Date
+              ? ev.date.toISOString()
+              : new Date(ev.date).toISOString(),
+          time: formatTo12Hour(ev.time),
+          speakers: ev.speakers,
+        })),
+        { mode, venue: settings.venue ?? "", startTime }
+      );
+    } catch (mailError) {
+      mailSent = false;
+      console.error(
+        "Registration saved but confirmation email failed:",
+        registration._id,
+        mailError
+      );
+    }
 
     return NextResponse.json(
-      { success: true, data: registration },
+      { success: true, data: registration, mailSent },
       { status: 201 }
     );
   } catch (error) {
