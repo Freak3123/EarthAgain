@@ -25,8 +25,8 @@ const Navbar = () => {
     { href: "/about", label: "About" },
     { href: "/events", label: "Events" },
     { href: "/climate-panchayat", label: "Climate Panchayat" },
-    // // { href: "/join-us", label: "Join Us" },
-    // { href: "/blog", label: "Blog" },
+    // { href: "/join-us", label: "Join Us" },
+    { href: "/blog", label: "Blog" },
     { href: "/speakers", label: "Speakers" },
     // { href: "/admin", label: "Admin" },
   ];

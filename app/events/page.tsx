@@ -71,8 +71,17 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-[#fefaf2]">
       {/* Hero Section */}
-      <section className="pt-30 px-4 md:px-6 lg:px-8 ">
+      <section className="pt-32 px-4 md:px-6 lg:px-8 ">
         <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 mb-4 sm:mb-6">
+            Where Change <span className="text-[#79b727]">Happens</span>
+          </h1>
+          <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto mb-8 sm:mb-12">
+            Workshops, climate panchayats, launches and action drives — real
+            gatherings, in real communities, building a greener Odisha one event
+            at a time.
+          </p>
+
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-6">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">

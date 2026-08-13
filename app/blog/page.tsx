@@ -30,6 +30,9 @@ type Article = {
   featured?: boolean;
 };
 
+/** How many featured posts get the spotlight panel at the top of the page. */
+const MAX_FEATURED = 3;
+
 export default function BlogPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
@@ -70,15 +73,24 @@ export default function BlogPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const featuredArticle = filteredArticles.find((article) => article.featured);
-  const otherArticles = filteredArticles.filter((article) => !article.featured);
+  // Only the three most recent featured posts get the spotlight. Anything
+  // beyond that falls through to Latest Articles rather than vanishing.
+  const byNewest = (a: Article, b: Article) =>
+    new Date(b.date).getTime() - new Date(a.date).getTime();
 
-  
+  const featuredArticles = filteredArticles
+    .filter((article) => article.featured)
+    .sort(byNewest)
+    .slice(0, MAX_FEATURED);
+
+  const otherArticles = filteredArticles.filter(
+    (article) => !featuredArticles.includes(article)
+  );
 
   return (
     <div className="min-h-screen bg-[#fefaf2]">
       {/* Hero Section */}
-      <section className="pt-24 px-4 md:px-6 lg:px-8">
+      <section className="pt-32 px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           {/* <Badge className="bg-green-100 mt-8 text-green-800 hover:bg-green-200 mb-6">
             Earth Again Blog
@@ -109,72 +121,85 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Featured Article */}
-      {featuredArticle && (
+      {/* Featured Articles — the newest few, each in its own full panel */}
+      {featuredArticles.length > 0 && (
         <section className="py-8 sm:py-10 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-8 sm:mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Featured Article
+                {featuredArticles.length > 1
+                  ? "Featured Articles"
+                  : "Featured Article"}
               </h2>
             </div>
 
-            <Card className="border-0 rounded-sm py-0 shadow-2xl overflow-hidden">
-              <div className="grid lg:grid-cols-2">
-                <div className="relative h-56 sm:h-96 lg:h-auto">
-                  <Image
-                    src={`${featuredArticle.image}`}
-                    alt={featuredArticle.title}
-                    width={600}
-                    height={500}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-6 left-6">
-                    <Badge className="bg-[#79b727] text-white">Featured</Badge>
-                  </div>
-                </div>
-                <CardContent className="p-6 text-left sm:p-8 lg:p-12">
-                  <div className="mb-4">
-                    <Badge className="bg-blue-100 text-blue-800">
-                      {featuredArticle.category}
-                    </Badge>
-                  </div>
+            <div className="space-y-8 sm:space-y-10">
+              {featuredArticles.map((featuredArticle) => (
+                <Card
+                  key={featuredArticle._id}
+                  className="border-0 rounded-sm py-0 shadow-2xl overflow-hidden"
+                >
+                  <div className="grid lg:grid-cols-2">
+                    <div className="relative h-56 sm:h-96 lg:h-auto">
+                      <Image
+                        src={`${featuredArticle.image}`}
+                        alt={featuredArticle.title}
+                        width={600}
+                        height={500}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-6 left-6">
+                        <Badge className="bg-[#79b727] text-white">
+                          Featured
+                        </Badge>
+                      </div>
+                    </div>
+                    <CardContent className="p-6 text-left sm:p-8 lg:p-12">
+                      <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                        {featuredArticle.title}
+                      </h3>
 
-                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
-                    {featuredArticle.title}
-                  </h3>
-                  <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
-                    {featuredArticle.excerpt}
-                  </p>
+                      <div className="mb-4 sm:mb-5">
+                        <Badge className="bg-blue-100 text-blue-800">
+                          {featuredArticle.category}
+                        </Badge>
+                      </div>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-6 text-sm text-gray-500 mb-6 sm:mb-8">
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      <span>{featuredArticle.author}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>{featuredArticle.date.slice(0,10)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span>{featuredArticle.readTime}</span>
-                    </div>
+                      <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
+                        {featuredArticle.excerpt}
+                      </p>
+
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-6 text-sm text-gray-500 mb-6 sm:mb-8">
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          <span>{featuredArticle.author}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          <span>{featuredArticle.date.slice(0, 10)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4" />
+                          <span>{featuredArticle.readTime}</span>
+                        </div>
+                      </div>
+                      <Link
+                        href={`/blog/${featuredArticle._id}`}
+                        className="block w-full sm:inline-block sm:w-auto"
+                      >
+                        <Button
+                          size="lg"
+                          className="w-full sm:w-auto bg-[#79b727] hover:bg-[#338c20]"
+                        >
+                          Read Full Article{" "}
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
+                    </CardContent>
                   </div>
-                  <Link
-                    href={`/blog/${featuredArticle._id}`}
-                    className="block w-full sm:inline-block sm:w-auto"
-                  >
-                    <Button
-                      size="lg"
-                      className="w-full sm:w-auto bg-[#79b727] hover:bg-[#338c20]"
-                    >
-                      Read Full Article <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </div>
-            </Card>
+                </Card>
+              ))}
+            </div>
           </div>
         </section>
       )}
@@ -219,17 +244,19 @@ export default function BlogPage() {
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="hidden sm:block absolute top-4 left-4">
-                      <Badge className="bg-white/90 text-gray-900">
-                        {article.category}
-                      </Badge>
-                    </div>
                   </div>
 
                   <CardContent className="px-2 sm:px-6 py-0 pb-0 sm:pb-2 text-left">
-                    <h3 className="text-xs leading-tight line-clamp-2 sm:text-lg lg:text-xl font-semibold text-gray-900 mb-1 sm:mb-3 group-hover:text-[#79b727] transition-colors">
+                    <h3 className="text-xs leading-tight line-clamp-2 sm:text-lg lg:text-xl font-semibold text-gray-900 mb-1 sm:mb-2 group-hover:text-[#79b727] transition-colors">
                       {article.title}
                     </h3>
+                    {/* Sits under the title rather than over the image; the
+                        phone tiles are too tight for it, as before. */}
+                    <div className="hidden sm:block mb-3">
+                      <Badge className="bg-gray-100 text-gray-900">
+                        {article.category}
+                      </Badge>
+                    </div>
                     {/* No location on an article, so read time takes the
                         second line the other routes give to the map pin. */}
                     <div className="sm:hidden space-y-0.5 text-[11px] leading-tight text-gray-500">

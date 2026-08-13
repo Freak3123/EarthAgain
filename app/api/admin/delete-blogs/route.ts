@@ -25,10 +25,8 @@ export async function POST() {
     const toDelete = await Blog.find({ date: { $lt: CUTOFF } });
 
     const paths = toDelete
-      .map((b) => {
-        const url = b.image as string | undefined;
-        return url?.split("/storage/v1/object/public/blogs/")[1];
-      })
+      .flatMap((b) => [b.image as string | undefined, ...(b.images ?? [])])
+      .map((url) => url?.split("/storage/v1/object/public/blogs/")[1])
       .filter((p): p is string => Boolean(p));
 
     if (paths.length > 0) {
@@ -91,16 +89,17 @@ export async function DELETE(req: Request) {
 
     const deletedBlog = await Blog.findByIdAndDelete(id);
 
-    // If blog had an image, delete it from Supabase
-    if (deletedBlog?.image) {
-      // deletedBlog.image is a public URL → extract the file path
-      const imageUrl = deletedBlog.image as string;
-      const filePath = imageUrl.split("/storage/v1/object/public/blogs/")[1];
-      // Adjust "blogs" if your bucket name differs
+    // Clear the primary image and any gallery images from Supabase. Both are
+    // public URLs → extract the file path each one maps to in the bucket.
+    const filePaths = [
+      deletedBlog?.image as string | undefined,
+      ...(deletedBlog?.images ?? []),
+    ]
+      .map((url) => url?.split("/storage/v1/object/public/blogs/")[1])
+      .filter((p): p is string => Boolean(p));
 
-      if (filePath) {
-        await supabase.storage.from("blogs").remove([filePath]);
-      }
+    if (filePaths.length > 0) {
+      await supabase.storage.from("blogs").remove(filePaths);
     }
 
     return NextResponse.json({

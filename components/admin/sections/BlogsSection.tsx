@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { Trash2, Star } from "lucide-react";
+import { Trash2, Star, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BlogForm } from "../forms/BlogForm";
+import { BlogForm, type EditableBlog } from "../forms/BlogForm";
 import SiteFilterSelect, { SiteFilterValue, matchesSiteFilter } from "../SiteFilterSelect";
 import {
   SectionHeading,
@@ -46,6 +46,9 @@ export function BlogsSection({
   const [mode, setMode] = useState<SectionMode>("manage");
   const [view, setView] = useState<PeriodView>("new");
   const [siteFilter, setSiteFilter] = useState<SiteFilterValue>("all");
+  // The post currently open in the form. Reuses the create form in edit mode
+  // rather than a second form that would drift out of sync with it.
+  const [editing, setEditing] = useState<EditableBlog | null>(null);
   const count = Array.isArray(blogs) ? blogs.length : 0;
 
   const handleDeleteAllOlder = async () => {
@@ -56,7 +59,18 @@ export function BlogsSection({
 
   const handleSaved = () => {
     setMode("manage");
+    setEditing(null);
     onRefresh();
+  };
+
+  const startEdit = (blog: EditableBlog) => {
+    setEditing(blog);
+    setMode("create");
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setMode("manage");
   };
 
   const toggleFeatured = async (id: string | undefined, next: boolean) => {
@@ -79,12 +93,22 @@ export function BlogsSection({
     <div>
       <SectionToggle
         mode={mode}
-        onMode={setMode}
+        onMode={(m) => {
+          // Leaving the form, or switching to "create", drops the post being
+          // edited — otherwise "Add Blog" would reopen the last edit.
+          setEditing(null);
+          setMode(m);
+        }}
         count={count}
         createLabel="Add Blog"
       />
       {mode === "create" ? (
-        <BlogForm mode={formMode} onSaved={handleSaved} />
+        <BlogForm
+          mode={formMode}
+          onSaved={handleSaved}
+          blog={editing ?? undefined}
+          onCancel={editing ? cancelEdit : undefined}
+        />
       ) : (
         <div>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -148,17 +172,7 @@ export function BlogsSection({
               <div className="space-y-4">
                 {shown.map(
                   (
-                    blog: {
-                      _id?: string;
-                      title: string;
-                      excerpt: string;
-                      author: string;
-                      date?: string;
-                      readTime: string;
-                      category: string;
-                      image?: string;
-                      featured?: boolean;
-                    },
+                    blog: EditableBlog & { title: string },
                     idx: number
                   ) => (
                     <div key={blog._id || idx} className={listCard}>
@@ -206,7 +220,18 @@ export function BlogsSection({
                         />
                       )}
 
-                      <div className="flex gap-2 self-start md:self-center">
+                      <div className="flex flex-wrap gap-2 self-start md:self-center">
+                        {/* Edit */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1.5 border-stone-300 text-stone-700 hover:bg-stone-100"
+                          onClick={() => startEdit(blog)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                          Edit
+                        </Button>
+
                         {/* Feature toggle */}
                         <Button
                           variant="outline"
