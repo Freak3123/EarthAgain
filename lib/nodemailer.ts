@@ -3,10 +3,18 @@ import nodemailer from "nodemailer";
 export const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL_USER?.trim(),
+    // Google shows app passwords spaced ("abcd efgh ijkl mnop"); the spaces
+    // are display-only, so strip them rather than depend on how it was pasted.
+    pass: process.env.EMAIL_PASS?.replace(/\s/g, ""),
   },
 });
+
+/** Gmail requires the envelope sender to be the authenticated account, so the
+ *  display name is the only part we control here. */
+function fromAddress() {
+  return `EarthAgain <${process.env.EMAIL_USER?.trim()}>`;
+}
 
 /** Escapes the handful of characters that would otherwise break the markup. */
 function escapeHtml(value: string) {
@@ -69,7 +77,7 @@ export async function sendConfirmationMail(
       : "";
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: fromAddress(),
     to,
     subject: "Confirmation: Registration for Earth Again Event",
     html: `
@@ -106,7 +114,7 @@ export async function sendConfirmationMail(
 
 export async function sendStayUpdatedMail(to: string) {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: fromAddress(),
     to,
     subject: "🌱 Stay Connected with Earth Again 2025",
     html: `

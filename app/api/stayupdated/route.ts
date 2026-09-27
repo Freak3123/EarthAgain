@@ -11,10 +11,21 @@ export async function POST(req: Request) {
     // Save subscriber
     const subscriber = await StayUpdated.create({ email });
 
-    // Send welcome/updates mail
-    await sendStayUpdatedMail(email);
+    // The subscriber is already saved, so a mail failure must not fail the
+    // request — reporting an error here would invite a duplicate submission.
+    let mailSent = true;
+    try {
+      await sendStayUpdatedMail(email);
+    } catch (mailError) {
+      mailSent = false;
+      console.error(
+        "Subscriber saved but updates email failed:",
+        subscriber._id,
+        mailError
+      );
+    }
 
-    return NextResponse.json({ success: true, subscriber });
+    return NextResponse.json({ success: true, subscriber, mailSent });
   } catch (error) {
     console.error("StayUpdated error:", error);
     return NextResponse.json({ error: "Subscription failed" }, { status: 500 });

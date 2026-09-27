@@ -3,6 +3,7 @@ import Hero from '@/components/home/Hero';
 import KeyFeatures from '@/components/home/KeyFeatures';
 import ImpactTracker from '@/components/home/ImpactTracker';
 import Events from '@/components/home/UpcomingEvents';
+import Blogs from '@/components/home/LatestBlogs';
 import SpeakersSection from '@/components/home/SpeakerSection';
 import Testimonials from '@/components/home/Testimonials';
 import SponsorsPartners from '@/components/home/SponsorsPartners';
@@ -42,6 +43,7 @@ Join us in making the earth whole again.
       {/* <SpeakersSection /> */}
       <Events />
       <Testimonials />
+      <Blogs />
       {/* <InstaFeed /> */}
       <CallAction />
     </div>

@@ -2,11 +2,12 @@
 
 import { Clock, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import axios from "axios";
+import { pickFeaturedFirst } from "@/lib/featuredFirst";
 
 interface EventProps {
   _id: string;
@@ -16,11 +17,11 @@ interface EventProps {
   location: string;
   description: string;
   image: string;
+  featured: boolean;
 }
 
 export default function UpcomingEvents() {
   const [events, setEvents] = useState<EventProps[]>([]);
-  const [displayedEvents, setDisplayedEvents] = useState<EventProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [windowWidth, setWindowWidth] = useState(0);
@@ -48,18 +49,18 @@ export default function UpcomingEvents() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Update displayed events based on window width
-  useEffect(() => {
-    if (!events.length) return;
+  // Narrow viewports fit two cards, wide ones three. windowWidth is still 0 on
+  // the first pass, but the cards are gated behind isLoading — which only
+  // clears once the fetch resolves, well after the width is read — so that
+  // initial 0 never reaches the grid.
+  const cardCount = windowWidth < 1024 ? 2 : 3;
 
-    if (windowWidth < 1024) {
-      // small & medium → 2 events
-      setDisplayedEvents(events.slice(0, 2));
-    } else {
-      // large → 3 events
-      setDisplayedEvents(events.slice(0, 3));
-    }
-  }, [events, windowWidth]);
+  // Featured events first, topped up with the most recent of the rest, then the
+  // whole row ordered by date — shared with the blog section below it.
+  const displayedEvents = useMemo(
+    () => pickFeaturedFirst(events, cardCount),
+    [events, cardCount]
+  );
 
   if (isLoading) return <p className="text-center py-8">Loading events...</p>;
   if (error) return <p className="text-center py-8 text-red-600">{error}</p>;
