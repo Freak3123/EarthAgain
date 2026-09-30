@@ -207,8 +207,16 @@ export function RegistrationsList({
     });
   };
 
-  // Flatten registrations (one row per registrant × session) and download as CSV.
-  const exportRegistrationsCsv = () => {
+  /**
+   * Flatten registrations (one row per registrant × session) and download as
+   * CSV. Takes the list to export rather than reading `regList` directly, so
+   * the same builder serves both the export-everything button and the
+   * period-scoped one that only takes what the current view is showing.
+   */
+  const exportRegistrationsCsv = (
+    list: IRegistration[],
+    filename = "registrations.csv"
+  ) => {
     const header = [
       "Name",
       "Email",
@@ -222,7 +230,7 @@ export function RegistrationsList({
       "Session",
     ];
     const rows: string[][] = [header];
-    (Array.isArray(regList) ? regList : []).forEach((reg: IRegistration) => {
+    list.forEach((reg: IRegistration) => {
       const registered = reg.createdAt
         ? new Date(reg.createdAt).toLocaleDateString("en-GB")
         : "";
@@ -247,7 +255,7 @@ export function RegistrationsList({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "registrations.csv";
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -442,7 +450,7 @@ export function RegistrationsList({
                       <Button
                         variant="outline"
                         className="gap-2 border-stone-300 text-stone-700 hover:bg-stone-100"
-                        onClick={exportRegistrationsCsv}
+                        onClick={() => exportRegistrationsCsv(allRegList)}
                         disabled={allRegList.length === 0}
                       >
                         <Download className="h-4 w-4" />
@@ -478,15 +486,35 @@ export function RegistrationsList({
                       newCount={newCount}
                       olderCount={olderCount}
                     />
-                    {/* Withheld in the by-date view: the bulk delete removes
-                        by submission date, which is not the split shown. */}
-                    {groupBy === "session" &&
-                      view === "older" &&
-                      olderCount > 0 && (
-                        <DeleteAllOlderButton
-                          onDeleteAll={handleDeleteAllOlder}
-                        />
-                      )}
+                    <div className="flex flex-wrap items-center gap-3">
+                      {/* Only what the active period is showing, unlike the
+                          Export CSV button above which takes everything. */}
+                      <Button
+                        variant="outline"
+                        className="gap-2 border-stone-300 text-stone-700 hover:bg-stone-100"
+                        onClick={() =>
+                          exportRegistrationsCsv(
+                            safeRegList,
+                            isOlder
+                              ? `registrations-before-${CUTOFF_YEAR}.csv`
+                              : `registrations-${CUTOFF_YEAR}-onward.csv`
+                          )
+                        }
+                        disabled={safeRegList.length === 0}
+                      >
+                        <Download className="h-4 w-4" />
+                        Download CSV
+                      </Button>
+                      {/* Withheld in the by-date view: the bulk delete removes
+                          by submission date, which is not the split shown. */}
+                      {groupBy === "session" &&
+                        view === "older" &&
+                        olderCount > 0 && (
+                          <DeleteAllOlderButton
+                            onDeleteAll={handleDeleteAllOlder}
+                          />
+                        )}
+                    </div>
                   </div>
 
                   {/* Session / date grouping */}
